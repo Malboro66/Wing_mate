@@ -1,0 +1,72 @@
+{
+  "squadronId": "Esc 68",
+  "squadronName": "Esc 68",
+  "country": "FRANCE",
+  "history": "A Escadrille 68 foi uma esquadrilha de caça francesa criada no outono de 1915 como N 68, que operou com Nieuport (biplaces e depois “Bébé”) antes de adotar SPAD e ser redesignada SPA 68 até o Armistício de 1918. O emblema característico foi o “cor de chasse”, frequentemente representado junto ao número 68 nas fuselagens, visto em Nieuport 12 e 17 da unidade em 1916–1917.​\nIdentificação e formação\nDesignação original: N 68 (N para Nieuport), ativa a partir de 23 de setembro de 1915 sob o Capitaine Jacques de Sylvestre.​\nDesignação final: SPA 68 (SPAD), adotada quando a unidade reequipou com caças SPAD em 1917–1918.​\nEmblema: “Cor de chasse” como marca distintiva, lembrando o corpo de origem da unidade, com variações gráficas integrando o algarismo “68”.​\nHistória operacional\nEm 3 de abril de 1917, Nieuport 17 da escadrilha 68 são registrados em decolagens e pousos no campo de La Noblette, confirmando emprego operacional no setor de Mourmelon‑le‑Grand durante a ofensiva da primavera de 1917.​\nA sequência de vitórias e perdas está documentada por entradas nominais e datadas, evidenciando atividade contínua até o fim do conflito (ex.: 5/2/1918 em Thiaucourt; 17/6/1918; 26/9/1918 em Ville‑sur‑Tourbe).​\nEstatísticas e desempenho\nOs registros “Victoires et pertes” listam eventos por data, local e tipo de alvo, sem um somatório único na fonte, mas demonstrando engajamentos regulares de caça ao longo de 1917–1918.​\nAs fontes iconográficas e operacionais confirmam o perfil de caça, escolta e intercepção, com transição de Nieuport para SPAD na fase final, conforme a prática de redesignação para SPA 68.​\nComandantes\nA chefia compreendeu, entre outros, o Capitaine Jacques de Sylvestre (23/9/1915–9/6/1916), o Capitaine Marcel Garde (1/7/1916–9/12/1916) e o Capitaine Jacques Lemerle (1/1/1917–14/6/1918).​\nAs mudanças de comando alinham‑se às fases de reequipamento e aos deslocamentos táticos da unidade entre 1916 e 1918.​\nPessoal notável\nPierre Mouronval serviu como piloto na N 68 a partir de 15 de maio de 1917, com promoção em 1º de julho de 1917 e trajetória documentada na unidade nesse período de transição de material.​\nAs listas de vitórias e de pessoal complementam a presença de outros pilotos e mecânicos, compondo o retrato operacional da escadrilha.​\nAeronaves utilizadas\nNieuport 12A.2 biplace, com exemplares da N 68 exibindo o emblema “cor de chasse + 68” em 1916.​\nNieuport 17 monoplaces de caça, documentados em La Noblette em abril de 1917.​\nSPAD (VII/XIII), cuja adoção motivou a redesignação para SPA 68 na fase final da guerra.​\nInsígnia e tradição\nO “cor de chasse” aparece como insígnia recorrente da escadrilha 68 nas fontes de tradição e iconografia, associado ao número “68” em diversas aplicações.​\nA página de referência de Albin Denis consolida simbolismo, histórico, chefes, aeronaves e quadros de campanhas, preservando a memória institucional da N/SPA 68.",
+  "emblemImage": "squadrons\\images\\Esc 68.jpg",
+  "airfields": [
+    {
+      "start": "19160801",
+      "end": "19170101",
+      "airfield": "Lemmes"
+    },
+    {
+      "start": "19170101",
+      "end": "19170201",
+      "airfield": "Souilly"
+    },
+    {
+      "start": "19170201",
+      "end": "19170301",
+      "airfield": "Ferme de Alger"
+    },
+    {
+      "start": "19170301",
+      "end": "19170401",
+      "airfield": "Ferme de Alger"
+    },
+    {
+      "start": "19170401",
+      "end": "19170501",
+      "airfield": "Bouy"
+    },
+    {
+      "start": "19170501",
+      "end": "19170701",
+      "airfield": "Beaucourt"
+    },
+    {
+      "start": "19170701",
+      "end": "19170801",
+      "airfield": "Ferme de Corbeaulieu"
+    },
+    {
+      "start": "19170801",
+      "end": "19171201",
+      "airfield": "Ferme Cravancon"
+    },
+    {
+      "start": "19171201",
+      "end": "19180201",
+      "airfield": "La Noblette"
+    },
+    {
+      "start": "19180201",
+      "end": "19180701",
+      "airfield": "Saconin Breuil"
+    },
+    {
+      "start": "19180701",
+      "end": "19181001",
+      "airfield": "Saint Just"
+    },
+    {
+      "start": "19181001",
+      "end": "",
+      "airfield": "Vauxcere"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 68.json"
+  }
+}

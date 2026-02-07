@@ -1,0 +1,158 @@
+{
+  "_comment": "V2 - Estrutura JSON otimizada para normalização, consistência e escalabilidade. O campo 'history' foi desmembrado em dados estruturados para melhor processamento.",
+  "squadronInfo": {
+    "id": "esc_7_france",
+    "name": "Escadrille 7",
+    "countryIsoCode": "FRA"
+  },
+  "history": {
+    "summary": "A Escadrille 7 foi uma unidade francesa de observação e reconhecimento da Aeronáutica Militar que surgiu no pré-guerra. Distinguiu-se pela primeira insígnia em forma de 'cor de chasse', adotada pelo Capitaine René Roëckel, o que marcou a identidade da esquadrilha. Suas designações evoluíram com os tipos de aeronave de observação e bombardeio leve, sem uma fase de caça 'N 7'.",
+    "formation": {
+      "date": "Pre-1914",
+      "context": "Unidade de observação/regulação de artilharia, com designações sucessivas por tipo de aeronave, conforme norma orgânica da Aéronautique Militaire."
+    },
+    "designations": [
+      {
+        "name": "Escadrille HF 7"
+      },
+      {
+        "name": "Escadrille MF 7"
+      },
+      {
+        "name": "Escadrille F 7"
+      },
+      {
+        "name": "Escadrille SOP 7"
+      },
+      {
+        "name": "Escadrille BR 7"
+      }
+    ],
+    "notableEvents": [
+      {
+        "date": "1914-1916",
+        "description": "Emprego em Champagne e setores adjacentes, com missões de observação, foto aérea e regulação de tiro."
+      },
+      {
+        "date": "1916-10-25",
+        "description": "A unidade, sob o comando do Capitaine René Roëckel, foi citada à ordem do Exército."
+      },
+      {
+        "date": "1917-1918",
+        "description": "Nas fases SOP 7 e BR 7, incrementou o raio de ação e carga útil, mantendo missões de reconhecimento e bombardeio até o Armistício."
+      }
+    ]
+  },
+  "keyPersonnel": [
+    {
+      "name": "Capitaine René Hubert Roëckel",
+      "roles": ["Commander"],
+      "details": "Comandante citado à ordem do Exército em 25/10/1916. Associado à adoção da insígnia 'cor de chasse', derivada de sua origem nos Chasseurs."
+    }
+  ],
+  "statistics": {
+    "recognitions": {
+      "armyCitation": {
+        "date": "1916-10-25",
+        "context": "Citação à ordem do Exército pelo desempenho da unidade sob a liderança do Capitaine Roëckel."
+      }
+    }
+  },
+  "equipment": {
+    "aircraftUsed": [
+      "Henri-Farman",
+      "Maurice-Farman",
+      "Sopwith 1A2",
+      "Sopwith 1B1",
+      "Breguet 14 A2",
+      "Breguet 14 B2"
+    ],
+    "markings": {
+      "insignia": "Cor de chasse",
+      "description": "Símbolo derivado da origem do Capitaine Roëckel nos Chasseurs, aplicado como marca distintiva da esquadrilha."
+    }
+  },
+  "media": {
+    "emblemImagePath": "squadrons/images/Esc 7.jpg"
+  },
+  "deploymentHistory": [
+    {
+      "airfieldId": "ferme_de_corbeaulieu",
+      "startDate": "1916-01-01",
+      "endDate": "1916-04-01"
+    },
+    {
+      "airfieldId": "tilloy",
+      "startDate": "1916-04-01",
+      "endDate": "1916-06-01"
+    },
+    {
+      "airfieldId": "lemmes",
+      "startDate": "1916-06-01",
+      "endDate": "1916-07-01"
+    },
+    {
+      "airfieldId": "vauxcere",
+      "startDate": "1916-07-01",
+      "endDate": "1916-09-01"
+    },
+    {
+      "airfieldId": "saint_just",
+      "startDate": "1916-09-01",
+      "endDate": "1916-10-01"
+    },
+    {
+      "airfieldId": "allonville",
+      "startDate": "1916-10-01",
+      "endDate": "1916-11-01"
+    },
+    {
+      "airfieldId": "cachy",
+      "startDate": "1916-11-01",
+      "endDate": "1916-12-01"
+    },
+    {
+      "airfieldId": "lhery",
+      "startDate": "1916-12-01",
+      "endDate": "1917-01-01"
+    },
+    {
+      "airfieldId": "grivesnes",
+      "startDate": "1917-01-01",
+      "endDate": "1917-02-01"
+    },
+    {
+      "airfieldId": "esquennoy",
+      "startDate": "1917-02-01",
+      "endDate": "1917-06-01"
+    },
+    {
+      "airfieldId": "allonville",
+      "startDate": "1917-06-01",
+      "endDate": "1917-09-01"
+    },
+    {
+      "airfieldId": "ravenel",
+      "startDate": "1917-09-01",
+      "endDate": "1918-07-01"
+    },
+    {
+      "airfieldId": "sacy_le_grand",
+      "startDate": "1918-07-01",
+      "endDate": "1918-10-01"
+    },
+    {
+      "airfieldId": "ravenel",
+      "startDate": "1918-10-01",
+      "endDate": "1918-11-01"
+    },
+    {
+      "airfieldId": "warfusee",
+      "startDate": "1918-11-01"
+    }
+  ],
+  "source": {
+    "pwcgSquadronFile": "pwcg_files/Esc 7.json",
+    "comment": "Caminho absoluto original alterado para um caminho relativo para portabilidade."
+  }
+}

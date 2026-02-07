@@ -1,0 +1,114 @@
+{
+  "_comment": "V2 - Estrutura JSON otimizada para normalização, consistência e escalabilidade. As chaves seguem a convenção camelCase.",
+  "squadronInfo": {
+    "id": "jasta_4_germany",
+    "name": "Jasta 4",
+    "countryIsoCode": "DEU"
+  },
+  "history": {
+    "summary": "A 'hunting group' (fighter squadron) of the Luftstreitkräfte, known for being part of Manfred von Richthofen's famed Flying Circus (Jagdgeschwader I). The unit scored 192 confirmed victories during the war.",
+    "formationDate": "1916-08-25",
+    "formationContext": "Founded on 25 August 1916, drawing personnel from FFA 23, other two-seater reconnaissance units within 2 Armee, Kampfeinsitzerkommando Vaux, and Armee-Flugpark Nr. 2.",
+    "disbandmentDate": "1918-11-16",
+    "disbandmentContext": "Disbanded at FEA 9, Darmstadt, shortly after the Armistice.",
+    "notableEvents": [
+      {
+        "date": "1917-06-24",
+        "description": "Became part of the forming Jagdgeschwader I (JG I), the famed 'Flying Circus'."
+      }
+    ]
+  },
+  "keyPersonnel": [
+    {
+      "name": "Kurt-Bertram von Döring",
+      "roles": ["Commander", "Notable Pilot"],
+      "details": {
+        "commandTenure": "1917 (Temporary command of JG I while Richthofen was wounded)"
+      }
+    },
+    {
+      "name": "Hans Klein",
+      "roles": ["Notable Pilot"]
+    },
+    {
+      "name": "Fritz Anders",
+      "roles": ["Notable Pilot"]
+    }
+  ],
+  "statistics": {
+    "confirmedVictories": 192,
+    "personnelLosses": {
+      "killedInAction": 11,
+      "woundedInAction": 9,
+      "prisonersOfWar": 2
+    }
+  },
+  "equipment": {
+    "aircraftUsed": [
+      "Halberstadt D.II",
+      "Fokker E.III",
+      "Albatros D.II",
+      "Pfalz D.III",
+      "Fokker Dr.I",
+      "Albatros D.III",
+      "Albatros D.V",
+      "Halberstadt D.V",
+      "Fokker D.VII"
+    ],
+    "markingsDescription": "Initially included black and white bands around the fuselage. In 1918, Fokker Triplanes were reportedly striped red and turquoise on wings and fuselages."
+  },
+  "media": {
+    "emblemImagePath": "squadrons/images/Jasta 4.png"
+  },
+  "deploymentHistory": [
+    {
+      "airfieldId": "roupy",
+      "startDate": "1916-08-25",
+      "endDate": "1916-12-01"
+    },
+    {
+      "airfieldId": "bellevue_ferme",
+      "startDate": "1916-12-01",
+      "endDate": "1917-02-01"
+    },
+    {
+      "airfieldId": "douai",
+      "startDate": "1917-02-01",
+      "endDate": "1917-06-01"
+    },
+    {
+      "airfieldId": "lomme",
+      "startDate": "1917-06-01",
+      "endDate": "1917-07-01"
+    },
+    {
+      "airfieldId": "douai",
+      "startDate": "1917-07-01",
+      "endDate": "1917-09-01"
+    },
+    {
+      "airfieldId": "roucourt",
+      "startDate": "1917-09-01",
+      "endDate": "1917-11-01"
+    },
+    {
+      "airfieldId": "bullecourt",
+      "startDate": "1917-11-01",
+      "endDate": "1918-03-01"
+    },
+    {
+      "airfieldId": "champien",
+      "startDate": "1918-03-01",
+      "endDate": "1918-10-01"
+    },
+    {
+      "airfieldId": "ugny_lequipee",
+      "startDate": "1918-10-01",
+      "endDate": "1918-11-11"
+    }
+  ],
+  "source": {
+    "pwcgSquadronFile": "pwcg_files/Jasta 4.json",
+    "comment": "Original source path was an absolute path, changed to a relative one for portability."
+  }
+}

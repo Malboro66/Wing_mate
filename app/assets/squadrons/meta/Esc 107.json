@@ -1,0 +1,72 @@
+{
+  "squadronId": "Esc 107",
+  "squadronName": "Esc 107",
+  "country": "FRANCE",
+  "history": "A Escadrille 107 foi uma esquadrilha de bombardeio diurno da Aeronáutica Militar Francesa, que começou equipada com Voisin (VB), teve fase intermediária em Sopwith (SOP) e, no início de 1918, passou ao Breguet 14 (BR), consolidando sua identidade como BR 107 e deixando como tradição o emblema do “Serpent ailé”.​\nIdentificação e Formação\nDesignação Original: Escadrille VB 107 (VB para Voisin).​\nDesignação Intermediária: Escadrille SOP 107 (SOP para Sopwith).​\nDesignação Final: Escadrille BR 107 (BR para Breguet 14).​\nPaís: França.​\nData de Criação: 1915.​\nContexto de Formação: Unidade de bombardeio diurno criada no âmbito da Aeronáutica Militar, inicialmente equipada com Voisin e sujeita às redesignações francesas por tipo de aeronave.​\nHistória Operacional\n1915–1917: Operações de bombardeio diurno com Voisin na Frente Ocidental.​\nInício de 1918: Transição para Breguet 14 B2 e redesignação para BR 107, elevando alcance e carga de ataque.​\n1918 (ofensivas): Emprego em ações de apoio como a Batalha da Matz, sob forte oposição da caça inimiga.​\nArmistício: Manteve o perfil de bombardeio até o fim do conflito em novembro de 1918.​\nEstatísticas e Desempenho\nRegistros de perdas: A página reúne mortos, feridos e prisioneiros em “Les Hommes”, sem síntese numérica única.​\nFoco operacional: Missões de bombardeio diurno e interdição, não centradas em contagem de vitórias aéreas.​\nIntensidade: Atividade elevada em 1918 em apoio a grandes operações, com riscos significativos.​\nComandantes (Chefs d’escadrille)\nA página lista os sucessivos comandantes com suas datas na seção dedicada, documentando a continuidade de comando da unidade.​\nPessoal Notável\nA seção “Les Hommes” destaca tripulantes com fotos e perfis preservados por arquivos familiares e coleções, contribuindo para a memória da unidade.​\nAeronaves Utilizadas\nVoisin (VB) – bombardeio diurno nos primeiros anos.​\nSopwith (SOP) – fase intermediária de reequipamento.​\nBreguet 14 B2 (BR) – bombardeio diurno a partir de 1918.​\nInsígnia e Tradição\nInsígnia: Tradição associada ao emblema “Serpent ailé” na fase BR 107.​\nMarcas de aeronaves: Marcas distintivas variaram nos Voisin e foram padronizadas com a adoção do Breguet 14.​\nLegado: A tradição BR 107 permaneceu referenciada em unidades da Armée de l’Air no pós‑guerra.​",
+  "emblemImage": "squadrons\\images\\Esc 107.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160601",
+      "airfield": "Erize la Petite"
+    },
+    {
+      "start": "19160601",
+      "end": "19161201",
+      "airfield": "Beauze sur Aire"
+    },
+    {
+      "start": "19161201",
+      "end": "19170401",
+      "airfield": "Quinquempoix"
+    },
+    {
+      "start": "19170401",
+      "end": "19170501",
+      "airfield": "Bertangles"
+    },
+    {
+      "start": "19170501",
+      "end": "19170601",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19170601",
+      "end": "19170701",
+      "airfield": "Villesavoye"
+    },
+    {
+      "start": "19170701",
+      "end": "19170801",
+      "airfield": "Lhery"
+    },
+    {
+      "start": "19170801",
+      "end": "19170901",
+      "airfield": "La Mellette"
+    },
+    {
+      "start": "19170901",
+      "end": "19171001",
+      "airfield": "Ferme de Alger"
+    },
+    {
+      "start": "19171001",
+      "end": "19180101",
+      "airfield": "Somme Vesle"
+    },
+    {
+      "start": "19180101",
+      "end": "19180901",
+      "airfield": "Belrain"
+    },
+    {
+      "start": "19180901",
+      "end": "",
+      "airfield": "Matougues"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 107.json"
+  }
+}

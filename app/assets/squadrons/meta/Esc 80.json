@@ -1,0 +1,57 @@
+{
+  "squadronId": "Esc 80",
+  "squadronName": "Esc 80",
+  "country": "FRANCE",
+  "history": "A Escadrille 80 foi uma esquadrilha de caça criada em 13 de dezembro de 1916 em Lyon‑Bron como N 80, reequipada com SPAD e redesignada SPA 80 em 1917, permanecendo ativa até o Armistício de 11 de novembro de 1918. As tradições da unidade não foram retomadas após a dissolução formal em 18 de fevereiro de 1919.​\nIdentificação e formação\nDesignação original: N 80 (Nieuport); designação final: SPA 80 (SPAD).​\nCriação e local: 13 de dezembro de 1916, Lyon‑Bron; inicialmente anexada à V Armée e depois ao Groupe de Combat 14 em março de 1917.​\nÂmbito: Unidade de caça (“chasse”) criada para operações de superioridade aérea na Frente Ocidental.​\nHistória operacional\n1916–1917: Formação em Lyon‑Bron, emprego sob a V Armée e transferência ao GC 14 em março de 1917 para operações de caça de maior envergadura.​\n1917–1918: Redesignação para SPA 80 após reequipamento com SPAD, mantendo missões de caça, escolta e intercepção até o Armistício de 11 de novembro de 1918.​\nPós‑guerra: Unidade dissolvida em 18 de fevereiro de 1919, sem retomada de tradições por unidades herdeiras.​\nEstatísticas e desempenho\nBalanço de combate: 23 vitórias aéreas creditadas no período de atividade durante a Primeira Guerra Mundial.​\nSituação histórica: Tradição não retomada após 1919, registrando fim de linhagem no pós‑guerra imediato.​\nRegistros: Cronologias de “appellations”, estacionamentos e vínculos constam nos repositórios de tradição e história operacional da unidade.​\nComandantes\nA listagem de comandos por período, com mudanças associadas a reequipamentos e reagrupamentos (ex.: GC 14), está compilada nos históricos especializados da escadrilha.​\nPessoal notável\nRelações nominativas de pilotos, vitórias e eventos constam nas seções específicas de “Victoires et pertes” e nos históricos da N/SPA 80.​\nAeronaves utilizadas\nNieuport XVII na fase N 80 a partir da criação em 1916.​\nSPAD (família VII/XIII) na fase SPA 80 após a transição em 1917.​\nInsígnia e tradição\nInsígnias e elementos heráldicos da N/SPA 80 são apresentados na página dedicada de tradição da unidade.​\nTradições e continuidade: Sem retomada após a dissolução de 18 de fevereiro de 1919, conforme nota editorial do acervo.",
+  "emblemImage": "squadrons\\images\\Esc 80.jpg",
+  "airfields": [
+    {
+      "start": "19170201",
+      "end": "19170301",
+      "airfield": "Saizerais"
+    },
+    {
+      "start": "19170301",
+      "end": "19170401",
+      "airfield": "Ferme de Corbeaulieu"
+    },
+    {
+      "start": "19170401",
+      "end": "19170501",
+      "airfield": "Saizerais"
+    },
+    {
+      "start": "19170501",
+      "end": "19170701",
+      "airfield": "Lemmes"
+    },
+    {
+      "start": "19170701",
+      "end": "19170801",
+      "airfield": "Mont de Soissons"
+    },
+    {
+      "start": "19170801",
+      "end": "19171201",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19171201",
+      "end": "19180201",
+      "airfield": "Froides"
+    },
+    {
+      "start": "19180201",
+      "end": "19180401",
+      "airfield": "Grivesnes"
+    },
+    {
+      "start": "19180401",
+      "end": "",
+      "airfield": "Auve"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 80.json"
+  }
+}

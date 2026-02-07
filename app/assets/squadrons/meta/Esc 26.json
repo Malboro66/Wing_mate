@@ -1,0 +1,57 @@
+{
+  "squadronId": "Esc 26",
+  "squadronName": "Esc 26",
+  "country": "FRANCE",
+  "history": "A Escadrille 26 foi uma esquadrilha de caça da Aeronáutica Militar Francesa criada em 1914, que evoluiu de MS 26 (Morane‑Saulnier) para N 26 (Nieuport) e SPA 26 (SPAD), integrou o GC 12 “Cigognes” em 1916 e adotou a insígnia “Cigogne de Saint‑Galmier”, mantendo atuação intensa até o Armistício de 1918. Em 1918 recebeu citação da 4ª Armée por 51 aparelhos inimigos destruídos e 70 postos fora de combate, com presença de figuras como Roland Garros na fase final da guerra.​\nIdentificação e Formação\nDesignação Original: Escadrille MS 26 (MS para Morane‑Saulnier).​\nDesignação Intermediária: Escadrille N 26 (N para Nieuport).​\nDesignação Final: Escadrille SPA 26 (SPA para SPAD).​\nPaís: França.​\nData de Criação: 26 de agosto de 1914 (Arras).​\nContexto de Formação: Criada para apoio à 6ª Armée, com rápida passagem à Bélgica; em junho de 1916 passou ao GC 12 e adotou a “Cigogne de Saint‑Galmier” como insígnia.​\nHistória Operacional\n1914–1915: Ações iniciais com Morane‑Saulnier e depois Nieuport, incluindo Marne e Ypres, passando a missões de caça e escolta à medida que reequipou.​\n1916–1917: Integração ao GC 12 em Cachy durante a Somme; participação no Chemin des Dames e destacamento à Flandres em julho de 1917.​\n1918: Engajada nas grandes batalhas finais; citada pela 4ª Armée por 51 inimigos abatidos e 70 neutralizados, combatendo até o Armistício.​\nEstatísticas e Desempenho\nCitação de 1918: 51 aparelhos inimigos destruídos e 70 fora de combate, conforme ordem da 4ª Armée.​\nFoco operacional: Caça, escolta e intercepção dentro do GC 12, com emprego crescente de SPAD VII/XIII no fim de 1917–1918.​\nRegistros: A página da unidade compila “Batailles et missions importantes” e “Relevés quantitatifs”, sem síntese única de perdas no corpo do texto.​\nComandantes (Chefs d’escadrille)\nOs sucessivos comandantes e períodos estão listados na página, com correlação às fases MS, N e SPA e ao período no GC 12.​\nPessoal Notável\nRoland Garros integrou a SPA 26 a partir de 20 de agosto de 1918, somando vitórias na fase final do conflito; outros pilotos destacados são citados em fontes de tradição e memória.​\nAeronaves Utilizadas\nMorane‑Saulnier (MS 26) – fase inicial de 1914–1915.​\nNieuport 11 e derivados (N 26) – transição para caça em 1915–1916.​\nSPAD VII/XIII (SPA 26) – padronização de 1917–1918.​\nInsígnia e Tradição\nInsígnia: “Cigogne de Saint‑Galmier”, homologada n.º A‑1097, documentada com variantes pintadas e metálicas.​\nMarcas e cores: Registradas nas seções de insígnias, “Couleurs des avions” e “Les avions” da página.​\nLegado: Tradição preservada no pós‑guerra nas unidades herdeiras do GC 12 “Cigognes” e nos acervos de memória aeronáutica franceses.​",
+  "emblemImage": "squadrons\\images\\Esc 26.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160301",
+      "airfield": "Ancemont"
+    },
+    {
+      "start": "19160301",
+      "end": "19170401",
+      "airfield": "Villers Bretonneu 2"
+    },
+    {
+      "start": "19170401",
+      "end": "19171101",
+      "airfield": "Sainte Menehould"
+    },
+    {
+      "start": "19171101",
+      "end": "19180101",
+      "airfield": "Vauxcere"
+    },
+    {
+      "start": "19180101",
+      "end": "19180201",
+      "airfield": "Beauze sur Aire"
+    },
+    {
+      "start": "19180201",
+      "end": "19180301",
+      "airfield": "Pretz en Argonne"
+    },
+    {
+      "start": "19180301",
+      "end": "19180901",
+      "airfield": "Vadelaincourt"
+    },
+    {
+      "start": "19180901",
+      "end": "19181001",
+      "airfield": "Muizon"
+    },
+    {
+      "start": "19181001",
+      "end": "",
+      "airfield": "Saizerais"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 26.json"
+  }
+}

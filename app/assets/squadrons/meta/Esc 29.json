@@ -1,0 +1,67 @@
+{
+  "squadronId": "Esc 29",
+  "squadronName": "Esc 29",
+  "country": "FRANCE",
+  "history": "A Escadrille 29 foi criada em 29 de maio de 1915 em Belfort como unidade de bombardeio MF 29, substituindo a V 29 dissolvida em 15 de maio de 1915 e passando depois por SOP 29 até tornar‑se BR 29 com Breguet 14 no fim da guerra. Ao longo de 1915–1918 operou no front da Alsácia‑Mosela e em setores adjacentes, integrando o Grupo de Bombardeio de Belfort/GB 4 e realizando ataques notáveis como o bombardeio da estação de Colmar em 20 de julho de 1915 sob o comando de Maurice Happe, pioneiro do bombardeio em formação.​\nIdentificação e Formação\nDesignação Original: Escadrille MF 29 (MF para Maurice Farman).​\nDesignação Intermediária: Escadrille SOP 29 (SOP para Sopwith 1B1/1B2).​\nDesignação Final: Escadrille BR 29 (BR para Breguet 14).​\nPaís: França.​\nData de Criação: 29 de maio de 1915 (Belfort).​\nContexto de Formação: Unidade de bombardeio de Belfort integrada ao Grupo de Bombardeio local (depois GB 4), organizada para missões ofensivas de longo alcance na frente oriental francesa.​\nHistória Operacional\n1915: Formação com seis MF.7; ataque à estação de Colmar em 20 de julho; integração ao Grupo de Bombardeio de Belfort em 3 de novembro de 1915, base para futuras operações coordenadas de bombardeio.​\n1916: Mobilidade elevada entre campos na Alsácia‑Mosela; recebimento de 10 Sopwith 1B1/1B2 em janeiro e redesignação para SOP 29, ampliando o desempenho em bombardeio diurno.​\n1918: Transferência do leste em janeiro e retorno breve em setembro a Neufchâteau com novos aparelhos, preparando a transição para Breguet 14 e a fase BR 29 até o Armistício.​\nArmistício: Manteve perfil de bombardeio diurno até o fim da guerra, alinhada à padronização francesa de emprego do Breguet 14 nos grupos de bombardeio.​\nEstatísticas e Desempenho\nFoco operacional: Bombardeio diurno de alvos ferroviários e logísticos, com tática de voo em formação sistematizada por Happe na MF 29 em 1915.​\nCapacidades: O reequipamento em Breguet 14 B2 consolidou alcance, carga e robustez, tornando‑o o padrão francês de bombardeio no fim do conflito.​\nTeatro e ritmo: Operações contínuas na Alsácia‑Mosela em 1915–1916 e deslocamentos táticos em 1918, conforme os movimentos do grupo de bombardeio.​\nComandantes (Chefs d’escadrille)\nComandante inicial: Capitaine Maurice Happe, associado à adoção do bombardeio em formação e a ações emblemáticas em 1915.​\nOutras chefias subsequentes são registradas nas listagens e cronologias de unidades correlatas de bombardeio.​\nPessoal Notável\nTripulações da MF 29 executaram ataques coordenados em 1915, incluindo neutralização do entroncamento ferroviário de Cernay sob a doutrina de Happe, com registros em estudos dedicados.​\nRelatos de acidentes e riscos de manuseio de munições no período inicial evidenciam a periculosidade do bombardeio embrionário em Belfort.​\nAeronaves Utilizadas\nMaurice Farman MF.7 (dotação inicial de seis aparelhos em 1915).​\nSopwith 1B1/1B2 (reequipamento de janeiro de 1916, redesignação para SOP 29).​\nBreguet 14 B2 (fase BR 29 no fim da guerra, padrão de bombardeio francês).​\nInsígnia e Tradição\nTradição: A Escadrille figura nas listagens de tradições como BR 29 no arco de unidades de bombardeio francesas, com continuidade documental no pós‑guerra.​\nLegado: A consolidação do Breguet 14 como vetor de bombardeio padronizado reforça o papel histórico da 29 no processo de modernização do bombardeio francês em 1917–1918.​",
+  "emblemImage": "squadrons\\images\\Esc 29.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160301",
+      "airfield": "Cachy"
+    },
+    {
+      "start": "19160301",
+      "end": "19160601",
+      "airfield": "Cachy"
+    },
+    {
+      "start": "19160601",
+      "end": "19161201",
+      "airfield": "Esquennoy"
+    },
+    {
+      "start": "19161201",
+      "end": "19170201",
+      "airfield": "Fere en Tardenois"
+    },
+    {
+      "start": "19170201",
+      "end": "19170401",
+      "airfield": "Tilloy"
+    },
+    {
+      "start": "19170401",
+      "end": "19170601",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19170601",
+      "end": "19170701",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19170701",
+      "end": "19170901",
+      "airfield": "Senard en Argonne"
+    },
+    {
+      "start": "19170901",
+      "end": "19180101",
+      "airfield": "Lhery"
+    },
+    {
+      "start": "19180101",
+      "end": "19180901",
+      "airfield": "Souilly"
+    },
+    {
+      "start": "19180901",
+      "end": "",
+      "airfield": "Ferme de Rosnay"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 29.json"
+  }
+}

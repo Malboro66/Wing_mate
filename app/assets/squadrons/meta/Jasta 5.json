@@ -1,0 +1,161 @@
+{
+  "_comment": "Improved JSON structure for better data organization and machine-readability.",
+  "squadronId": "jasta_5_germany",
+  "squadronName": "Jasta 5",
+  "country": "DEU",
+  "parentUnit": {
+    "unit": "Jagdgruppe 2",
+    "formedDate": "1918-03-01"
+  },
+  "history": {
+    "summary": "One of the first fighter units of the Luftstreitkräfte, Jasta 5 achieved the third-highest victory total of any German squadron with approximately 253 kills. It was famed for its number of aces, including the 'golden triumvirate' of Könnecke, Rumey, and Mai.",
+    "formation": {
+      "creationDate": "1916-01-21",
+      "mobilizationDate": "1916-08-21",
+      "context": "Formed from pilots of KEK Avillers, an early fighter unit."
+    },
+    "notableEvents": [
+      {
+        "date": "1916-08-21",
+        "event": "Mobilized at Bechamp near Verdun in support of 5 Armee."
+      },
+      {
+        "date": "1916-09-29",
+        "event": "Moved to the Somme to support 1 Armee."
+      },
+      {
+        "date": "1917-03-11",
+        "event": "Moved to Boistrancourt, supporting 2 Armee for the next year."
+      },
+      {
+        "date": "1918-03-01",
+        "event": "Joined by Jasta 46 to form Jagdgruppe 2."
+      },
+      {
+        "date": "1918-08-01",
+        "event": "Jagdgruppe 2 expanded with the addition of Jasta 34 and Jasta 37."
+      }
+    ],
+    "commanders": [
+      {
+        "name": "Flashar",
+        "tenure": "1918-03-01 to 1918-07-01"
+      },
+      {
+        "name": "Otto Schmidt",
+        "tenure": "1918-07-01 to 1918-11-11"
+      }
+    ],
+    "notablePilots": [
+      {
+        "name": "Paul Bäumer",
+        "note": "Pour le Mérite winner."
+      },
+      {
+        "name": "Hans Berr",
+        "note": "Pour le Mérite winner."
+      },
+      {
+        "name": "Heinrich Gontermann",
+        "note": "Pour le Mérite winner."
+      },
+      {
+        "name": "Hermann Göring",
+        "note": "Pour le Mérite winner."
+      },
+      {
+        "name": "Otto Könnecke",
+        "note": "Pour le Mérite winner and member of the 'golden triumvirate'."
+      },
+      {
+        "name": "Bruno Loerzer",
+        "note": "Pour le Mérite winner."
+      },
+      {
+        "name": "Fritz Rumey",
+        "note": "Pour le Mérite winner and member of the 'golden triumvirate'."
+      },
+      {
+        "name": "Werner Voss",
+        "note": "Pour le Mérite winner."
+      },
+      {
+        "name": "Josef Mai",
+        "note": "Third member of the 'golden triumvirate', nominated for Pour le Mérite."
+      },
+      {
+        "name": "Rudolf Nebel",
+        "note": "Rocket expert."
+      }
+    ],
+    "aircraftUsed": [
+      "Fokker Eindecker",
+      "Albatros D.II",
+      "Halberstadt D.II",
+      "Albatros D.III",
+      "Albatros D.V",
+      "Fokker Dr.I",
+      "Fokker D.VII",
+      "Pfalz D.XII"
+    ]
+  },
+  "statistics": {
+    "victories": {
+      "total": 253
+    },
+    "casualties": {
+      "killedInAction": 19,
+      "killedInAccident": 3,
+      "woundedInAction": 8,
+      "injuredInAccident": 1,
+      "total": 31
+    }
+  },
+  "emblemImage": "squadrons/images/Jasta 5.png",
+  "airfields": [
+    {
+      "start": "1916-08-21",
+      "end": "1916-09-29",
+      "airfield": "Bellevue Ferme"
+    },
+    {
+      "start": "1916-09-29",
+      "end": "1917-03-11",
+      "airfield": "Falvy"
+    },
+    {
+      "start": "1917-03-11",
+      "end": "1917-04-01",
+      "airfield": "Beugnatre"
+    },
+    {
+      "start": "1917-04-01",
+      "end": "1917-11-01",
+      "airfield": "Lechelle"
+    },
+    {
+      "start": "1917-11-01",
+      "end": "1918-03-01",
+      "airfield": "Lomme"
+    },
+    {
+      "start": "1918-03-01",
+      "end": "1918-10-01",
+      "airfield": "Lechelle"
+    },
+    {
+      "start": "1918-10-01",
+      "end": "1918-11-01",
+      "airfield": "Bouvincourt"
+    },
+    {
+      "start": "1918-11-01",
+      "end": "1918-11-11",
+      "airfield": "Fontaine Uterte"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "pwcg_files/Jasta 5.json",
+    "comment": "Original source path was an absolute path, changed to a relative one for portability."
+  }
+}

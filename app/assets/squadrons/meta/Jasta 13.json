@@ -1,0 +1,145 @@
+{
+  "_comment": "Improved JSON structure for better data organization and machine-readability.",
+  "squadronId": "jasta_13_germany",
+  "squadronName": "Jasta 13",
+  "country": "DEU",
+  "parentUnit": {
+    "unit": "Jagdgeschwader 2",
+    "joinedDate": "1918-02-02"
+  },
+  "history": {
+    "summary": "A World War I fighter squadron of the Luftstreitkräfte, credited with 108 aerial victories. It became a highly mobile 'fire brigade' unit in 1918, supporting various armies before demobilizing at the end of the war.",
+    "formation": {
+      "date": "1916-09-16",
+      "operationalDate": "1916-10-15",
+      "context": "Formed from personnel of the Fokkerstaffel attached to FFA 9 and other units in the Armee-Abteilung C sector."
+    },
+    "notableEvents": [
+      {
+        "date": "1917-01-22",
+        "event": "Scored the squadron's first aerial victory."
+      },
+      {
+        "date": "1917-09-01",
+        "event": "Joined Jagdgruppe von Braun, a temporary fighter group."
+      },
+      {
+        "date": "1918-02-02",
+        "event": "Joined Jagdgeschwader II, alongside Jasta 12, Jasta 15, and Jasta 19."
+      },
+      {
+        "date": "1918-03-01",
+        "event": "Became a 'fire brigade' unit, moving frequently to support different armies (18th, 1st, 2nd, 3rd, 5th Armee)."
+      },
+      {
+        "date": "1918-11-10",
+        "event": "Moved to its last base at Trier, the day before the Armistice."
+      },
+      {
+        "date": "1918-11-30",
+        "event": "Demobilized at FEA 14, Halle-an-der-Salle, Germany."
+      }
+    ],
+    "commanders": [
+      {
+        "name": "Eduard Ritter von Dostler",
+        "note": "Notable ace, winner of the Pour le Mérite and a knighthood."
+      },
+      {
+        "name": "Guttler",
+        "note": "Notable ace, decorated for his services."
+      },
+      {
+        "name": "Thomas",
+        "note": "Notable ace, decorated for his services."
+      },
+      {
+        "name": "Franz Buchner",
+        "note": "Notable ace, credited with 40 victories for the squadron."
+      }
+    ],
+    "notablePilots": [
+      {
+        "name": "Hans Martin Pippart",
+        "note": "Prewar veteran and prominent balloon buster ace."
+      },
+      {
+        "name": "Kurt Hetze",
+        "note": "Decorated ace."
+      },
+      {
+        "name": "Reinhold Jörke",
+        "note": "Decorated ace."
+      }
+    ],
+    "aircraftUsed": [
+      "Fokker Eindecker",
+      "Fokker Dr.I",
+      "Fokker D.VII"
+    ]
+  },
+  "statistics": {
+    "victories": {
+      "total": 108
+    },
+    "casualties": {
+      "killedInAction": 12,
+      "killedInAccident": 1,
+      "woundedInAction": 2,
+      "prisonersOfWar": 2,
+      "total": 17
+    }
+  },
+  "emblemImage": "squadrons/images/Jasta 13.png",
+  "airfields": [
+    {
+      "start": "1916-10-15",
+      "end": "1917-03-01",
+      "airfield": "Mars La Tour"
+    },
+    {
+      "start": "1917-03-01",
+      "end": "1917-05-01",
+      "airfield": "Marchais"
+    },
+    {
+      "start": "1917-05-01",
+      "end": "1917-07-01",
+      "airfield": "Puisieux Ferme Laon"
+    },
+    {
+      "start": "1917-07-01",
+      "end": "1918-02-01",
+      "airfield": "Balatre"
+    },
+    {
+      "start": "1918-02-01",
+      "end": "1918-03-01",
+      "airfield": "Sissonne"
+    },
+    {
+      "start": "1918-03-01",
+      "end": "1918-06-01",
+      "airfield": "Mesnil NE"
+    },
+    {
+      "start": "1918-06-01",
+      "end": "1918-10-01",
+      "airfield": "Warfusee"
+    },
+    {
+      "start": "1918-10-01",
+      "end": "1918-11-01",
+      "airfield": "Noyelles"
+    },
+    {
+      "start": "1918-11-01",
+      "end": "1918-11-10",
+      "airfield": "Avesnes le Sec Quest"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "pwcg_files/Jasta 13.json",
+    "comment": "Original source path was an absolute path, changed to a relative one for portability."
+  }
+}

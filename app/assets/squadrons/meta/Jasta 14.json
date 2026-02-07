@@ -1,0 +1,132 @@
+{
+  "_comment": "Improved JSON structure for better data organization and machine-readability.",
+  "squadronId": "jasta_14_germany",
+  "squadronName": "Jasta 14",
+  "country": "DEU",
+  "history": {
+    "summary": "A World War I fighter squadron of the Luftstreitkräfte, credited with 57 aerial victories. Notably commanded by ace Rudolph Berthold, it was one of only three squadrons to be fully equipped with Fokker Dr.I triplanes while operating independently of a wing.",
+    "formation": {
+      "date": "1916-09-28",
+      "context": "Formed from a preceding ad hoc unit, Fokkerstaffel Falkenhausen, in the Armee-Abteilung A Sector."
+    },
+    "notableEvents": [
+      {
+        "date": "1918-03-21",
+        "event": "Supported the 17th Armee during Germany's last great offensive."
+      },
+      {
+        "date": "1918-05-01",
+        "event": "Switched to support the 6th Armee."
+      },
+      {
+        "date": "1918-09-01",
+        "event": "Transferred to support the 4th Armee."
+      }
+    ],
+    "commanders": [
+      {
+        "name": "Rudolph Berthold",
+        "note": "One of Germany's leading aces (44 victories), awarded the Pour le Mérite, Military Order of Saint Henry, and Iron Cross."
+      }
+    ],
+    "notablePilots": [
+      {
+        "name": "Josef Veltjens",
+        "note": "High-scoring ace with 35 victories, recipient of the Pour le Mérite and Royal House Order of Hohenzollern."
+      },
+      {
+        "name": "Paul Rothe",
+        "note": "The squadron's preeminent balloon buster."
+      },
+      {
+        "name": "Johannes Werner",
+        "note": "Squadron ace."
+      },
+      {
+        "name": "Hans Bowski",
+        "note": "Squadron ace."
+      },
+      {
+        "name": "Herbert Boy",
+        "note": "Squadron ace."
+      },
+      {
+        "name": "Joachim-Friedrich Huth",
+        "note": "Claimed one victory; later served in the WWII Luftwaffe, retiring as a Generalleutnant."
+      }
+    ],
+    "aircraftUsed": [
+      "Fokker Biplane",
+      "Fokker Eindecker",
+      "Halberstadt Biplane",
+      "Fokker Dr.I"
+    ]
+  },
+  "statistics": {
+    "victories": {
+      "total": 57,
+      "balloons": 5
+    },
+    "casualties": {
+      "killedInAction": 8,
+      "woundedInAction": 5,
+      "prisonersOfWar": 3,
+      "total": 16
+    }
+  },
+  "markings": {
+    "description": "A black and white band running the length of the aircraft's fuselage."
+  },
+  "emblemImage": "squadrons/images/Jasta 14.png",
+  "airfields": [
+    {
+      "start": "1916-10-01",
+      "end": "1917-05-01",
+      "airfield": "Vivaise"
+    },
+    {
+      "start": "1917-05-01",
+      "end": "1917-06-01",
+      "airfield": "Saint Remy le Petit"
+    },
+    {
+      "start": "1917-06-01",
+      "end": "1917-09-01",
+      "airfield": "Houplin"
+    },
+    {
+      "start": "1917-09-01",
+      "end": "1917-12-01",
+      "airfield": "Saint Loup Sud"
+    },
+    {
+      "start": "1917-12-01",
+      "end": "1918-03-01",
+      "airfield": "Hauvine"
+    },
+    {
+      "start": "1918-03-01",
+      "end": "1918-05-01",
+      "airfield": "Lomme"
+    },
+    {
+      "start": "1918-05-01",
+      "end": "1918-10-01",
+      "airfield": "Fromelles"
+    },
+    {
+      "start": "1918-10-01",
+      "end": "1918-11-01",
+      "airfield": "Beaucamp"
+    },
+    {
+      "start": "1918-11-01",
+      "end": "1918-11-11",
+      "airfield": "Bachy"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "pwcg_files/Jasta 14.json",
+    "comment": "Original source path was an absolute path, changed to a relative one for portability."
+  }
+}

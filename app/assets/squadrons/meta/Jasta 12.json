@@ -1,0 +1,146 @@
+{
+  "_comment": "Improved JSON structure for better data organization and machine-readability.",
+  "squadronId": "jasta_12_germany",
+  "squadronName": "Jasta 12",
+  "country": "DEU",
+  "parentUnit": {
+    "unit": "Jagdgeschwader 2",
+    "joinedDate": "1918-02-02"
+  },
+  "history": {
+    "summary": "A World War I fighter squadron of the Luftstreitkräfte, credited with 155 aerial victories. As one of the original German fighter squadrons, it was a seasoned unit by the time it joined Jagdgeschwader II in 1918.",
+    "formation": {
+      "date": "1916-09-28",
+      "mobilizationDate": "1916-10-12",
+      "location": "Laon, France",
+      "context": "Created from an existing ad hoc unit, Fokkerstaffel West, in support of the 7th Armee."
+    },
+    "notableEvents": [
+      {
+        "date": "1916-12-04",
+        "event": "Scored the squadron's first aerial victory."
+      },
+      {
+        "date": "1917-03-24",
+        "event": "Credited with its tenth victory."
+      },
+      {
+        "date": "1917-04-01",
+        "event": "During 'Bloody April', the squadron downed 23 Royal Flying Corps aircraft."
+      },
+      {
+        "date": "1918-02-02",
+        "event": "Joined Jagdgeschwader II, alongside Jasta 13, Jasta 15, and Jasta 19."
+      },
+      {
+        "date": "1918-05-26",
+        "event": "Temporarily grounded due to a lack of serviceable aircraft."
+      }
+    ],
+    "commanders": [
+      {
+        "name": "Adolf von Tutschek",
+        "note": "Notable ace, wounded and relieved of command."
+      },
+      {
+        "name": "Victor Shobinger",
+        "note": "Notable ace and Staffelführer."
+      },
+      {
+        "name": "Hermann Becker",
+        "note": "Notable ace and Staffelführer."
+      }
+    ],
+    "notablePilots": [
+      {
+        "name": "Adolf Schulte",
+        "note": "The squadron's first ace, achieving the status on 24 March 1917."
+      },
+      {
+        "name": "Ulrich Neckel",
+        "note": "Winner of the Pour le Mérite and Iron Cross."
+      },
+      {
+        "name": "Reinhold Jörke",
+        "note": "Iron Cross awardee."
+      },
+      {
+        "name": "Paul Billik",
+        "note": "Iron Cross and Hohenzollern winner; highest scoring ace to be denied a Pour le Mérite."
+      }
+    ],
+    "aircraftUsed": [
+      "Fokker D.I",
+      "Albatros D.III",
+      "Fokker Dr.I",
+      "Fokker D.VII"
+    ]
+  },
+  "statistics": {
+    "victories": {
+      "total": 155,
+      "balloons": 3
+    },
+    "casualties": {
+      "killedInAction": 17,
+      "woundedInAction": 8,
+      "prisonersOfWar": 1,
+      "total": 26
+    }
+  },
+  "markings": {
+    "description": "Common squadron paint scheme was black tails and rear fuselages with white propeller spinners and/or engine cowlings."
+  },
+  "emblemImage": "squadrons/images/Jasta 12.png",
+  "airfields": [
+    {
+      "start": "1916-09-28",
+      "end": "1916-12-01",
+      "airfield": "Mesnil Bruntel"
+    },
+    {
+      "start": "1916-12-01",
+      "end": "1917-04-01",
+      "airfield": "Bullecourt"
+    },
+    {
+      "start": "1917-04-01",
+      "end": "1917-11-01",
+      "airfield": "Assevilers"
+    },
+    {
+      "start": "1917-11-01",
+      "end": "1918-02-01",
+      "airfield": "St Marguerite"
+    },
+    {
+      "start": "1918-02-01",
+      "end": "1918-03-01",
+      "airfield": "Besny et Loizy"
+    },
+    {
+      "start": "1918-03-01",
+      "end": "1918-05-01",
+      "airfield": "Assevilers"
+    },
+    {
+      "start": "1918-05-01",
+      "end": "1918-10-01",
+      "airfield": "Cappy"
+    },
+    {
+      "start": "1918-10-01",
+      "end": "1918-11-01",
+      "airfield": "Gonnelieu"
+    },
+    {
+      "start": "1918-11-01",
+      "end": "1918-11-11",
+      "airfield": "Noyelles"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "pwcg_files/Jasta 12.json",
+    "comment": "Original source path was an absolute path, changed to a relative one for portability."
+  }
+}

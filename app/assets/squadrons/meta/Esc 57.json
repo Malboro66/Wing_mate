@@ -1,0 +1,52 @@
+{
+  "squadronId": "Esc 57",
+  "squadronName": "Esc 57",
+  "country": "FRANCE",
+  "history": "A Escadrille 57 foi uma esquadrilha de caça criada em 10 de maio de 1915 em Lyon‑Bron como MS 57, redesignada N 57 ao receber Nieuport e, no fim de 1917, SPA 57 com SPAD, adotando a insígnia “Mouette” e servindo do setor de Arras a Verdun até integrar o Groupe de Combat 11 em 1º de novembro de 1916. Ao término da guerra, foi creditada com 65 aeronaves e 14 balões inimigos destruídos, após múltiplas citações que renderam o uso da fourragère da Croix de guerre aos seus integrantes em 1917.​\nIdentificação e Formação\nDesignação Original: Escadrille MS 57 (MS para Morane‑Saulnier).​\nDesignação Intermediária: Escadrille N 57 (N para Nieuport).​\nDesignação Final: Escadrille SPA 57 (SPA para SPAD), dezembro de 1917.​\nPaís: França.​\nData de Criação: 10 de maio de 1915 (Lyon‑Bron).​\nContexto de Formação: Constituída sob o Cne Alfred Zappelli, partiu para o setor de Arras com Morane‑Saulnier L/LA e transitou para Nieuport, seguindo a norma francesa de designar a unidade pelo tipo principal em serviço.​\nHistória Operacional\n1915–início de 1916: Setor de Arras com MS L/LA, primeira citação como N 57 em 24 de outubro de 1915 sob novo comando, consolidando o papel de caça e escolta.​\nMarço–novembro de 1916: Movida para a frente de Verdun em 16 de março de 1916 e incorporada ao GC 11 em 1º de novembro de 1916, mantendo elevada cadência operacional.​\n1917–1918: Segunda citação em 24 de maio de 1917 por 20 aeronaves e 6 balões abatidos, direito à fourragère, e transição a SPAD no fim de 1917 até o Armistício com o GC 11.​\nEstatísticas e Desempenho\nBalanço final: 65 aeronaves e 14 balões destruídos até 11/11/1918, conforme síntese histórica padronizada.​\nCitações: Pelo menos duas citações em 1915 e 1917, com outorga da fourragère da Croix de guerre aos membros da unidade.​\nPerfil operacional: Caça, escolta, intercepção e destruição de balões de observação em setores críticos como Arras e Verdun.​\nComandantes (Chefs d’escadrille)\nComando inicial pelo Cne Alfred Zappelli, sucedido em setembro de 1915 por Edouard Duseigneur, alinhando a transição de MS 57 para N 57 e a intensificação das operações de caça.​\nA chefia subsequente acompanhou a incorporação ao GC 11 e a passagem a SPAD, conforme registros cronológicos da unidade.​\nPessoal Notável\nGeorges Marcel Lachmann recebeu a Médaille Militaire com citação como piloto da N 57 em 29 de junho de 1915, ilustrando a reputação tática precoce da unidade.​\nPierre Violet‑Marty, ás com 5 vitórias, e o Lt Onokichi Isobe figuram entre os nomes ligados à N/SPA 57 em 1917, indicando diversidade de perfis na esquadrilha.​\nAeronaves Utilizadas\nMorane‑Saulnier Type L/LA na fase MS 57, em 1915.​\nNieuport 10/11 na fase N 57, 1915–1917.​\nSPAD VII/XIII na fase SPA 57 a partir do fim de 1917.​\nInsígnia e Tradição\nInsígnia: “Mouette”, homologada sob A‑1129, origem na N 57 de 1915 e continuidade na SPA 57 em 1917.​\nLegado: A tradição da SPA 57 foi preservada no pós‑guerra e hoje integra o EE 3/8 “Côte d’Or”, mantendo a heráldica e memória operacional da unidade.",
+  "emblemImage": "squadrons\\images\\Esc 57.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160301",
+      "airfield": "Braizieux"
+    },
+    {
+      "start": "19160301",
+      "end": "19161101",
+      "airfield": "Beaucourt"
+    },
+    {
+      "start": "19161101",
+      "end": "19170401",
+      "airfield": "Vadelaincourt"
+    },
+    {
+      "start": "19170401",
+      "end": "19170701",
+      "airfield": "Brabant en Argonne"
+    },
+    {
+      "start": "19170701",
+      "end": "19170901",
+      "airfield": "Brabant en Argonne"
+    },
+    {
+      "start": "19170901",
+      "end": "19180301",
+      "airfield": "Bouy"
+    },
+    {
+      "start": "19180301",
+      "end": "19181001",
+      "airfield": "Ravenel"
+    },
+    {
+      "start": "19181001",
+      "end": "",
+      "airfield": "Chalons sur Vesle"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 57.json"
+  }
+}

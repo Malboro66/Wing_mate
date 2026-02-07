@@ -1,0 +1,57 @@
+{
+  "squadronId": "Esc 227",
+  "squadronName": "Esc 227",
+  "country": "FRANCE",
+  "history": "A Escadrille 227 foi uma unidade de observação/proteção criada no início de 1917 como C 227, equipada com Caudron G.4 e Sopwith 1A2, e redesignada BR 227 em 1918 ao receber Breguet 14 A2, com suas insígnias coletivas, missões e perdas detalhadas em páginas especializadas de tradição e história operacional da Aeronáutica Militar Francesa. Operou inicialmente junto à 10ª Armée, passou à 4ª Armée em março de 1917 e manteve perfil de reconhecimento e escolta/proteção até o Armistício, com registros fotográficos em Vadelaincourt (outubro de 1917) e listagem formal nas compilações de escadrilhas como BR 227.​\nIdentificação e Formação\nDesignação Original: Escadrille C 227 (C para Caudron).​\nDesignação Intermediária: C 227 operando também Sopwith 1A2 (sem mudança de código).​\nDesignação Final: Escadrille BR 227 (BR para Breguet 14 A2).​\nPaís: França.​\nData de Criação: início de 1917; formalizada como escadrille em 01/01/1917 e nomeada C 227 em fevereiro de 1917.​\nContexto de Formação: Unidade de proteção/reconhecimento ligada à 10ª Armée, seguindo a prática francesa de redesignar pelo tipo principal de aeronave.​\nHistória Operacional\n1917: Dotada de 10 Caudron G.4, rattachée à 10ª Armée e, em 30 de março, transferida para a 4ª Armée; registrada com Sopwith 1A2 no campo de Vadelaincourt em outubro.​\n1918: Reequipada com Breguet 14 A2 e redesignada BR 227, mantendo missões de reconhecimento, escolta/proteção e ligação.​\nArmistício: Manteve o perfil de A2 até o fim da guerra, com documentação de missões e movimentações nas páginas correlatas.​\nEstatísticas e Desempenho\nRegistros de perdas: Consolidado em “Victoires et pertes”, sem síntese numérica única apresentada no corpo do texto.​\nFoco operacional: Reconhecimento fotográfico, proteção/escorta e ligação no nível de Exército.​\nFontes visuais: Fotografias de aparelhos e insígnias coletivas da C/BR 227.​\nComandantes (Chefs d’escadrille)\nOs sucessivos comandantes e períodos constam nas páginas dedicadas da unidade.​\nPessoal Notável\nAs seções de “Personnels/Portraits” e fotografias associadas reúnem perfis e nomes vinculados às fases C 227 e BR 227.​\nAeronaves Utilizadas\nCaudron G.4 (A2) – dotação inicial de 10 aparelhos na fase C 227.​\nSopwith 1A2 – empregado na C 227 em 1917 (Vadelaincourt).​\nBreguet 14 A2 – padrão da fase BR 227 em 1918.​\nInsígnia e Tradição\nInsígnias: Insígnias coletivas e marcas de unidade documentadas com exemplos fotográficos.​\nTradição: A BR 227 aparece nas listagens de escadrilhas por número e nas compilações de tradições da Aeronáutica Militar/Armée de l’Air.",
+  "emblemImage": "squadrons\\images\\Esc 227.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160301",
+      "airfield": "Bouy"
+    },
+    {
+      "start": "19160301",
+      "end": "19170201",
+      "airfield": "Tilloy"
+    },
+    {
+      "start": "19170201",
+      "end": "19170401",
+      "airfield": "Quinquempoix"
+    },
+    {
+      "start": "19170401",
+      "end": "19170601",
+      "airfield": "La Mellette"
+    },
+    {
+      "start": "19170601",
+      "end": "19170701",
+      "airfield": "La Mellette"
+    },
+    {
+      "start": "19170701",
+      "end": "19170901",
+      "airfield": "Beauze sur Aire"
+    },
+    {
+      "start": "19170901",
+      "end": "19180101",
+      "airfield": "La Cheppe"
+    },
+    {
+      "start": "19180101",
+      "end": "19180301",
+      "airfield": "Lisle en Barrois"
+    },
+    {
+      "start": "19180301",
+      "end": "",
+      "airfield": "Senard en Argonne"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 227.json"
+  }
+}

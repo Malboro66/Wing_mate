@@ -1,0 +1,92 @@
+{
+  "squadronId": "Esc 66",
+  "squadronName": "Esc 66",
+  "country": "FRANCE",
+  "history": "A Escadrille 66 foi uma unidade francesa criada em julho de 1915 como C 66 (Caudron), redesiginada SOP 66 em 1917 e BR 66 ao receber Breguet 14, conhecida pelo emblema do “falcão egípcio” e por bombardeios de longo alcance como a expedição de Karlsruhe em 22 de junho de 1916. O insígnia original foi desenhado pelo Sargento Jacques Rapin, piloto e arquiteto, marcando a identidade visual da escadrilha desde os primeiros meses de operação com Caudron G.3/G.4.​\nIdentificação e formação\nDesignação original: Escadrille C 66 (C para Caudron), criada em julho de 1915 e equipada inicialmente com Caudron G.3, passando rapidamente ao G.4 no fim do ano.​\nDesignações intermediárias: Escadrille SOP 66 (SOP para Sopwith) durante 1917 na transição de reequipamento.​\nDesignação final: Escadrille BR 66 (BR para Breguet 14) a partir do fim de 1917, consolidando o perfil de bombardeio.​\nPaís: França.​\nContexto de formação: Transferida em dezembro de 1915 para o 1º Grupo de Bombardeio, recém‑organizado, para missões estratégicas contra vias férreas, gares e depósitos alemães.​\nHistória operacional\n1915–início de 1916: Já como “bombardeio leve e proteção”, decola de Malzéville para ataques em Metz e Arnaville a partir de 19 de janeiro de 1916, operando integrada ao GB I/GB II sob comando de Curault.​\n22 de junho de 1916: Expedição de represália contra Karlsruhe com danos significativos, porém sob interceptação inimiga que custou cerca de um terço do efetivo da escadrilha nessa ação.​\n1916–1917: Emprego continuado no setor de Verdun e interdição de retaguarda, com tática “em voo de patos” adotada pelo Cap. de Kérillis para defesa mútua e comandos por pistola de sinal.​\n1917–1918: Passagem a SOP 66 e, no fim de 1917, a BR 66 com Breguet 14, mantendo bombardeios de interdição e apoio até o Armistício.​\n1919 (pós‑guerra): BR 66 deslocada à Polônia no verão de 1919, integrando estruturas aéreas locais em Varsóvia e Poznań em junho daquele ano.​\nEstatísticas e desempenho\nPerfil de missão: Bombardeio diurno e noturno de alvos ferroviários, logistísticos e urbanos, com emprego em massa de bombas e coordenação intergrupos na frente de Malzéville.​\nPerdas e riscos: A expedição de Karlsruhe evidencia o alto custo das penetrações profundas contra zonas urbanas defendidas, com perdas severas em uma única surtida.​\nEvolução de meios: A transição de G.3/G.4 para Sopwith e Breguet 14 elevou alcance, carga e robustez, padronizando o vetor francês de bombardeio no fim da guerra.​\nComandantes\nO comando tático da formação “em voo de patos” é atribuído ao Cap. de Kérillis em 1916, atuando como chefe de esquadrilha nas grandes expedições daquele ano.​\nAs listagens de “Commandements” e cronologias detalhadas por período constam em repertórios especializados da escadrilha 66.​\nPessoal notável\nJacques Rapin (Sargento), autor do insígnia e piloto da C 66, ex‑aluno de Belas‑Artes, legando a marca heráldica do “falcão egípcio” à unidade.​\nTripulações da C/SOP/BR 66 destacaram‑se em bombardeios coordenados sobre Metz e Karlsruhe, documentados em históricos institucionais do “Gascogne”.​\nAeronaves utilizadas\nCaudron G.3 e G.4 na fase C 66 (1915–1916), com crescimento de raio de ação e carga útil.​\nSopwith (fase SOP 66 em 1917), como vetor intermediário de bombardeio leve.​\nBreguet 14 (fase BR 66 em 1917–1918), padrão francês de bombardeio no fim da guerra.​\nInsígnia e tradição\nInsígnia: “Falcão egípcio” em ouro e goles sobre disco, concebido por Jacques Rapin e aplicado nos fuselagens da C 66 a partir de 1916.​\nTradição: A BR 66 figura em compilações de tradições e ordens de batalha do pós‑guerra, com menções ao emprego do nome em unidades de bombardeio e herdeiras históricas.​",
+  "emblemImage": "squadrons\\images\\Esc 66.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19161201",
+      "airfield": "Toul Aerodrom"
+    },
+    {
+      "start": "19161201",
+      "end": "19170101",
+      "airfield": "Froides"
+    },
+    {
+      "start": "19170101",
+      "end": "19170201",
+      "airfield": "Quinquempoix"
+    },
+    {
+      "start": "19170201",
+      "end": "19170401",
+      "airfield": "Malzeville"
+    },
+    {
+      "start": "19170401",
+      "end": "19170618",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19170618",
+      "end": "19170904",
+      "airfield": "Froides"
+    },
+    {
+      "start": "19170904",
+      "end": "19180114",
+      "airfield": "Somme Vesle"
+    },
+    {
+      "start": "19180114",
+      "end": "19180209",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19180209",
+      "end": "19180321",
+      "airfield": "Vauxcere"
+    },
+    {
+      "start": "19180321",
+      "end": "19180409",
+      "airfield": "Grivesnes"
+    },
+    {
+      "start": "19180409",
+      "end": "19180518",
+      "airfield": "Fere en Tardenois"
+    },
+    {
+      "start": "19180518",
+      "end": "19180628",
+      "airfield": "Froides"
+    },
+    {
+      "start": "19180628",
+      "end": "19180710",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19180710",
+      "end": "19180806",
+      "airfield": "La Mellette"
+    },
+    {
+      "start": "19180806",
+      "end": "19181015",
+      "airfield": "Froides"
+    },
+    {
+      "start": "19181015",
+      "end": "",
+      "airfield": "Auve"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 66.json"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "squadronId": "Esc 65",
+  "squadronName": "Esc 65",
+  "country": "FRANCE",
+  "history": "A Escadrille 65 foi uma esquadrilha de caça criada em 2 de agosto de 1915 em Lyon‑Bron como C 65 (Caudron), redesignada N 65 ao receber Nieuport em fevereiro de 1916 e, depois, SPA 65 com SPAD em 1917, adotando a insígnia “Chimère d’argent” e integrando o GC 13 nas grandes batalhas de 1916–1918. Ao fim da guerra, somou 108 vitórias homologadas, recebeu múltiplas citações (permitindo a fourragère da Croix de guerre e, em setembro de 1918, a da Médaille militaire) e manteve continuidade histórica no pós‑guerra como escadrilha do “Côte d’Or” até a era Mirage e Alphajet.​\nIdentificação e formação\nDesignação original: Escadrille C 65 (C para Caudron), fundada em 02/08/1915 em Lyon‑Bron.​\nDesignação intermediária: Escadrille N 65 (N para Nieuport) em 21/02/1916.​\nDesignação final: Escadrille SPA 65 (SPA para SPAD) a partir de 1917, insígnia “Chimère d’argent” (A‑1128).​\nPaís: França.​\nContexto: Transferências entre VI, VII, I e II Armées; entrada no GC 13 no início de novembro de 1916 sob o Cdt Féquant.​\nHistória operacional\n1915–1916: De C 65 (Caudron G.IV) a N 65 com Nieuport; combate em Verdun e Somme; primeiro agrupamento ad hoc em Cachy em junho de 1916.​\n1917: Operou com SPAD VII/Nieuport 17 no início do ano, destacada na Segunda Batalha do Aisne; segunda citação em 16/11/1917 por 68 aviões e 5 balões abatidos, garantindo a fourragère.​\n1918: Incorporada à Escadre de Combat n.º 2 dentro da 1ère Division Aérienne; duas citações em setembro (10 e 19), direito à fourragère da Médaille militaire; combate até o Armistício.​\nEstatísticas e desempenho\nVitórias: 108 aeronaves inimigas destruídas ao final da guerra.​\nCitações e condecorações: Múltiplas citações (1916–1918), fourragère da Croix de guerre e, depois, da Médaille militaire para o pessoal.​\nPerfil: Caça, escolta, intercepção e destruição de balões, com pico de eficácia no período SPAD (1917–1918).​\nComandantes (chefs d’escadrille)\nLt Louis Gonnet‑Thomas (02/08/1915 – 01/05/1916); Lt Georges Boillot (02–17/05/1916, KIA); Cne Philippe Féquant (18/05 – início 11/1916); Cne Émile Billon du Plan (11/1916 – 29/04/1917, KIA); Cne Lamy (30/04/1917 – c. 23/01/1918); Cne Louis Séjourné (24/01/1918 – fim da guerra).​\nPessoal notável\nCharles Nungesser voou na N/SPA 65, incluindo emprego de SPAD XII de canhão citado em registros e discussões técnicas, integrando o hall de ases ligados à unidade.​\nIconografia oficial registra SPADs da N 65 ornados com a chimera negra, preservados em acervos do Ministério das Forças Armadas.​\nAeronaves utilizadas\nCaudron G.IV (fase C 65).​\nNieuport 11/17 (fase N 65).​\nSPAD VII/XIII (fase SPA 65).​\nInsígnia e tradição\nInsígnia: “Chimère d’argent” homologada A‑1128, com variantes de aplicação ao longo de 1917–1918.​\nLegado: No pós‑guerra, a SPA 65 integrou o GC II/2 “Côte d’Or” e, posteriormente, o EC/EE 2/2–3/8, voando Mirage IIIC/IIIR/2000 e Alphajet, mantendo a tradição ativa.",
+  "emblemImage": "squadrons\\images\\Esc 65.jpg",
+  "airfields": [
+    {
+      "start": "19160801",
+      "end": "19170101",
+      "airfield": "Souilly"
+    },
+    {
+      "start": "19170101",
+      "end": "19170201",
+      "airfield": "Ferme de Alger"
+    },
+    {
+      "start": "19170201",
+      "end": "19170301",
+      "airfield": "Muizon"
+    },
+    {
+      "start": "19170301",
+      "end": "19170401",
+      "airfield": "Mont de Soissons"
+    },
+    {
+      "start": "19170401",
+      "end": "19170501",
+      "airfield": "Saconin Breuil"
+    },
+    {
+      "start": "19170501",
+      "end": "19170701",
+      "airfield": "Ferme de Corbeaulieu"
+    },
+    {
+      "start": "19170701",
+      "end": "19170801",
+      "airfield": "Ferme Cravancon"
+    },
+    {
+      "start": "19170801",
+      "end": "19171201",
+      "airfield": "Saconin Breuil"
+    },
+    {
+      "start": "19171201",
+      "end": "19180201",
+      "airfield": "Sainte Menehould"
+    },
+    {
+      "start": "19180201",
+      "end": "19180301",
+      "airfield": "Cachy"
+    },
+    {
+      "start": "19180301",
+      "end": "19181001",
+      "airfield": "Pierrefonds"
+    },
+    {
+      "start": "19181001",
+      "end": "",
+      "airfield": "Villesavoye"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 65.json"
+  }
+}

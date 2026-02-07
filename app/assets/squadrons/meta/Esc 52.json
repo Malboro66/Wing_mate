@@ -1,0 +1,77 @@
+{
+  "squadronId": "Esc 52",
+  "squadronName": "Esc 52",
+  "country": "FRANCE",
+  "history": "A Escadrille 52 foi uma esquadrilha de observação/reconhecimento da Aeronáutica Militar Francesa que evoluiu por MF 52, F 52, AR 52 e, por fim, SAL 52, com insígnias registradas e atuação comprovada junto ao II Corpo Colonial a partir de 7 de junho de 1916 na Frente Ocidental. A trajetória documentada reúne símbolos, histórico, quadros de vitórias e retratos, confirmando o perfil de reconhecimento, fotografia aérea e regulação de tiro até o Armistício de 1918.​\nIdentificação e Formação\nDesignação Original: Escadrille MF 52 (MF para Maurice Farman).​\nDesignações Intermediárias: Escadrille F 52 (Farman) e AR 52 (Dorand AR 1).​\nDesignação Final: Escadrille SAL 52 (Salmson 2A2).​\nPaís: França.​\nData de Criação: não explicitada na referência disponível; ver “Appellations successives” na página da unidade.​\nContexto de Formação: Unidade de observação/regulação de artilharia sujeita às redesignações francesas conforme o tipo principal em serviço.​\nHistória Operacional\n1915–início de 1916: Missões de reconhecimento e ligação com Farman em apoio às grandes unidades no Front Ocidental.​\n7 de junho de 1916: Engajamento com o IIe Corps Colonial, seguido de operações com a Division Marocaine, intensificando a atividade em setores de forte combate.​\n1917: Emprego de Dorand AR 1 com insígnia em forma de estrela de cinco pontas observada nessa fase.​\n1918: Consolidação como SAL 52 com Salmson A2, mantendo reconhecimento, fotografia e regulação de tiro até o Armistício.​\nEstatísticas e Desempenho\nVitórias: Registros individuais listados (ex.: primeira vitória em 10/11/1916 por Jules Covin), sem síntese numérica única na referência consultada.​\nPerdas: Não consolidadas em número total nas páginas públicas; nomes e eventos aparecem em listas de “Victoires” e “Portraits”.​\nFoco operacional: Reconhecimento, regulação de artilharia, ligação e fotografia aérea, com prioridade tática sobre combate ar‑ar.​\nComandantes (Chefs d’escadrille)\nOs sucessivos chefes constam nas seções históricas; a afetação ao IIe Corps Colonial entre 1916 e 1918 está documentada.​\nPessoal Notável\nAlexandre Sallès serviu na MF 52 em 1915 antes de atuar com o grupo de bombardeio de Belfort, deixando registros de missões de escolta no ataque à estação de Colmar em 20 de julho de 1915.​\nAs páginas correlatas reúnem retratos e notas biográficas de pilotos e observadores da unidade ao longo da campanha.​\nAeronaves Utilizadas\nFarman (MF/F 52) – observação nos primeiros anos.​\nDorand AR 1 (AR 52) – reconhecimento em 1917.​\nSalmson 2A2 (SAL 52) – reconhecimento a partir de 1918.​\nInsígnia e Tradição\nInsígnia: versão oval com estrela de cinco pontas observada em Dorand AR 1 em 1917, representada nos arquivos da unidade.​\nTradição: A 52 figura nas compilações de escadrilhas e tradições da Aeronáutica Militar/Armée de l’Air, com trajetória sintetizada por número nas listagens históricas.",
+  "emblemImage": "squadrons\\images\\Esc 52.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160601",
+      "airfield": "Grivesnes"
+    },
+    {
+      "start": "19160601",
+      "end": "19160701",
+      "airfield": "Bertangles"
+    },
+    {
+      "start": "19160701",
+      "end": "19170101",
+      "airfield": "Villers Bretonneux"
+    },
+    {
+      "start": "19170101",
+      "end": "19170201",
+      "airfield": "Allonville"
+    },
+    {
+      "start": "19170201",
+      "end": "19170501",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19170501",
+      "end": "19170601",
+      "airfield": "Erize la Petite"
+    },
+    {
+      "start": "19170601",
+      "end": "19170801",
+      "airfield": "Souilly"
+    },
+    {
+      "start": "19170801",
+      "end": "19171001",
+      "airfield": "Tilloy"
+    },
+    {
+      "start": "19171001",
+      "end": "19171101",
+      "airfield": "Villers Bretonneu 2"
+    },
+    {
+      "start": "19171101",
+      "end": "19180101",
+      "airfield": "Allonville"
+    },
+    {
+      "start": "19180101",
+      "end": "19181001",
+      "airfield": "Ferme de Corbeaulieu"
+    },
+    {
+      "start": "19181001",
+      "end": "19181101",
+      "airfield": "Malzeville"
+    },
+    {
+      "start": "19181101",
+      "end": "",
+      "airfield": "Saconin Breuil"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 52.json"
+  }
+}

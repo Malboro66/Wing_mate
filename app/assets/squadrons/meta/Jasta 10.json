@@ -1,0 +1,138 @@
+{
+  "_comment": "Improved JSON structure for better data organization and machine-readability.",
+  "squadronId": "jasta_10_germany",
+  "squadronName": "Jasta 10",
+  "squadronAlias": "Jagdstaffel Linck",
+  "country": "DEU",
+  "history": {
+    "summary": "A World War I fighter squadron of the Luftstreitkräfte, credited with 118 enemy planes and 33 enemy observation balloons destroyed. It was a founding member of the famed 'Flying Circus' (Jagdgeschwader I).",
+    "formation": {
+      "date": "1916-09-28",
+      "location": "Phalempin",
+      "context": "Founded from the pre-existing KEK 3 (Kampfeinsitzerkommando 3)."
+    },
+    "notableEvents": [
+      {
+        "date": "1917-03-25",
+        "event": "First victory scored by Paul Aue while supporting the 5th Armee."
+      },
+      {
+        "date": "1917-06-01",
+        "event": "Joined Jagdgeschwader I, the 'Flying Circus', alongside Jasta 4, Jasta 6, and Jasta 11."
+      }
+    ],
+    "commanders": [
+      "Linck",
+      "Althaus",
+      "Dossenbach",
+      "Heldmann",
+      "Klein",
+      "Laumann",
+      "Löwenhardt",
+      "Voss",
+      "Weiss"
+    ],
+    "notablePilots": [
+      "Paul Aue",
+      "Friedrich Friedrichs",
+      "Justus Grassmann",
+      "Friedrich Schumacher"
+    ],
+    "aircraftUsed": [
+      "Fokker E.IV",
+      "Albatros D.II",
+      "Albatros D.III",
+      "Fokker D.II",
+      "Halberstadt D.II",
+      "Albatros D.V",
+      "Pfalz D.III",
+      "Fokker Dr.I",
+      "Fokker D.VII",
+      "Fokker D.VIII"
+    ]
+  },
+  "statistics": {
+    "victories": {
+      "planes": 118,
+      "balloons": 33,
+      "total": 151
+    },
+    "casualties": {
+      "killedInAction": 20,
+      "killedInAccident": 1,
+      "woundedInAction": 10,
+      "prisonersOfWar": 4,
+      "total": 35
+    }
+  },
+  "markings": {
+    "description": "Fokker Dr.I triplanes often had their cowlings painted black with white facing."
+  },
+  "emblemImage": "squadrons/images/Jasta 10.png",
+  "airfields": [
+    {
+      "start": "1916-09-28",
+      "end": "1917-02-01",
+      "airfield": "Chassonge Ferme, Stenay/Verdun"
+    },
+    {
+      "start": "1917-02-01",
+      "end": "1917-05-01",
+      "airfield": "Leffincourt"
+    },
+    {
+      "start": "1917-05-01",
+      "end": "1917-06-01",
+      "airfield": "Menin"
+    },
+    {
+      "start": "1917-06-01",
+      "end": "1917-07-01",
+      "airfield": "St Marguerite"
+    },
+    {
+      "start": "1917-07-01",
+      "end": "1917-09-01",
+      "airfield": "La Neuville"
+    },
+    {
+      "start": "1917-09-01",
+      "end": "1917-11-01",
+      "airfield": "Neuflize"
+    },
+    {
+      "start": "1917-11-01",
+      "end": "1918-03-01",
+      "airfield": "Houplin"
+    },
+    {
+      "start": "1918-03-01",
+      "end": "1918-05-01",
+      "airfield": "Cappy"
+    },
+    {
+      "start": "1918-05-01",
+      "end": "1918-09-01",
+      "airfield": "Braizieux"
+    },
+    {
+      "start": "1918-09-01",
+      "end": "1918-10-01",
+      "airfield": "Assevilers"
+    },
+    {
+      "start": "1918-10-01",
+      "end": "1918-11-01",
+      "airfield": "Foreste"
+    },
+    {
+      "start": "1918-11-01",
+      "end": "1918-11-11",
+      "airfield": "Ronssoy"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "pwcg_files/Jasta 10.json",
+    "comment": "Original source path was an absolute path, changed to a relative one for portability."
+  }
+}

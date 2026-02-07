@@ -1,0 +1,57 @@
+{
+  "squadronId": "Esc 82",
+  "squadronName": "Esc 82",
+  "country": "FRANCE",
+  "history": "A Escadrille 82 foi uma esquadrilha de caça criada em 5 de janeiro de 1917 como N 82, reequipada com SPAD e redesignada SPA 82 em 1918, operando na Frente Ocidental, na Itália e na Flandres, e encerrando a guerra creditada com 26 vitórias confirmadas antes de ser dissolvida em 1919. O emblema coletivo adotado foi um fanion vermelho e branco com uma cabeça de galo preta ao centro sobre um disco branco, documentado no acervo de tradições da unidade.​\nIdentificação e formação\nDesignação original: Escadrille N 82 (N para Nieuport), formada em 5/1/1917 em Sacy‑le‑Grand e vinculada inicialmente à VIIe Armée.​\nDesignação final: Escadrille SPA 82 (SPA para SPAD), após reequipamento em 1918 até o Armistício.​\nEmblema: Fanion bicolor vermelho/branco com cabeça de galo negra centrada sobre um círculo branco.​\nHistória operacional\n1917: Setores da VIIe Armée; deslocamentos e afetamentos registrados nas tabelas de “Stationnements/Affectations” ao longo do ano, com primeiras vitórias listadas a partir de maio.​\n1918: Passagens por X° Armée, GC 23 a partir de setembro e VIe Armée no fim de setembro, incluindo emprego na Flandres e cooperação com forças aliadas.​\nTeatros: Além da Frente Ocidental, destacamentos na Itália constam em sínteses históricas da unidade.​\nEstatísticas e desempenho\nBalanço de combate: 26 vitórias aéreas confirmadas ao final do conflito, conforme síntese enciclopédica dedicada.​\nRegistros nominativos: Quadros de “Victoires et pertes” listam, por exemplo, François de Boigne com vitória em 3/5/1917 na N82, entre outras entradas.​\nCronologia: A estrutura de deslocamentos por datas e Exércitos está consolidada nas páginas de “Stationnements/Affectations”.​\nComandantes\nLt Raoul Échard, de janeiro de 1917 até meados de 1918, seguido pelo Lt Marie Lecoq de Kerland a partir de 6 de junho de 1918 até o fim da guerra.​\nAs mudanças de comando se alinham aos períodos de reequipamento e aos reagrupamentos no GC 23 em setembro de 1918.​\nPessoal notável\nRaoul Échard e Marie Lecoq de Kerland figuram como perfis destacados, com menções em sínteses de unidades e listas de pessoal.​\nFrançois de Boigne aparece nas tabelas de vitórias como artilheiro/piloto com abate datado na fase N 82.​\nAeronaves utilizadas\nNieuport (fase N 82) a partir de janeiro de 1917, em Sacy‑le‑Grand e demais campos subsequentes.​\nSPAD VII/XIII (fase SPA 82) em 1918, após a transição material padronizada na caça francesa.​\nInsígnia e tradição\nInsígnia: Fanion vermelho e branco com cabeça de galo preta sobre disco branco, documentado como insígnia coletiva da SPA 82.​\nListagens: A unidade consta nos índices de escadrilhas por número e nas compilações de tradições da Aeronáutica Militar/Armée de l’Air.",
+  "emblemImage": "squadrons\\images\\Esc 82.jpg",
+  "airfields": [
+    {
+      "start": "19170401",
+      "end": "19170501",
+      "airfield": "Beaucourt"
+    },
+    {
+      "start": "19170501",
+      "end": "19170701",
+      "airfield": "Saconin Breuil"
+    },
+    {
+      "start": "19170701",
+      "end": "19170801",
+      "airfield": "Ferme de Alger"
+    },
+    {
+      "start": "19170801",
+      "end": "19171201",
+      "airfield": "Ferme de Corbeaulieu"
+    },
+    {
+      "start": "19171201",
+      "end": "19180201",
+      "airfield": "Senard en Argonne"
+    },
+    {
+      "start": "19180201",
+      "end": "19180701",
+      "airfield": "Ferme de Rosnay"
+    },
+    {
+      "start": "19180701",
+      "end": "19180901",
+      "airfield": "Lemmes"
+    },
+    {
+      "start": "19180901",
+      "end": "19181001",
+      "airfield": "Vauxcere"
+    },
+    {
+      "start": "19181001",
+      "end": "",
+      "airfield": "Nancy Malzeville"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 82.json"
+  }
+}

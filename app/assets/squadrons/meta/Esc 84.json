@@ -1,0 +1,52 @@
+{
+  "squadronId": "Esc 84",
+  "squadronName": "Esc 84",
+  "country": "FRANCE",
+  "history": "A Escadrille 84 foi criada em 6 de janeiro de 1917 como N 84 em Lyon‑Bron, operando com Nieuport e SPAD VII, e foi redesignada SPA 84 em 10 de março de 1918 após padronização em SPAD XIII na Frente Ocidental. O emblema foi a “Tête de renard” (homologada A‑592), e a unidade encerrou a guerra com cerca de 24–25 vitórias homologadas, além de uma menção em ordens e perdas significativas de pilotos.​\nIdentificação e formação\nCriação: 6 de janeiro de 1917 como N 84, em Lyon‑Bron.​\nRedesignação: SPA 84 em 10 de março de 1918, após reequipamento integral em SPAD XIII.​\nInsígnia: “Tête de renard”, homologada sob o n.º A‑592, adotada como marca de fuselagem.​\nHistória operacional\nDe 6 de janeiro de 1917 a 10 de março de 1918, a N 84 voou Nieuport e SPAD VII, passando a SPAD XIII em meados de 1917 e atuando em caça e escolta na IIIe Armée e em grupos de caça. Em 22 de março de 1917 a unidade foi incorporada ao Groupe de Combat 13, sendo transferida entre exércitos durante a campanha; em setembro de 1918 recebeu menção em ordens por seu desempenho. A página dedicada reúne “Appellations”, estacionamentos, vínculos e palmarés, com quadros de vitórias e baixas por data.​\nEstatísticas e desempenho\nAté o Armistício, são atribuídas 24 vitórias de aeronaves e 1 balão à SPA 84 em compilações enciclopédicas. Em síntese de tradição, a escadrilha totaliza cerca de 25 vitórias homologadas, com 11 pilotos mortos ou desaparecidos em combate, refletindo elevada intensidade operacional. As listas de vitórias e perdas por dia e local estão consolidadas nas seções “Victoires et pertes” e no palmarés do histórico.​\nComandantes\nO comando alternou entre o Lt (depois Cne) Paul Gastin, o Lt André d’Humières e outros oficiais, com rotações associadas às fases Nieuport e SPAD. A cronologia de comando por datas e mudanças de grupo está sumarizada nas páginas de tradição e de “Stationnements/Commandements”.​\nPessoal notável\nOmer Paul Demeuldre foi o ás mais pontuado da unidade, com 13 vitórias, e a escadrilha contou ainda com outros ases e pelo menos três pilotos norte‑americanos. Registros nominativos de abatimentos incluem, por exemplo, Wertheimer e Delcuze em ações de março‑abril de 1918.​\nAeronaves utilizadas\nA N 84 operou Nieuport 24 e alguns SPAD VII desde a formação, padronizando o parque em SPAD XIII no início de 1918. A transição material motivou a mudança formal de N 84 para SPA 84, consolidando o emprego em caça de superioridade e escolta.​\nInsígnia e tradição\nA insígnia “Tête de renard” foi homologada e empregada em variantes pintadas e metálicas, figurando nos acervos de tradição. No entre‑guerras e pós‑guerra, a SPA 84 manteve continuidade em diferentes escadrons (ex.: GC III/1 em 1939‑1940), com histórico moderno documentado em repositórios de unidades.",
+  "emblemImage": "squadrons\\images\\Esc 84.jpg",
+  "airfields": [
+    {
+      "start": "19170401",
+      "end": "19170501",
+      "airfield": "Ferme de Corbeaulieu"
+    },
+    {
+      "start": "19170501",
+      "end": "19170701",
+      "airfield": "Mont de Soissons"
+    },
+    {
+      "start": "19170701",
+      "end": "19170801",
+      "airfield": "Bouy"
+    },
+    {
+      "start": "19170801",
+      "end": "19171201",
+      "airfield": "Ferme de Alger"
+    },
+    {
+      "start": "19171201",
+      "end": "19180201",
+      "airfield": "Grivesnes"
+    },
+    {
+      "start": "19180201",
+      "end": "19180301",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19180301",
+      "end": "19180901",
+      "airfield": "Froides"
+    },
+    {
+      "start": "19180901",
+      "end": "",
+      "airfield": "La Noblette"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 84.json"
+  }
+}

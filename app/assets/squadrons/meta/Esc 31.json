@@ -1,0 +1,67 @@
+{
+  "squadronId": "Esc 31",
+  "squadronName": "Esc 31",
+  "country": "FRANCE",
+  "history": "A Escadrille 31 foi uma esquadrilha de caça da Aeronáutica Militar Francesa, criada em 25 de setembro de 1914 em Dijon‑Longvic, que evoluiu de MS 31 (Morane‑Saulnier) para N 31 (Nieuport) e, em setembro de 1917, para SPA 31 (SPAD), operando no Front Ocidental sob o emblema do “Archer grec” e integrando o Groupe de Combat II no fim de 1916 até o Armistício.​\nIdentificação e Formação\nDesignação Original: Escadrille MS 31 (MS para Morane‑Saulnier).​\nDesignação Intermediária: Escadrille N 31 (N para Nieuport).​\nDesignação Final: Escadrille SPA 31 (SPA para SPAD) em 17 de setembro de 1917.​\nPaís: França.​\nData de Criação: 25 de setembro de 1914 (Dijon‑Longvic).​\nContexto de Formação: Unidade de caça criada no início da guerra, seguindo a prática francesa de redesignar pela aeronave principal em serviço.​\nHistória Operacional\n1914–início de 1916: Defesa de Verdun a partir de fevereiro de 1915; reequipamento com Nieuport 10 em abril de 1915 e com Nieuport 11 monoplaces em janeiro de 1916.​\nAbril–novembro de 1916: O Ltt de Villeneuve assume e institui o emblema do arqueiro romano; em outubro passa a apoiar a II Armée.​\nNovembro de 1916: Incorporação ao Groupe de Combat II, mantendo operações de caça e escolta.​\n1917–1918: Recebimento de SPAD a partir de 7 de janeiro de 1917 e redesignação para SPA 31 em setembro; permanece no GC II até o fim da guerra.​\nEstatísticas e Desempenho\nVitórias creditadas: 42 aeronaves e 4 balões de observação destruídos até o Armistício.​\nCitações: Duas citações à ordem de Corpo de Exército pelo conjunto das operações.​\nPerfil operacional: Caça, escolta e intercepção no Front Ocidental, com padronização em SPAD no período final.​\nComandantes (Chefs d’escadrille)\nDestaque para o Lieutenant de Villeneuve, que assumiu em meados de abril de 1916 e instituiu o emblema do arqueiro na fuselagem.​\nPessoal Notável\nA unidade reuniu pilotos de caça com atuação destacada em Verdun e nas ofensivas subsequentes, conforme registros históricos de campanha da N 31/SPA 31.​\nAeronaves Utilizadas\nMorane‑Saulnier H e derivados (fase MS 31, 1914–1915).​\nNieuport 10 (abril de 1915) e Nieuport 11 monoplaces (janeiro de 1916).​\nSPAD VII/XIII (recebimento a partir de 7 de janeiro de 1917; redesignação em setembro de 1917).​\nInsígnia e Tradição\nInsígnia: “Archer grec”, adotado sob o comando de Villeneuve e homologado como A‑1039 nas tradições da unidade.​\nLegado: A SPA 31 é referenciada em compilações de escadrilhas e tradições da Armée de l’Air pela antiguidade, emblema e passagem pelo GC II.",
+  "emblemImage": "squadrons\\images\\Esc 31.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160301",
+      "airfield": "Brabant en Argonne"
+    },
+    {
+      "start": "19160301",
+      "end": "19161201",
+      "airfield": "Ferme de Rosnay"
+    },
+    {
+      "start": "19161201",
+      "end": "19170201",
+      "airfield": "Muizon"
+    },
+    {
+      "start": "19170201",
+      "end": "19170901",
+      "airfield": "Chalons sur Vesle"
+    },
+    {
+      "start": "19170901",
+      "end": "19171201",
+      "airfield": "Villesavoye"
+    },
+    {
+      "start": "19171201",
+      "end": "19180101",
+      "airfield": "Bonne Maison"
+    },
+    {
+      "start": "19180101",
+      "end": "19180301",
+      "airfield": "Muizon"
+    },
+    {
+      "start": "19180301",
+      "end": "19180701",
+      "airfield": "Bouy"
+    },
+    {
+      "start": "19180701",
+      "end": "19181001",
+      "airfield": "Quinquempoix"
+    },
+    {
+      "start": "19181001",
+      "end": "19181101",
+      "airfield": "Saconin Breuil"
+    },
+    {
+      "start": "19181101",
+      "end": "",
+      "airfield": "Bonneuil Ferme"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 31.json"
+  }
+}

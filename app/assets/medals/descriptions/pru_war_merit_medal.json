@@ -1,0 +1,70 @@
+{
+  "id": "medalha_merito_militar_prussiana",
+  "nome": "Medalha de Mérito Militar Prussiana",
+  "nomeOriginal": "Militär-Verdienstkreuz",
+  "apelido": "Pour le Mérite para Suboficiais e Soldados",
+  "resumo": "A mais alta condecoração por bravura do Reino da Prússia para suboficiais e soldados. Era considerada o equivalente da Pour le Mérite para as patentes mais baixas.",
+  "historia": {
+    "fundacao": {
+      "data": "27 de fevereiro de 1864",
+      "fundador": "Rei Guilherme I da Prússia"
+    },
+    "concessoesPorConflito": [
+      {
+        "conflito": "Guerra Austro-Prussiana (1866)",
+        "quantidade": 16,
+        "observacao": "Primeiras concessões da medalha."
+      },
+      {
+        "conflito": "Guerra Franco-Prussiana (1870-71)",
+        "quantidade": 0,
+        "observacao": "Nenhuma concessão; a Cruz de Ferro foi a principal condecoração."
+      },
+      {
+        "conflito": "Guerra Russo-Turca (1877-78)",
+        "quantidade": 17,
+        "observacao": "Concedida a soldados russos por bravura."
+      },
+      {
+        "conflito": "Período pré-Primeira Guerra Mundial",
+        "quantidade": 5,
+        "observacao": "Concedida por conflitos coloniais e a Rebelião dos Boxers."
+      },
+      {
+        "conflito": "Primeira Guerra Mundial",
+        "detalhes": "A primeira concessão foi em outubro de 1916. Apesar do aumento em 1918, a condecoração permaneceu extremamente rara em comparação com a Cruz de Ferro."
+      }
+    ]
+  },
+  "criteriosDeConcessao": {
+    "patente": {
+      "inicial": "Originalmente reservada para Feldwebel (a mais alta patente de suboficial na época) e patentes inferiores.",
+      "expansao": "Posteriormente estendida para soldados na patente de Offizier-Stellvertreter (criada em 1887), semelhante a um warrant officer."
+    },
+    "ramoMilitar": "Apenas membros de unidades do Exército Prussiano, bem como da Marinha e da Força Aérea, eram elegíveis."
+  },
+  "contextoEComparacoes": {
+    "descricao": "Para membros dos exércitos de outros estados alemães, existiam condecorações de bravura separadas.",
+    "premiosEquivalentes": [
+      {
+        "estado": "Baviera",
+        "premio": "Medalha de Mérito Militar Bávara"
+      },
+      {
+        "estado": "Saxônia",
+        "premio": "Ordem Militar de St. Henry"
+      },
+      {
+        "estado": "Württemberg",
+        "premio": "Medalha de Mérito Militar Dourada de Württemberg"
+      },
+      {
+        "estado": "Grão-Ducado de Baden",
+        "premio": "Ordem do Mérito Militar Karl-Friedrich"
+      }
+    ]
+  },
+  "beneficios": {
+    "estipendioMensal": "Os recipientes recebiam um estipêndio mensal. Este benefício foi mantido mesmo após o fim da monarquia prussiana em 1918, através da era do Terceiro Reich, e foi restabelecido na Alemanha Ocidental em 1957."
+  }
+}

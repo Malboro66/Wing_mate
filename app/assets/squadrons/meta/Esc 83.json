@@ -1,0 +1,52 @@
+{
+  "squadronId": "Esc 83",
+  "squadronName": "Esc 83",
+  "country": "FRANCE",
+  "history": "A Escadrille 83 foi uma esquadrilha de caça criada como N 83 em 1º de janeiro de 1917 e redesignada SPA 83 no fim de 1917 após reequipamento com SPAD, usando como insígnia uma “Chimère” (homologada A‑681) e, inicialmente, um “dragão negro” aplicado por estêncil na fuselagem.​\nIdentificação e formação\nCriação: N 83 em 1º de janeiro de 1917; passagem a SPA 83 no fim de 1917 conforme a prática francesa de renomear pela aeronave principal.​\nTipo: Esquadrilha de caça (Nieuport, depois SPAD), na linha das unidades de “chasse” criadas em 1917.​\nInsígnia: “Chimère” (A‑681) como emblema de tradição; estêncil inicial do “dragão negro” confeccionado pelo soldado Anatole Toussaint.​\nHistória operacional\nEmprego: Atuação como unidade de caça após a formação em 1917, com transição de Nieuport para SPAD ao final do ano.​\nNota de distinção: Não confundir com a V 83 do front d’Orient (Voisin), unidade de bombardeio/observação chegada a Salonique em 1º de dezembro de 1915 e que se tornaria a 501.​\nComposição e tradição\nTradição: A SPA 83 manteve a heráldica da “Chimère” nos ciclos posteriores da Armée de l’Air, sendo listada entre as escadrilles de caça de referência.​\nRegistros: A página dedicada reúne ícones de insígnia e notas de simbolismo, incluindo o estêncil inicial do “dragão negro” atribuído à oficina da unidade.​\nInsígnias e marcas\nEmblema homologado: “Chimère” (nº A‑681), documentado nas compilações de unidades e tradições.​\nMarca inicial: “Dragão negro” aplicado por estêncil na SPA 83, conforme documentação iconográfica específica.",
+  "emblemImage": "squadrons\\images\\Esc 83.jpg",
+  "airfields": [
+    {
+      "start": "19170401",
+      "end": "19170501",
+      "airfield": "Ferme de Corbeaulieu"
+    },
+    {
+      "start": "19170501",
+      "end": "19170701",
+      "airfield": "Mont de Soissons"
+    },
+    {
+      "start": "19170701",
+      "end": "19170801",
+      "airfield": "Bouy"
+    },
+    {
+      "start": "19170801",
+      "end": "19171201",
+      "airfield": "Ferme de Alger"
+    },
+    {
+      "start": "19171201",
+      "end": "19180201",
+      "airfield": "Grivesnes"
+    },
+    {
+      "start": "19180201",
+      "end": "19180301",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19180301",
+      "end": "19180901",
+      "airfield": "Froides"
+    },
+    {
+      "start": "19180901",
+      "end": "",
+      "airfield": "La Noblette"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 83.json"
+  }
+}

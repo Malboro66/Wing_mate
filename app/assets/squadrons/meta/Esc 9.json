@@ -1,0 +1,89 @@
+{
+  "_comment": "V2 - Estrutura JSON otimizada para normalização, consistência e escalabilidade. O campo 'history' foi desmembrado em dados estruturados para melhor processamento.",
+  "squadronInfo": {
+    "id": "esc_9_france",
+    "name": "Escadrille 9",
+    "countryIsoCode": "FRA"
+  },
+  "history": {
+    "summary": "A Escadrille 9 foi uma unidade francesa criada no pré-guerra que serviu na Primeira Guerra como esquadrilha de observação e bombardeio leve. Evoluiu de aeronaves Blériot (BL 9) para Breguet (BR 9) na fase final, com um foco operacional em missões táticas em vez de combate ar-ar.",
+    "formation": {
+      "date": "Pre-1914",
+      "context": "Unidade de observação, regulação de tiro, reconhecimento fotográfico e bombardeio leve/diurno, reorganizada ao longo do conflito."
+    },
+    "designations": [
+      {
+        "name": "Escadrille BL 9",
+        "period": "Início da guerra"
+      },
+      {
+        "name": "Escadrille BR 9",
+        "period": "Fase final da guerra"
+      }
+    ],
+    "notableEvents": [
+      {
+        "date": "1914",
+        "description": "Atividade inicial como BL 9, com missões condicionadas pela disponibilidade de aeronaves e meteorologia."
+      },
+      {
+        "date": "1917-1918",
+        "description": "Transição para aeronaves Breguet, refletida na redesignação para BR 9, mantendo missões de observação e interdição tática."
+      }
+    ]
+  },
+  "keyPersonnel": {
+    "comment": "O comando variou ao longo de 1914–1918. O texto de origem não lista os comandantes ou pessoal notável por nome, mas menciona que essas listas são preservadas em arquivos."
+  },
+  "statistics": {
+    "comment": "O foco operacional em observação e bombardeio leve reduziu a ênfase em vitórias ar-ar. O palmarés é exposto mais em termos de missões cumpridas e citações do que em abates confirmados."
+  },
+  "equipment": {
+    "aircraftUsed": [
+      "Blériot (monoplaces e variantes 'vision totale')",
+      "Breguet"
+    ],
+    "markings": {
+      "insignia": "Insignia da Escadrille 9",
+      "description": "A unidade possuía insígnias pintadas e heráldica associada, documentadas em compilações especializadas."
+    }
+  },
+  "media": {
+    "emblemImagePath": "squadrons/images/Esc 9.jpg"
+  },
+  "deploymentHistory": [
+    {
+      "airfieldId": "ferme_cravancon",
+      "startDate": "1916-01-01",
+      "endDate": "1917-07-01"
+    },
+    {
+      "airfieldId": "arcy_sainte_restitue",
+      "startDate": "1917-07-01",
+      "endDate": "1917-10-01"
+    },
+    {
+      "airfieldId": "vauxcere",
+      "startDate": "1917-10-01",
+      "endDate": "1917-11-01"
+    },
+    {
+      "airfieldId": "rugny",
+      "startDate": "1917-11-01",
+      "endDate": "1917-12-01"
+    },
+    {
+      "airfieldId": "pierrefonds",
+      "startDate": "1917-12-01",
+      "endDate": "1918-03-01"
+    },
+    {
+      "airfieldId": "mont_de_soissons",
+      "startDate": "1918-03-01"
+    }
+  ],
+  "source": {
+    "pwcgSquadronFile": "pwcg_files/Esc 9.json",
+    "comment": "Caminho absoluto original alterado para um caminho relativo para portabilidade."
+  }
+}

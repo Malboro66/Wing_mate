@@ -1,0 +1,72 @@
+{
+  "squadronId": "Esc 62",
+  "squadronName": "Esc 62",
+  "country": "FRANCE",
+  "history": "A Escadrille 62 foi uma esquadrilha de caça da Aeronáutica Militar Francesa na Primeira Guerra que evoluiu de MS 62 para N 62 e, por fim, SPA 62, destacando-se pelo emblema do coq e por vitórias de ases como Paul Tarascon sob o comando de François Coli. A página reúne insígnias, histórico, designações, bases, comandantes, aeronaves, citações coletivas, quadros quantitativos e extensa iconografia e documentação da unidade e de suas herdeiras na tradição do EC 1/3 “Navarre”.​\nIdentificação e formação\nDesignação original: MS 62 (Morane‑Saulnier), com posterior N 62 (Nieuport) e fase final SPA 62 (SPAD), conforme a prática francesa de redesignar a esquadrilha pelo tipo principal em uso.​\nPaís: França.​\nData de criação: indicada na seção “Appellations successives”, juntamente com os primeiros estacionamentos e vinculações iniciais.​\nContexto: Unidade de caça integrada ao dispositivo da VIe Armée, com estrutura orgânica e administrativa detalhada nas seções de “Rattachements” e “Lieux de stationnements”.​\nHistória operacional\nAtuação contínua na Frente Ocidental em missões de caça, escolta e intercepção, com registros fotográficos e mapas de estacionamentos nas seções dedicadas.​\nParticipação documentada em setores de forte combate como a Somme (ex.: ferimento de Tarascon em 9/8/1916 nas imediações Chaulne‑Roye), além de campanhas que renderam citações coletivas à unidade.​\nA página traz “Batailles et missions importantes”, fotos aéreas e documentos correlatos que permitem acompanhar cronologia e deslocamentos até o Armistício.​\nEstatísticas e desempenho\nAs “Citations collectives” e “Relevés quantitatifs” consolidam o reconhecimento operacional, sem impedir consultas a quadros detalhados de vitórias, perdas e aeronaves numeradas.​\nA listagem “Morts: en rouge / Blessés et indemnes: en jaune” registra baixas por cor, possibilitando leitura nominativa e por período.​\nOs números de vitórias individuais aparecem nas fichas de ases, como as 12 homologadas e 8 prováveis de Paul Tarascon, complementadas por medalhas e condecorações listadas.​\nComandantes (chefs d’escadrille)\nA seção “Commandants” relaciona os sucessivos chefes, incluindo François Coli, citado também em documentos pessoais e memórias ligados à N 62/SPA 62.​\nDatas e vínculos de comando são cruzados com “Rattachements” e com as ordens de batalha da VIe Armée referenciadas na bibliografia.​\nPessoal notável\nPaul Tarascon, com 12 vitórias homologadas e 8 prováveis, condecorado com Médaille Militaire, Légion d’Honneur e Croix de Guerre com 12 palmas, tem biografia completa transcrita na página.​\nOutros nomes e retratos incluem Ltt Alfred Palats, Cne Jean Lavidalie, MdL Marius Tirefort e diversos pilotos/observadores listados em “As et personnels connus” e “Les Hommes”.​\nAeronaves utilizadas\nFases e tipos: Nieuport (fase N 62) e SPAD (fase SPA 62), com registros materiais de entoilagem e números de aparelhos nas seções técnicas.​\nHá documentação específica de SPAD VII/XIII e menções a SPAD XI associadas à unidade em registros fotográficos e de coleção.​\nInsígnia e tradição\nOrigem do coq: explicada em seção própria, com variantes pintadas em fuselagens e entoilagem preservada da SPA 62, além de insígnias metálicas catalogadas.​\nTradição e herdeiras: “Unités détentrices des traditions” e “Fanions des unités héritières” conectam a N/SPA 62 ao EC 1/3 “Navarre”, com fanions e aeronaves das herdeiras ilustrados.​",
+  "emblemImage": "squadrons\\images\\Esc 62.jpg",
+  "airfields": [
+    {
+      "start": "19160801",
+      "end": "19170101",
+      "airfield": "Grivesnes"
+    },
+    {
+      "start": "19170101",
+      "end": "19170201",
+      "airfield": "Mont de Soissons"
+    },
+    {
+      "start": "19170201",
+      "end": "19170401",
+      "airfield": "Vauxcere"
+    },
+    {
+      "start": "19170401",
+      "end": "19170901",
+      "airfield": "Villers Bretonneu 2"
+    },
+    {
+      "start": "19170901",
+      "end": "19171101",
+      "airfield": "Villers Bretonneu 2"
+    },
+    {
+      "start": "19171101",
+      "end": "19171201",
+      "airfield": "Cachy"
+    },
+    {
+      "start": "19171201",
+      "end": "19180301",
+      "airfield": "Beaucourt"
+    },
+    {
+      "start": "19180301",
+      "end": "19180401",
+      "airfield": "Esquennoy"
+    },
+    {
+      "start": "19180401",
+      "end": "19180701",
+      "airfield": "Chalons sur Vesle"
+    },
+    {
+      "start": "19180701",
+      "end": "19180901",
+      "airfield": "Bouy"
+    },
+    {
+      "start": "19180901",
+      "end": "19181001",
+      "airfield": "Nancy Malzeville"
+    },
+    {
+      "start": "19181001",
+      "end": "",
+      "airfield": "Ferme de Rosnay"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 62.json"
+  }
+}

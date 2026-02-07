@@ -1,0 +1,62 @@
+{
+  "squadronId": "Esc 67",
+  "squadronName": "Esc 67",
+  "country": "FRANCE",
+  "history": "A Escadrille 67 foi criada em 17 de setembro de 1915 em Lyon‑Bron como N 67, inicialmente equipada com Nieuport biplaces para reconhecimento e bombardeio leve, e tornou‑se SPA 67 em agosto/outubro de 1917 ao adotar caças SPAD, integrando GC 13 e depois GC 12 até o Armistício. Distinguida por duas citações em 1916 que lhe conferiram a fourragère da Croix de guerre, acumulou 42–46 vitórias homologadas e permaneceu como tradição ativa no pós‑guerra, hoje herdada pelo EC 2/3 “Champagne”.​\nIdentificação e formação\nDesignação original: Escadrille N 67 (N para Nieuport), 17/09/1915, Lyon‑Bron, atribuída à IVe Armée e enviada à defesa de Verdun em outubro de 1915.​\nDesignação final: Escadrille SPA 67 (SPAD), reequipada com SPAD e renomeada em agosto/outubro de 1917, mantendo emprego de caça até 1918.​\nEmblema: “Cigogne de Navarre”, homologado A‑1111, com fanion característico adotado no âmbito dos “Cigognes”.​\nHistória operacional\n1915–meados de 1916: Missões com Nieuport biplaces em reconhecimento, fotografia, regulação de artilharia e bombardeio, recebendo a primeira citação em 25/01/1916 e a segunda em julho de 1916 por 257 combates e 11 vitórias, tornando‑se a primeira unidade a portar a fourragère da Croix de guerre.​\n11/1916–06/1917: Incorporação ao Groupe de Combat 13 em 1/11/1916 e, em junho de 1917, passagem ao Groupe Provisoire de Bonneuil subordinado à IIIe Armée.​\n01/1918–11/1918: Com SPAD, integra o Groupe de Combat 12 em 18/01/1918 e permanece até o fim da guerra, atuando como caça de superioridade e escolta.​\nEstatísticas e desempenho\nVitórias creditadas: 42 homologadas no cômputo anglófono e 46 homologadas mais 34 não homologadas em sínteses francesas de tradição.​\nReconhecimentos: Duas citações em 1916 e direito à fourragère da Croix de guerre, consolidando reputação de alto desempenho na fase Verdun‑Somme.​\nPerfil operacional: Transição de biplaces Nieuport para Nieuport “Bébé” de caça no verão de 1916 e depois SPAD VII/XIII, com foco em intercepção e escolta.​\nComandantes\nComando inicial atribuído a oficiais como Capitaine de Villepin ainda em setembro de 1915, seguido por chefias ligadas aos grupos de caça GC 13 e GC 12, com registo de Capitaine Jacques d’Indy no final de 1918 em cronologias comemorativas.​\nAs listas de comando por período constam nas páginas históricas e fóruns especializados de escadrilhas 14‑18.​\nPessoal notável\nJean Navarre, Marcel Viallet e Georges Flachaire figuram entre ases associados ao arco “Cigognes”, com vínculos citados à SPA 67 em repertórios de tradição.​\nQuadros nominativos e retratos de pilotos e mecânicos estão compilados em “Personnels” e listas de 1917 na documentação da unidade.​\nAeronaves utilizadas\nNieuport X biplaces e, a partir do verão de 1916, Nieuport monoplaces “Bébé” na fase N 67.​\nSPAD VII e SPAD XIII na fase SPA 67 a partir de 1917–1918, com desempenho superior em caça.​\nInsígnia e tradição\nInsígnia: “Cigogne de Navarre”, homologada A‑1111, com uso contínuo nos fanions e marcações da escadrilha.​\nLegado: Tradições preservadas no Escadron de chasse 2/3 “Champagne”, herdeiro oficial das SPA 67 e SPA 75, com continuidade operacional na era Mirage 2000D.",
+  "emblemImage": "squadrons\\images\\Esc 67.jpg",
+  "airfields": [
+    {
+      "start": "19160801",
+      "end": "19170101",
+      "airfield": "Bouy"
+    },
+    {
+      "start": "19170101",
+      "end": "19170201",
+      "airfield": "Bonne Maison"
+    },
+    {
+      "start": "19170201",
+      "end": "19170301",
+      "airfield": "Grivesnes"
+    },
+    {
+      "start": "19170301",
+      "end": "19170401",
+      "airfield": "Bouy"
+    },
+    {
+      "start": "19170401",
+      "end": "19170501",
+      "airfield": "Mont de Soissons"
+    },
+    {
+      "start": "19170501",
+      "end": "19170701",
+      "airfield": "Ferme de Alger"
+    },
+    {
+      "start": "19170701",
+      "end": "19170801",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19170801",
+      "end": "19171201",
+      "airfield": "Bouy"
+    },
+    {
+      "start": "19171201",
+      "end": "19180201",
+      "airfield": "Ferme de Alger"
+    },
+    {
+      "start": "19180201",
+      "end": "",
+      "airfield": "Ferme de Alger"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 67.json"
+  }
+}

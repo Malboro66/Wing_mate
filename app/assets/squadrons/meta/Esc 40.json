@@ -1,0 +1,87 @@
+{
+  "squadronId": "Esc 40",
+  "squadronName": "Esc 40",
+  "country": "FRANCE",
+  "history": "A Escadrille 40 foi uma esquadrilha francesa de observação/reconhecimento criada em 27 de março de 1915 no campo de Cuperly como MF 40, que evoluiu para AR 40 e, por fim, SAL 40, adotando como tradição o emblema “Taureau Assyrien” da fase Salmson. Operou em missões de reconhecimento, fotografia aérea e regulação de tiro ao nível de Exército, acompanhando a prática francesa de redesignar a unidade pelo tipo principal de aeronave em serviço até o Armistício de 1918.​\nIdentificação e Formação\nDesignação Original: Escadrille MF 40 (MF para Maurice Farman).​\nDesignação Intermediária: Escadrille AR 40 (AR para Dorand).​\nDesignação Final: Escadrille SAL 40 (SAL para Salmson A2).​\nPaís: França.​\nData de Criação: 27 de março de 1915 (Cuperly).​\nContexto de Formação: Unidade de observação/reconhecimento sujeita às redesignações francesas por tipo de aeronave em serviço no front.​\nHistória Operacional\n1915–1916: Reconhecimentos com Farman MF.7 e MF.11 a partir de Cuperly, cobrindo setores atribuídos pela IVe Armée no dispositivo francês.​\n1916–1917: Reequipamento progressivo com Dorand AR e redesignação para AR 40, mantendo missões de fotografia e regulação de tiro de artilharia.​\n1917–1918: Adoção de Salmson A2 e redesignação para SAL 40, prosseguindo em reconhecimento até o Armistício de novembro de 1918.​\nPós‑guerra imediato: Tradição da SAL 40 referenciada com a “Taureau Assyrien”, com continuidade listada nas compilações de escadrilhas (ex.: 59e escadrille du Levant em 1920–1923).​\nEstatísticas e Desempenho\nRegistros de perdas: Consolidados em páginas específicas da unidade, sem síntese numérica única no corpo do histórico público.​\nFoco operacional: Reconhecimento, regulação de artilharia, ligação e fotografia aérea em apoio às grandes unidades do Exército.​\nInsígnias e palmarés: Insígnias pintadas e metálicas, além de palmarés, documentados em acervos de tradição e páginas dedicadas.​\nComandantes (Chefs d’escadrille)\nOs sucessivos comandantes e períodos constam nas páginas históricas da escadrilha, com referências cruzadas a movimentos e reequipa­mentos.​\nPessoal Notável\nSeções de “Portraits” reúnem pilotos e observadores da unidade, preservando nomes e imagens associados às fases MF/AR/SAL.​\nAeronaves Utilizadas\nMaurice Farman MF.7 e MF.11 (fase MF 40).​\nDorand AR (fase AR 40).​\nSalmson A2/2A2 (fase SAL 40).​\nInsígnia e Tradição\nInsígnia: “Taureau Assyrien” como tradição da SAL 40, com registros de aplicação em insígnias pintadas e metálicas.​\nEmblema inicial: “Premier insigne de l’escadrille F 40” registrado no acervo de Albin Denis, marcando a evolução heráldica da unidade.​\nContinuidade: A SAL 40 figura nas listagens de tradições e de escadrilhas 40–49, com notas sobre unidades detentoras pós‑1918.",
+  "emblemImage": "squadrons\\images\\Esc 40.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160601",
+      "airfield": "Lisle en Barrois"
+    },
+    {
+      "start": "19160601",
+      "end": "19160801",
+      "airfield": "La Noblette"
+    },
+    {
+      "start": "19160801",
+      "end": "19161001",
+      "airfield": "Ferme de Alger"
+    },
+    {
+      "start": "19161001",
+      "end": "19161201",
+      "airfield": "Ferme de Rosnay"
+    },
+    {
+      "start": "19161201",
+      "end": "19170101",
+      "airfield": "Allonville"
+    },
+    {
+      "start": "19170101",
+      "end": "19170201",
+      "airfield": "Pierrefonds"
+    },
+    {
+      "start": "19170201",
+      "end": "19170401",
+      "airfield": "Belrain"
+    },
+    {
+      "start": "19170401",
+      "end": "19170701",
+      "airfield": "Gengoult"
+    },
+    {
+      "start": "19170701",
+      "end": "19170901",
+      "airfield": "Villers Bretonneu 2"
+    },
+    {
+      "start": "19170901",
+      "end": "19171101",
+      "airfield": "Cachy"
+    },
+    {
+      "start": "19171101",
+      "end": "19180301",
+      "airfield": "Villers Bretonneux"
+    },
+    {
+      "start": "19180301",
+      "end": "19180401",
+      "airfield": "Ansauvillers"
+    },
+    {
+      "start": "19180401",
+      "end": "19180901",
+      "airfield": "Lhery"
+    },
+    {
+      "start": "19180901",
+      "end": "19181001",
+      "airfield": "Malzeville"
+    },
+    {
+      "start": "19181001",
+      "end": "",
+      "airfield": "Gengoult"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 40.json"
+  }
+}

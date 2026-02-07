@@ -1,0 +1,69 @@
+{
+  "id": "ordem_militar_max_joseph",
+  "nome": "Ordem Militar de Max Joseph",
+  "nomeOriginal": "Militär-Max-Joseph-Orden",
+  "resumo": "A mais alta condecoração militar do Reino da Baviera, fundada em 1806.",
+  "fundacao": {
+    "data": "01 de janeiro de 1806",
+    "fundador": "Maximiliano I José da Baviera",
+    "contexto": "Primeiro rei da Baviera."
+  },
+  "historico": {
+    "status": "Obsoleta",
+    "detalhes": "Tornou-se obsoleta em 1918 com o colapso da monarquia bávara após a derrota na Primeira Guerra Mundial. Sua chancelaria continuou a processar indicações até pelo menos 1922."
+  },
+  "classes": [
+    {
+      "nome": "Grã-Cruz",
+      "nomeOriginal": "Großkreuz",
+      "descricaoInsignia": {
+        "medalha": "A maior, com 68 mm por 100 mm, com raios dourados entre os braços da cruz.",
+        "estrela": "Incluía uma estrela de prata de oito pontas, com o medalhão da ordem e o lema 'Virtuti pro patria'."
+      }
+    },
+    {
+      "nome": "Cruz de Comendador",
+      "nomeOriginal": "Kommandeurkreuz",
+      "descricaoInsignia": {
+        "medalha": "Um pouco maior que a Cruz de Cavaleiro, medindo 38 mm por 55 mm. Usada em uma fita no pescoço."
+      }
+    },
+    {
+      "nome": "Cruz de Cavaleiro",
+      "nomeOriginal": "Ritterkreuz",
+      "descricaoInsignia": {
+        "medalha": "A menor, com 28 mm de largura (e 50 mm de altura incluindo a coroa). Era usada na barra de medalhas ou separadamente, através da casa do botão. A partir de 1951, seu uso no pescoço foi permitido."
+      }
+    }
+  ],
+  "descricaoGeralDaInsignia": {
+    "cruz": "Cruz de Malta dourada com esmalte branco e bolas em cada ponta.",
+    "medalhaoCentral": {
+      "obverso": "Monograma de Max Joseph ('MJK') em esmalte azul com borda dourada.",
+      "reverso": "Lema da ordem em latim, 'Virtuti pro patria' ('Coragem pela Pátria'), em ouro."
+    },
+    "coroa": "Uma coroa dourada acima da cruz.",
+    "fita": "Fita de moiré preta com listras de borda internas brancas e externas azuis."
+  },
+  "nobiliarquia": {
+    "consequencia": "A recepção da ordem conferia uma patente de nobreza aos recipients que não eram da nobreza.",
+    "tituloAdicionado": "\"Ritter von\"",
+    "hereditario": false,
+    "aplicabilidade": "A patente era válida apenas para súditos bávaros; não-bávaros recebiam a ordem mas não podiam usar o título.",
+    "exemplosNotaveis": [
+      {
+        "nome": "Wilhelm Leeb",
+        "resultado": "Tornou-se Wilhelm Ritter von Leeb."
+      },
+      {
+        "nome": "Erich Ludendorff",
+        "resultado": "Permaneceu como Erich Ludendorff, pois não era súdito bávaro."
+      },
+      {
+        "nome": "Gustav Ritter von Kahr",
+        "observacao": "Recebeu o título de uma ordem diferente (Ordem do Mérito da Coroa da Baviera), não desta."
+      }
+    ],
+    "esclarecimento": "Nem todos os 'Ritter von' bávaros eram cavaleiros desta ordem, pois a Ordem do Mérito da Coroa da Baviera também concedia o título."
+  }
+}

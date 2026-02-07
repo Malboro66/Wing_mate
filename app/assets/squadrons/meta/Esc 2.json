@@ -1,0 +1,157 @@
+{
+  "_comment": "V2 - Estrutura JSON otimizada para normalização, consistência e escalabilidade. O campo 'history' foi desmembrado em dados estruturados para melhor processamento.",
+  "squadronInfo": {
+    "id": "esc_2_france",
+    "name": "Escadrille 2",
+    "countryIsoCode": "FRA"
+  },
+  "history": {
+    "summary": "A Escadrille 2 foi uma esquadrilha de observação e reconhecimento da Aeronáutica Militar Francesa, criada em 1912. Ao longo da guerra, evoluiu por diversas designações (MF, F, AR, SPAbi) e aeronaves, participando de missões cruciais de regulação de tiro, reconhecimento e bombardeio tático em campanhas como Verdun, Chemin des Dames e a Ofensiva Aliada final.",
+    "formation": {
+      "date": "1912-03-29",
+      "location": "Châlons-sur-Marne, France",
+      "context": "Unidade de observação/regulação de artilharia criada no pré-guerra, sucessivamente redesignada conforme o material de voo adotado."
+    },
+    "designations": [
+      {
+        "name": "Escadrille MF 2",
+        "period": "1912-03-29 onwards"
+      },
+      {
+        "name": "Escadrille F 2",
+        "period": "1916"
+      },
+      {
+        "name": "Escadrille AR 2",
+        "period": "1917"
+      },
+      {
+        "name": "Escadrille SPAbi 2",
+        "period": "1917-11 onwards"
+      }
+    ],
+    "notableEvents": [
+      {
+        "date": "1914-1916",
+        "description": "Operações em Verdun e Clermont-en-Argonne, com missões de reconhecimento, regulação e bombardeio de baixa altitude."
+      },
+      {
+        "date": "1917",
+        "description": "Atuou no setor do Chemin des Dames; reequipada com Dorand AR e, em novembro, com SPAD XI."
+      },
+      {
+        "date": "1918",
+        "description": "Participou da defesa de Noyon, da 3ª Batalha do Aisne e da 2ª Batalha do Marne, apoiando o avanço aliado até o Armistício."
+      }
+    ]
+  },
+  "keyPersonnel": [
+    {
+      "name": "Capitaine Léon Bretey",
+      "roles": ["Commander"],
+      "details": "Comandante inicial da unidade em Verdun."
+    },
+    {
+      "name": "Ltt Niels Paulli Krause-Jensen",
+      "roles": ["Notable Pilot"],
+      "details": "Destacou-se por missões audaciosas de reconhecimento e bombardeio em 1914-1915."
+    }
+  ],
+  "statistics": {
+    "totalVictories": 7,
+    "personnelLosses": {
+      "killedOrMissing": 15
+    },
+    "recognitions": {
+      "armyCorpsCitation": true,
+      "croixDeGuerre1914_1918": {
+        "award": "Croix de guerre 1914-1918",
+        "device": "Estrela de vermeil (vermeil star)"
+      }
+    }
+  },
+  "equipment": {
+    "aircraftUsed": [
+      "Farman MF.7",
+      "Farman MF.11",
+      "Farman F.40",
+      "Farman F.42",
+      "Caudron G.4",
+      "Letord 5",
+      "Nieuport biplaces",
+      "Salmson-Moineau SM.1",
+      "Dorand AR",
+      "Sopwith 1½ Strutter",
+      "SPAD S.XI",
+      "SPAD S.XVI",
+      "Breguet 14A2"
+    ],
+    "markings": {
+      "insignia": "Triskèle",
+      "description": "Triskèle aplicado na fuselagem dos aparelhos da unidade."
+    }
+  },
+  "media": {
+    "emblemImagePath": "squadrons/images/Esc 2.jpg"
+  },
+  "deploymentHistory": [
+    {
+      "airfieldId": "froides",
+      "startDate": "1916-01-01",
+      "endDate": "1916-04-01"
+    },
+    {
+      "airfieldId": "arcy_sainte_restitue",
+      "startDate": "1916-04-01",
+      "endDate": "1916-08-01"
+    },
+    {
+      "airfieldId": "auve",
+      "startDate": "1916-08-01",
+      "endDate": "1916-10-01"
+    },
+    {
+      "airfieldId": "cachy",
+      "startDate": "1916-10-01",
+      "endDate": "1916-12-01"
+    },
+    {
+      "airfieldId": "ferme_de_rosnay",
+      "startDate": "1916-12-01",
+      "endDate": "1917-02-01"
+    },
+    {
+      "airfieldId": "bouleuse",
+      "startDate": "1917-02-01",
+      "endDate": "1917-12-01"
+    },
+    {
+      "airfieldId": "ansauvillers",
+      "startDate": "1917-12-01",
+      "endDate": "1918-03-01"
+    },
+    {
+      "airfieldId": "quinquempoix",
+      "startDate": "1918-03-01",
+      "endDate": "1918-04-01"
+    },
+    {
+      "airfieldId": "coincy",
+      "startDate": "1918-04-01",
+      "endDate": "1918-09-01"
+    },
+    {
+      "airfieldId": "beugneux",
+      "startDate": "1918-09-01",
+      "endDate": "1918-10-01"
+    },
+    {
+      "airfieldId": "bouy",
+      "startDate": "1918-10-01"
+    }
+  ],
+  "source": {
+    "pwcgSquadronFile": "pwcg_files/Esc 2.json",
+    "comment": "Caminho absoluto original alterado para um caminho relativo para portabilidade."
+  }
+}

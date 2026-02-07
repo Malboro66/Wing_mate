@@ -1,0 +1,149 @@
+{
+  "_comment": "V2 - Estrutura JSON otimizada para normalização, consistência e escalabilidade. As chaves seguem a convenção camelCase.",
+  "squadronInfo": {
+    "id": "jasta_2_germany",
+    "name": "Jasta 2",
+    "alias": "Jasta Boelcke",
+    "countryIsoCode": "DEU"
+  },
+  "history": {
+    "summary": "One of the best-known German Luftstreitkräfte squadrons in World War I, founded by the great aerial tactician Oswald Boelcke. It was the incubator for several notable aviation careers and the birthplace of modern fighter aviation tactics.",
+    "formationDate": "1916-08-10",
+    "formationLocation": "Bertincourt, France",
+    "formationContext": "Formed from scratch with no parent unit, as part of a reorganization of the German air force (Luftstreitkräfte), inspired by Boelcke himself.",
+    "notableEvents": [
+      {
+        "date": "1916-09-17",
+        "description": "First combat mission. Intercepted a British raid, resulting in the first victories for Manfred von Richthofen and Erwin Böhme."
+      },
+      {
+        "date": "1916-10-28",
+        "description": "Commanding Officer Oswald Boelcke was killed in a mid-air collision during a dogfight."
+      },
+      {
+        "date": "1917-02-01",
+        "description": "The unit achieved its 100th aerial victory."
+      },
+      {
+        "date": "1918-02-01",
+        "description": "Became part of the new Royal Prussian Jagdgeschwader III, under Bruno Loerzer."
+      }
+    ]
+  },
+  "keyPersonnel": [
+    {
+      "name": "Oswald Boelcke",
+      "roles": ["Commander", "Founding Commander"],
+      "details": {
+        "tenure": "1916-08-30 to 1916-10-28",
+        "fate": "Killed in Action"
+      }
+    },
+    {
+      "name": "Stefan Kirmaier",
+      "roles": ["Commander", "Notable Pilot"],
+      "details": {
+        "tenure": "1916-10-28 to 1916-11-22",
+        "fate": "Killed in Action"
+      }
+    },
+    {
+      "name": "Franz Walz",
+      "roles": ["Commander"],
+      "details": {
+        "tenure": "1916-11-29 to 1918-02-01"
+      }
+    },
+    {
+      "name": "Bruno Loerzer",
+      "roles": ["Commander"],
+      "details": {
+        "tenure": "1918-02-01 to 1918-11-11"
+      }
+    },
+    {
+      "name": "Manfred von Richthofen",
+      "roles": ["Notable Pilot"]
+    },
+    {
+      "name": "Erwin Böhme",
+      "roles": ["Notable Pilot"]
+    },
+    {
+      "name": "Hans Reimann",
+      "roles": ["Notable Pilot"]
+    },
+    {
+      "name": "Otto Höhne",
+      "roles": ["Notable Pilot"]
+    }
+  ],
+  "statistics": {
+    "confirmedVictories": 336,
+    "aces": 23,
+    "personnelLosses": {
+      "killedInAction": 31,
+      "woundedInAction": 9,
+      "prisonersOfWar": 2,
+      "accidents": 2
+    }
+  },
+  "equipment": {
+    "aircraftUsed": [
+      "Fokker D.III",
+      "Albatros D.I",
+      "Albatros D.II",
+      "Halberstadt D.II"
+    ],
+    "markingsDescription": "Black and white tailplanes and elevators (top and bottom)—one side black, one side white."
+  },
+  "media": {
+    "emblemImagePath": "squadrons/images/Jasta 2.png"
+  },
+  "deploymentHistory": [
+    {
+      "airfieldId": "lagnicourt",
+      "startDate": "1916-09-01",
+      "endDate": "1916-11-01"
+    },
+    {
+      "airfieldId": "houplin",
+      "startDate": "1916-11-01",
+      "endDate": "1916-12-01"
+    },
+    {
+      "airfieldId": "pronville",
+      "startDate": "1916-12-01",
+      "endDate": "1917-08-01"
+    },
+    {
+      "airfieldId": "halluin",
+      "startDate": "1917-08-01",
+      "endDate": "1917-09-01"
+    },
+    {
+      "airfieldId": "menin",
+      "startDate": "1917-09-01",
+      "endDate": "1918-03-01"
+    },
+    {
+      "airfieldId": "mesnil_sw",
+      "startDate": "1918-03-01",
+      "endDate": "1918-10-01"
+    },
+    {
+      "airfieldId": "bony",
+      "startDate": "1918-10-01",
+      "endDate": "1918-11-01"
+    },
+    {
+      "airfieldId": "gouy",
+      "startDate": "1918-11-01",
+      "endDate": "1918-11-11"
+    }
+  ],
+  "source": {
+    "pwcgSquadronFile": "pwcg_files/Jasta 2.json",
+    "comment": "Original source path was an absolute path, changed to a relative one for portability."
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "squadronId": "Esc 64",
+  "squadronName": "Esc 64",
+  "country": "FRANCE",
+  "history": "A Escadrille 64 foi uma unidade francesa que evoluiu de C 64 (Caudron) para N 64 (Nieuport) e, por fim, SPA 64 (SPAD), atuando na Frente Ocidental entre reconhecimento inicial e emprego de caça no período final da guerra. A insígnia característica descrita é uma cabeça de penitente vermelha sobre a letra “Z” apoiada num triângulo, com trajetória, missões e perdas registradas em compêndios especializados de escadrilhas 1914–1918.​\nIdentificação e formação\nDesignação original: Escadrille C 64 (C para Caudron).​\nDesignação intermediária: Escadrille N 64 (N para Nieuport).​\nDesignação final: Escadrille SPA 64 (SPA para SPAD).​\nPaís: França.​\nData de criação: indicada nos históricos de unidade e nos diários de operações, com primeiras menções em 1915 na IVe Armée.​\nContexto de formação: Unidade originada no esforço de observação e evoluída para a caça conforme reequipamentos, seguindo a prática francesa de renomear pela aeronave principal em serviço.​\nHistória operacional\n1915–1916: Emprego em reconhecimento e apoio de artilharia como C 64, com estacionamentos e vínculos de Exército listados nas cronologias setoriais.​\n1916–1917: Transição a N 64 com Nieuport e maior ênfase em caça e escolta em setores atribuídos, conforme quadros de “Victoires et pertes” e marcos datados (ex.: Bouleuse, Ferme Rosnay, Cernon).​\n1917–1918: Fase SPA 64 com SPAD, mantendo missões de caça/intercepção até o Armistício, com registros de citações e deslocamentos por corpos e exércitos.​\nEstatísticas e desempenho\nRegistros de vitórias e perdas: consolidados por data e local nas seções “Victoires et pertes”, sem síntese numérica única nos excertos consultados.​\nPerfil operacional: evolução de observação A2 para caça, com incremento de intercepções e escoltas após a adoção de Nieuport e SPAD.​\nDocumentação: estacionamentos, rattachaments e referências cruzadas a JMO de Exércitos e Corpos constam nas compilações de unidades 1914–1918.​\nComandantes (chefs d’escadrille)\nA relação de chefes e períodos de comando está listada nos repositórios de tradição e complementada por entradas pontuais em fóruns e arquivos especializados.​\nPessoal notável\nAs listas nominativas e retratos aparecem nas páginas de “personnels/portraits”, com cruzamentos a datas de vitórias/perdas e estações de campanha.​\nAeronaves utilizadas\nCaudron (fase C 64) nas missões iniciais de observação e regulação.​\nNieuport (fase N 64) na transição para caça em 1916–1917.​\nSPAD VII/XIII (fase SPA 64) no emprego de caça até 1918.​\nInsígnia e tradição\nInsígnia: cabeça de penitente vermelha sobre a letra “Z” num triângulo, registrada na página da unidade com variações de aplicação.​\nTradição: a SPA 64 e demais escadrilhas 60–69 têm continuidade e referências nas listagens de tradições e unidades herdeiras da Armée de l’Air.",
+  "emblemImage": "squadrons\\images\\Esc 64.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160301",
+      "airfield": "Lhery"
+    },
+    {
+      "start": "19160301",
+      "end": "19160801",
+      "airfield": "Ferme de Alger"
+    },
+    {
+      "start": "19160801",
+      "end": "19170201",
+      "airfield": "La Cheppe"
+    },
+    {
+      "start": "19170201",
+      "end": "19170601",
+      "airfield": "Ferme de Rosnay"
+    },
+    {
+      "start": "19170601",
+      "end": "19170701",
+      "airfield": "Malzeville"
+    },
+    {
+      "start": "19170701",
+      "end": "19170801",
+      "airfield": "Tilloy"
+    },
+    {
+      "start": "19170801",
+      "end": "19170901",
+      "airfield": "Vauxcere"
+    },
+    {
+      "start": "19170901",
+      "end": "19171201",
+      "airfield": "Pierrefonds"
+    },
+    {
+      "start": "19171201",
+      "end": "19180201",
+      "airfield": "Vadelaincourt"
+    },
+    {
+      "start": "19180201",
+      "end": "19180301",
+      "airfield": "Beauze sur Aire"
+    },
+    {
+      "start": "19180301",
+      "end": "19180901",
+      "airfield": "Beauze sur Aire"
+    },
+    {
+      "start": "19180901",
+      "end": "",
+      "airfield": "Bouleuse"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 64.json"
+  }
+}

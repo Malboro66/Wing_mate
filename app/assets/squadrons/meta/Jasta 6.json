@@ -1,0 +1,131 @@
+{
+  "_comment": "Improved JSON structure for better data organization and machine-readability.",
+  "squadronId": "jasta_6_germany",
+  "squadronName": "Jasta 6",
+  "country": "DEU",
+  "parentUnit": {
+    "unit": "Jagdgeschwader 1",
+    "commonName": "The Flying Circus",
+    "joinedDate": "1917-07-02"
+  },
+  "history": {
+    "summary": "One of the original fighter units of the Luftstreitkräfte, Jasta 6 was a founding member of the 'Flying Circus'. The squadron was credited with 196 confirmed aerial victories and was known for its distinctive aircraft markings.",
+    "formation": {
+      "date": "1916-08-25",
+      "context": "Founded from Fokkerstaffel Sivry, an early fighter unit. Assigned to 2 Armee on 29 September 1916 and re-equipped with Albatros D.I fighters."
+    },
+    "notableEvents": [
+      {
+        "date": "1917-07-02",
+        "event": "Moved to Markebecke to join Manfred von Richthofen's newly formed Jagdgeschwader I."
+      },
+      {
+        "date": "1917-06-01",
+        "event": "Began a difficult three-month period, losing a commanding officer each month to enemy action."
+      },
+      {
+        "date": "1918-11-16",
+        "event": "Disbanded at FEA 9, Darmstadt, shortly after the Armistice."
+      }
+    ],
+    "commanders": [],
+    "notablePilots": [
+      {
+        "name": "Franz Hemer",
+        "note": "Notable ace who served in the squadron."
+      },
+      {
+        "name": "Kurt Küppers",
+        "note": "Notable ace who served in the squadron."
+      }
+    ],
+    "aircraftUsed": [
+      "Fokker E.IV",
+      "Albatros D.I",
+      "Fokker D.V",
+      "Albatros D.III",
+      "Albatros D.V",
+      "Fokker Dr.I",
+      "Fokker D.VII",
+      "Fokker D.VIII"
+    ]
+  },
+  "statistics": {
+    "victories": {
+      "total": 196
+    },
+    "casualties": {
+      "killedInAction": 10,
+      "woundedInAction": 9,
+      "killedInAccident": 2,
+      "injuredInAccident": 4,
+      "prisonersOfWar": 2,
+      "total": 27
+    }
+  },
+  "markings": {
+    "description": "Aircraft often had black and white stripes on their elevators. Later Fokker Dr.I triplanes featured an engine cowling painted in a scarlet and white petal pattern."
+  },
+  "emblemImage": "squadrons/images/Jasta 6.png",
+  "airfields": [
+    {
+      "start": "1916-08-25",
+      "end": "1916-09-29",
+      "airfield": "Sivry"
+    },
+    {
+      "start": "1916-09-29",
+      "end": "1917-03-01",
+      "airfield": "Villeselve"
+    },
+    {
+      "start": "1917-03-01",
+      "end": "1917-07-01",
+      "airfield": "Mesnil SW"
+    },
+    {
+      "start": "1917-07-01",
+      "end": "1917-09-01",
+      "airfield": "Houplin"
+    },
+    {
+      "start": "1917-09-01",
+      "end": "1917-11-01",
+      "airfield": "Phalempin"
+    },
+    {
+      "start": "1917-11-01",
+      "end": "1918-02-01",
+      "airfield": "Epinoy"
+    },
+    {
+      "start": "1918-02-01",
+      "end": "1918-03-01",
+      "airfield": "St Marguerite"
+    },
+    {
+      "start": "1918-03-01",
+      "end": "1918-06-01",
+      "airfield": "Warfusee"
+    },
+    {
+      "start": "1918-06-01",
+      "end": "1918-09-01",
+      "airfield": "Beaucourt"
+    },
+    {
+      "start": "1918-09-01",
+      "end": "1918-10-01",
+      "airfield": "Balatre"
+    },
+    {
+      "start": "1918-10-01",
+      "end": "1918-11-11",
+      "airfield": "Roupy"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "pwcg_files/Jasta 6.json",
+    "comment": "Original source path was an absolute path, changed to a relative one for portability."
+  }
+}

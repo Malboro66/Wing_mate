@@ -1,0 +1,60 @@
+{
+  "id": "wound_badge_black",
+  "nome": "Distintivo de Ferido",
+  "nomeOriginal": "Verwundetenabzeichen",
+  "resumo": "Uma condecoração militar alemã concedida a militares e civis feridos por ação hostil do inimigo. Foi instituída na Primeira Guerra Mundial e usada em vários conflitos até a Segunda Guerra Mundial.",
+  "historia": {
+    "instituicao": {
+      "data": "3 de março de 1918",
+      "instituidor": "Kaiser Guilherme II",
+      "contexto": "Primeiramente concedida a soldados do Exército Alemão feridos na Primeira Guerra Mundial."
+    },
+    "periodoEntreGuerras": {
+      "conflito": "Guerra Civil Espanhola (1938-39)",
+      "detalhes": "Concedida a membros das forças armadas alemãs que lutaram ao lado dos Nacionalistas e receberam ferimentos em combate."
+    },
+    "segundaGuerraMundial": {
+      "expansao": "Concedida a membros da Reichswehr, Wehrmacht, SS e organizações de serviço auxiliar.",
+      "civis": "Após março de 1943, devido ao aumento dos bombardeios Aliados, também foi concedida a civis feridos em ataques aéreos."
+    },
+    "posGuerra": {
+      "ano": 1957,
+      "detalhes": "O governo da Alemanha Ocidental autorizou uma versão desnazificada (sem a suástica) para ser usada no uniforme da Bundeswehr."
+    }
+  },
+  "classes": [
+    {
+      "nome": "Preto",
+      "classe": "3ª Classe",
+      "criterio": "Para aqueles feridos uma ou duas vezes por ação hostil (incluindo ataques aéreos)."
+    },
+    {
+      "nome": "Prata",
+      "classe": "2ª Classe",
+      "criterio": "Para aqueles feridos três ou quatro vezes."
+    },
+    {
+      "nome": "Ouro",
+      "classe": "1ª Classe",
+      "criterio": "Para aqueles feridos cinco ou mais vezes. Podia ser concedida postumamente."
+    }
+  ],
+  "casosEspeciais": "A 'progressão' entre as classes podia ser ignorada em caso de perda de um membro ou da visão; uma ferida tão grave resultava na concessão imediata da medalha de prata.",
+  "design": {
+    "materiais": [
+      "aço prensado",
+      "latão",
+      "zinco"
+    ],
+    "construcaoPorClasse": {
+      "preta": "Inicialmente estampada em folha de latão e pintada de preto fosco. A partir de 1942, passou a ser feita de aço.",
+      "prata": "Antes de 1942, feita de latão prateado. Após 1942, de zinco laqueado.",
+      "ouro": "Uma versão dourada da medalha de prata."
+    },
+    "fabricacao": "Havia 24 fabricantes aprovados para a produção do Distintivo de Ferido."
+  },
+  "formaDeUso": {
+    "posicao": "Usada no lado inferior esquerdo do peito do uniforme ou túnica.",
+    "hierarquia": "Era usada abaixo de todas as outras condecorações no lado esquerdo. Sua classificação era inferior à dos distintivos de combate."
+  }
+}

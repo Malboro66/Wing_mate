@@ -1,0 +1,67 @@
+{
+  "squadronId": "Esc 17",
+  "squadronName": "Esc 17",
+  "country": "FRANCE",
+  "history": "A Escadrille 17 foi uma esquadrilha de observação e reconhecimento fotográfico da Aeronáutica Militar Francesa na Primeira Guerra, criada como C 17 em 5 de dezembro de 1914 em Lyon‑Bron, depois redesignada SOP 17 em 1917 e SAL 17 em 1918, com insígnia do “Lynx” adotada em 1917. Atuou em missões de regulação de tiros de artilharia, reconhecimento e fotografia aérea na Woëvre, Somme, Chemin des Dames, Flandres e até a linha Hindenburg, encerrando a campanha nos Vosges no Armistício. A página dedicada reúne insígnias, histórico, chefes, pessoal, tipos de aeronaves, bases e citações, incluindo perfis como o do Cne Jules Maurice Donnio (comandante da C 17 entre 20/01/1917 e 16/02/1918) e documentação iconográfica extensa.​\nIdentificação e Formação\nDesignação Original: Escadrille C 17 (C para Caudron).​\nDesignação Intermediária: Escadrille SOP 17 (SOP para Sopwith 1B1).​\nDesignação Final: Escadrille SAL 17 (SAL para Salmson 2A2).​\nPaís: França.​\nData de Criação: 5 de dezembro de 1914 (Lyon‑Bron).​\nContexto de Formação: Unidade de observação/reconhecimento do 1º Corpo de Exército, com foco em regulação de artilharia e fotografia aérea.​\nHistória Operacional\n1914–1916: Emprego inicial na Woëvre e deslocamento para a Somme em setembro de 1916, com missões de observação e foto.​\n1917: Passagem ao 1º Corpo de Exército; participação no Chemin des Dames e no front das Flandres a partir de julho.​\n1918: Avanço em direção à linha Hindenburg e término da campanha nos Vosges na assinatura do Armistício.​\nArmistício: Mantido o perfil de reconhecimento/observação até novembro de 1918.​\nEstatísticas e Desempenho\nRegistros de perdas: Listagem de mortos (em vermelho) e feridos/ilesos (em amarelo) em “Les Hommes”, sem síntese numérica única.​\nFoco operacional: Reconhecimento, regulação de artilharia e fotografia aérea, com relevés quantitatifs registrados na página.​\nReconhecimentos: Seções de “Citations à l’ordre de l’armée” e “Batailles et missions” consolidam menções coletivas e engajamentos.​\nComandantes (Chefs d’escadrille)\nA página lista sucessivos comandantes; destaque para o Cne Jules Maurice Donnio (C 17, 20/01/1917–16/02/1918) e outros oficiais relacionados ao 1º Corpo.​\nPessoal Notável\n“Les Hommes” compila perfis com fotos e documentos de tripulantes como o Adj Henri Berhault, o Cne Adolphe Schlumberger e o Sgt Pierre Bourgeois, entre outros.​\nAeronaves Utilizadas\nCaudron G.3 (observação) na fase C 17.​\nSopwith 1B1 (reconhecimento) na fase SOP 17.​\nSalmson 2A2 (reconhecimento) na fase SAL 17 a partir de 1918.​\nInsígnia e Tradição\nInsígnia: “Lynx”, adotada em 1917 e homologada posteriormente como A‑931 na tradição da unidade.​\nMarcas e cores: Seções de insígnias pintadas/metálicas e “Couleurs des avions” documentam padronizações por período.​\nLegado: A tradição SAL 17 foi mantida no pós‑guerra em unidades de reconhecimento e, mais tarde, no EH 1/67 “Pyrénées” até a era Caracal",
+  "emblemImage": "squadrons\\images\\Esc 17.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160501",
+      "airfield": "Pretz en Argonne"
+    },
+    {
+      "start": "19160501",
+      "end": "19160901",
+      "airfield": "Beauze sur Aire"
+    },
+    {
+      "start": "19160901",
+      "end": "19161101",
+      "airfield": "Vignacourt"
+    },
+    {
+      "start": "19161101",
+      "end": "19170201",
+      "airfield": "La Mellette"
+    },
+    {
+      "start": "19170201",
+      "end": "19170401",
+      "airfield": "Villesavoye"
+    },
+    {
+      "start": "19170401",
+      "end": "19170501",
+      "airfield": "Fouvry"
+    },
+    {
+      "start": "19170501",
+      "end": "19170601",
+      "airfield": "La Mellette"
+    },
+    {
+      "start": "19170601",
+      "end": "19170901",
+      "airfield": "Julvecourt"
+    },
+    {
+      "start": "19170901",
+      "end": "19171201",
+      "airfield": "Vadelaincourt"
+    },
+    {
+      "start": "19171201",
+      "end": "19180201",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19180201",
+      "end": "",
+      "airfield": "Arcy Sainte Restitue"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 17.json"
+  }
+}

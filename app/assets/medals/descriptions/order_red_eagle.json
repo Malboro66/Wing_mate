@@ -1,0 +1,92 @@
+{
+  "id": "ordem_aguia_vermelha",
+  "nome": "Ordem da Águia Vermelha",
+  "nomeOriginal": "Roter Adlerorden",
+  "resumo": "Uma ordem de cavalaria do Reino da Prússia, concedida a pessoal militar e civil para reconhecer bravura em combate, excelência na liderança militar, longo e fiel serviço ao reino ou outras realizações. Era a segunda mais alta condecoração do reino.",
+  "historia": {
+    "predecessora": {
+      "nome": "Ordre de la Sincérité",
+      "fundacao": "17 de novembro de 1705",
+      "fundador": "Marquês Georg Wilhelm de Brandenburg-Bayreuth",
+      "evolucao": "Caiu em desuso, foi revivida em 1712 e 1734, quando recebeu o nome de 'Ordem da Águia Vermelha de Brandemburgo'. Em 1777, os estatutos foram alterados e a ordem foi nomeada 'Ordem da Águia Vermelha'."
+    },
+    "adocaoPrussiana": {
+      "data": "12 de junho de 1792",
+      "reinante": "Rei Frederico Guilherme II",
+      "contexto": "Após a Prússia absorver Brandemburgo-Bayreuth e Brandemburgo-Ansbach, a ordem foi revivida como uma ordem real prussiana, tornando-se a segunda mais alta em precedência, atrás apenas da Ordem da Águia Negra."
+    },
+    "revisoes": [
+      {
+        "ano": 1810,
+        "detalhes": "Rei Frederico Guilherme III revisou os estatutos, expandindo a ordem para três classes."
+      },
+      {
+        "ano": 1830,
+        "detalhes": "Uma estrela peito foi autorizada para a Segunda Classe, e a 'Condecoração Geral de Honra de Primeira Classe' tornou-se a Quarta Classe da ordem."
+      },
+      {
+        "ano": 1861,
+        "detalhes": "Uma Grã-Cruz foi estabelecida como a classe mais alta. Membros da Ordem da Águia Negra passaram a ser automaticamente investidos com a nova Grã-Cruz."
+      }
+    ],
+    "fimDaMonarquia": "Após a abdicação do Kaiser em 1919, todas as ordens formais cessaram, mas os recipientes continuaram a usar a condecoração nas eras subsequentes."
+  },
+  "classes": [
+    {
+      "nome": "Grã-Cruz",
+      "nomeOriginal": "Großkreuz",
+      "descricao": "Distintivo de cruz de Malta esmaltada em branco, usado em um colar em ocasiões cerimoniais ou com uma faixa no ombro direito; incluía uma estrela peito dourada de oito pontas. Geralmente concedida a membros da família real, nobres e monarquias estrangeiras."
+    },
+    {
+      "nome": "1ª Classe",
+      "nomeOriginal": "1. Klasse",
+      "descricao": "Distintivo de cruz pátea esmaltada e oversized, usado com uma faixa no ombro direito, mais uma estrela peito prateada de oito pontas. Disponível para generais, alta nobreza e chefes de Estado estrangeiros."
+    },
+    {
+      "nome": "2ª Classe",
+      "nomeOriginal": "2. Klasse",
+      "descricao": "Distintivo de cruz pátea esmaltada usado em uma fita no pescoço, mais uma estrela peito prateada de quatro pontas. Disponível para generais e nobreza."
+    },
+    {
+      "nome": "3ª Classe",
+      "nomeOriginal": "3. Klasse",
+      "descricao": "Distintivo de cruz pátea esmaltada usado em uma fita no lado esquerdo do peito. Disponível para oficiais de patente de campo e nobreza menor."
+    },
+    {
+      "nome": "4ª Classe",
+      "nomeOriginal": "4. Klasse",
+      "descricao": "Distintivo de cruz pátea não esmaltada, usado em uma fita no lado esquerdo do peito. Disponível para oficiais de companhia."
+    },
+    {
+      "nome": "Medalha",
+      "nomeOriginal": "Medaille",
+      "descricao": "Medalha redonda dourada usada em uma fita no lado esquerdo do peito. Disponível para soldados."
+    }
+  ],
+  "distincoesEspeciais": {
+    "espadas": "Todas as classes, exceto a Medalha, podiam ser concedidas com espadas para distinção em tempo de guerra.",
+    "espadasNoAnel": "Indicava que o receptor daquela classe sem espadas já havia recebido uma classe inferior com espadas.",
+    "coroa": "Todas as classes podiam ser concedidas 'com coroa' como uma distinção adicional.",
+    "folhasDeCarvalhoEDiamantes": "A Grã-Cruz, 1ª e 2ª Classe podiam ser concedidas com folhas de carvalho (indicando recebimento prévio da classe inferior) e/ou com diamantes, como uma distinção especial.",
+    "batoesDeMarechalCruzados": "A Grã-Cruz foi concedida pelo menos uma vez com batiões de marechal cruzados (para Paul von Hindenburg).",
+    "laco": "A 3ª Classe podia ser concedida com um laço (Schleife), indicando recebimento prévio da 4ª Classe.",
+    "numeroJubileu": "Por 50 anos de serviço, um medalhão com o número '50' era adicionado ao anel de suspensão."
+  },
+  "insignia": {
+    "distintivo": {
+      "graoCruz": "Cruz de Malta dourada esmaltada em branco, com águias vermelhas esmaltadas entre os braços. O disco central tinha o monarca real e o lema 'Sincere et Constanter'.",
+      "primeiraATerceiraClasse": "Cruz pátea dourada esmaltada em branco. O disco central tinha a águia vermelha no anverso e o monograma real no reverso.",
+      "quartaClasse": "Semelhante às classes superiores, mas com braços de prata lisos e sem esmalte (após 1879, com textura granulada).",
+      "medalha": "Design redondo e simples, com a coroa prussiana no topo e uma representação do distintivo regular no centro."
+    },
+    "estrelaPeito": {
+      "graoCruz": "Estrela dourada de oito pontas.",
+      "primeiraClasse": "Estrela prateada de oito pontas.",
+      "segundaClasse": "Estrela prateada de quatro pontas com uma cruz pátea esmaltada em branco no centro."
+    },
+    "fita": {
+      "tradicional": "Branca com duas listras laranja nas bordas.",
+      "combate": "Frequentemente conferida com uma fita preta e branca, semelhante à da Cruz de Ferro."
+    }
+  }
+}

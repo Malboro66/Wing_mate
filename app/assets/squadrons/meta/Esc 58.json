@@ -1,0 +1,72 @@
+{
+  "squadronId": "Esc 58",
+  "squadronName": "Esc 58",
+  "country": "FRANCE",
+  "history": "A Escadrille 58 foi uma esquadrilha francesa de observação e reconhecimento que, durante a Primeira Guerra, evoluiu por MF 58, F 58, AR 58 e, por fim, SAL 58, operando com Farman, Dorand AR e Salmson 2A2 em missões de regulação de tiro, ligação e fotografia aérea até o Armistício de 1918. A página dedicada reúne insígnias pintadas e metálicas, histórico, lista de comandantes, períodos de estacionamentos, aeronaves utilizadas e registros fotográficos do pessoal e dos aparelhos empregados pela unidade.​\nIdentificação e formação\nDesignação original: Escadrille MF 58 (MF para Maurice Farman).​\nDesignações intermediárias: F 58 (Farman) e AR 58 (Dorand AR).​\nDesignação final: SAL 58 (Salmson A2).​\nPaís: França.​\nData e contexto de criação: Escalão rolante formado em Lyon em 20 de maio, com administração no Parc n.º 10 (D.A.L.) e deslocamento para Villers‑lès‑Nancy, evidenciando organização para observação/regulação e a prática francesa de redesignar pela aeronave principal em serviço.​\nHistória operacional\n1915: Organização logística em Lyon e instalação na zona de Nancy; documentação de presença no campo de Saint‑Clément confirma o início das atividades no teatro oriental francês.​\n1916–1917: Missões de observação, regulação de artilharia e fotografia aérea, com transição para Dorand AR 1 e registros de “Périodes de stationnements” e “Rattachements” na página.​\n1918 e Armistício: Consolidação como SAL 58 com Salmson 2A2, mantendo o perfil de reconhecimento até novembro de 1918, com quadros de “Relevés quantitatifs” e “Photos aériennes prises” preservados.​\nEstatísticas e desempenho\nRegistros de perdas: A página lista mortos em vermelho e feridos/ilesos em amarelo, sem síntese numérica única consolidada.​\nPerfil operacional: Prioridade a observação, regulação de tiro, ligação e fotografia aérea, em apoio direto às grandes unidades do Exército.​\nDocumentação: Insígnias, numeração de aparelhos e quadros operacionais compõem o dossiê visual e textual da unidade.​\nComandantes\nA relação de chefes inclui, entre outros, o Capitaine Arthur Noé e o Lieutenant Pierre Vergé, com movimentações e datas detalhadas nas listagens específicas.​\nA sequência completa de comando e os períodos correspondentes estão organizada em “Commandants” na página da escadrilha.​\nPessoal notável\nA iconografia destaca o Adj Léon Chevallier, o Cne Paul Perdreau e o Slt Théophile Gallon, além de uma foto de grupo do pessoal da F 58, preservando a memória da unidade.​\nAs seções “Les Hommes” e “Documents en rapport” reúnem retratos, documentos e contribuições de acervos familiares e institucionais.​\nAeronaves utilizadas\nFarman (MF/F 58) nas fases iniciais, típicos de observação e ligação.​\nDorand AR 1 (AR 58) no ciclo de 1917, voltado a reconhecimento A2.​\nSalmson 2A2 (SAL 58) em 1918, consolidando a capacidade de reconhecimento fotográfico.​\nInsígnia e tradição\nInsígnias: A página apresenta insígnias pintadas, metálicas e variações por período, com referências às cores dos aviões e aos fanions de unidade.​\nLegado: A estrutura de “Appellations successives”, “Stationnements”, “Rattachements” e “Monuments commémoratifs” preserva a tradição e a memória institucional da Escadrille 58.​",
+  "emblemImage": "squadrons\\images\\Esc 58.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160201",
+      "airfield": "Givry en Argonne"
+    },
+    {
+      "start": "19160201",
+      "end": "19160301",
+      "airfield": "Grivesnes"
+    },
+    {
+      "start": "19160301",
+      "end": "19160601",
+      "airfield": "Saconin Breuil"
+    },
+    {
+      "start": "19160601",
+      "end": "19161101",
+      "airfield": "Allonville"
+    },
+    {
+      "start": "19161101",
+      "end": "19170201",
+      "airfield": "Ravenel"
+    },
+    {
+      "start": "19170201",
+      "end": "19170401",
+      "airfield": "Givry en Argonne"
+    },
+    {
+      "start": "19170401",
+      "end": "19170801",
+      "airfield": "Ferme de Rosnay"
+    },
+    {
+      "start": "19170801",
+      "end": "19170901",
+      "airfield": "La Noblette"
+    },
+    {
+      "start": "19170901",
+      "end": "19171201",
+      "airfield": "Ferme de Corbeaulieu"
+    },
+    {
+      "start": "19171201",
+      "end": "19180201",
+      "airfield": "Villers Bretonneu 2"
+    },
+    {
+      "start": "19180201",
+      "end": "19181101",
+      "airfield": "Ferme de Corbeaulieu"
+    },
+    {
+      "start": "19181101",
+      "end": "",
+      "airfield": "Bouleuse"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 58.json"
+  }
+}

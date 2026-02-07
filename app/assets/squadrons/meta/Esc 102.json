@@ -1,0 +1,32 @@
+{
+  "squadronId": "Esc 102",
+  "squadronName": "Esc 102",
+  "country": "FRANCE",
+  "history": "A Escadrille 102 foi uma esquadrilha de observação e, mais tarde, uma esquadrilha de caça francesa durante a Primeira Guerra Mundial. É mais famosa por ter feito parte do Groupe de Combat 12 (GC 12), conhecido como os \"Cigognes\" (Cegonhas), um dos grupos de caça mais prestigiosos e bem-sucedidos da guerra, ao lado de outras unidades lendárias como a SPA 3, SPA 26 e SPA 103.\nIdentificação e Formação\nDesignação Original: Escadrille C 102 (C para Corps d'Observation - Observação)\nDesignação Final: Escadrille SPA 102 (SPA para SPAD)\nPaís: França\nData de Criação: 1 de agosto de 1916\nContexto de Formação: Inicialmente formada como uma unidade de observação equipada com aviões Caudron G.4.\nHistória Operacional\nPrimeiros Meses (1916): Atuou como esquadrilha de observação na Frente de Verdun, sendo transferida para várias frentes (2ª, 6ª e 1ª Exércitos).\nTransição para Caça (Janeiro de 1917): Foi convertida em uma esquadrilha de caça, redesignada N 102 (N para Nieuport) e equipada com caças Nieuport.\nEntrada para as \"Cegonhas\" (1917): Juntou-se ao Groupe de Combat 12 (GC 12) \"Les Cigognes\", a elite da aviação de caça francesa.\nReequipamento (1918): Em março de 1918, recebeu caças SPAD e foi redesignada SPA 102, mantendo essa designação até o final da guerra.\nEstatísticas e Desempenho\nVitórias Confirmadas: 68 vitórias aéreas homologuadas.\nPerdas:\nMortos em combate: 5 pilotos\nFeridos em combate: 4 pilotos\nFeitos prisioneiros: 1 piloto\nComandantes (Chefs d'escadrille)\nA esquadrilha foi comandada por vários oficiais, incluindo:\nCapitaine de Wavrin\nCapitaine de Marolles\nCapitaine de la Tour\nCapitaine d'Olizy\nCapitaine de Marmier (também um ás com 10 vitórias)\nPilotos Notáveis\nA esquadrilha teve vários ases em suas fileiras, incluindo:\nCapitaine de Marmier (ás com 10 vitórias)\nLieutenant de la Tour\nSous-lieutenant Jean Dorme (um dos ases mais famosos da França, embora sua principal unidade tenha sido a SPA 94, ele voou com o GC 12)\nAdjudant Gilbert\nAeronaves Utilizadas\nCaudron G.4 (observação)\nNieuport 11, 17, 24 (caça)\nSPAD S.VII, S.XIII (caça)\nInsígnia e Marcas\nA insígnia da esquadrilha era uma cegonha em voo, vista de frente, que era o símbolo do GC 12 \"Les Cigognes\". As aeronaves frequentemente tinham a fuselagem pintada na cor vermelha característica do grupo.",
+  "emblemImage": "squadrons\\images\\Esc 102.jpg",
+  "airfields": [
+    {
+      "start": "19160601",
+      "end": "19170601",
+      "airfield": "Sainte Menehould"
+    },
+    {
+      "start": "19170601",
+      "end": "19171101",
+      "airfield": "Bonne Maison"
+    },
+    {
+      "start": "19171101",
+      "end": "19180901",
+      "airfield": "Julvecourt"
+    },
+    {
+      "start": "19180901",
+      "end": "",
+      "airfield": "Chalons sur Vesle"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 102.json"
+  }
+}

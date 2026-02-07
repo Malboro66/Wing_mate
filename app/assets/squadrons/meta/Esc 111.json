@@ -1,0 +1,82 @@
+{
+  "squadronId": "Esc 111",
+  "squadronName": "Esc 111",
+  "country": "FRANCE",
+  "history": "A Escadrille 111 foi uma esquadrilha de bombardeio da Aeronáutica Militar Francesa na Primeira Guerra Mundial, documentada com insígnias, listas de pessoal, comandantes, tipos de aeronaves e campanhas em uma página dedicada com seções detalhadas de tradição e operações. A unidade passou por sucessivas designações (VB, VC, SOP e BR), operou “avions canon” nas Seções 8 e 9, integrou o GB 6 e deixou registros fotográficos, monumentos e referências a condecorações e citações coletivas.​\nIdentificação e Formação\nDesignação Original: Escadrille VB 111 (VB para Voisin).​\nDesignação Intermediária: Escadrille VC 111 (Voisin‑Canon).​\nDesignação Intermediária: Escadrille SOP 111 (Sopwith 1B1).​\nDesignação Final: Escadrille BR 111 (Breguet 14B2).​\nPaís: França.​\nData de Criação: não explicitada no excerto; ver seção “Appellations successives” na página.​\nContexto de Formação: Unidade de bombardeio diurno da Aeronáutica Militar, sujeita às redesignações francesas por tipo de aeronave.​\nHistória Operacional\nFase inicial: Bombardeio diurno com Voisin, inclusive emprego de “avions canon” nas Seções 8 e 9, conforme seções dedicadas na página.​\nReequipamentos: Transição por Sopwith 1B1 e posterior adoção do Breguet 14B2, com padronizações de marcas e registros fotográficos das aeronaves.​\nVínculos e ações: Insígnias das escadrilhas do GB 6, “Batailles et missions importantes” e “Photos aériennes prises” documentam a atuação no conflito.​\nArmistício: A página cobre a trajetória da unidade no período 1914–1918, com listagem de estações, mapas e ramos de subordinação.​\nEstatísticas e Desempenho\nRegistros de perdas: “Morts em rouge / Blessés et indemnes en jaune” indica a lista por cor, sem síntese numérica única.​\nFoco operacional: Bombardeio diurno, emprego de avião‑canhão e execução de missões com registro fotográfico aéreo.​\nReconhecimentos: Seções de “Décorations” e “Les citations collectives” consolidam honrarias e menções.​\nComandantes (Chefs d’escadrille)\nA página lista os sucessivos comandantes na seção “Commandants de l’escadrille”, com o respectivo período de comando.​\nPessoal Notável\nA seção “Les hommes” reúne nomes, perfis e fotos (ex.: “Photo du Sgt Albert Puel”) e integra contribuições de arquivos familiares e institucionais, incluindo o Imperial War Museum.​\nAeronaves Utilizadas\nVoisin (VB) – bombardeio diurno na fase inicial.​\nVoisin‑Canon (VC) – emprego nas Seções d’avions canon 8 et 9.​\nSopwith 1B1 (SOP) – fase intermediária de reequipamento.​\nBreguet 14B2 (BR) – bombardeio diurno na fase final.​\nInsígnia e Tradição\nInsígnias: “Insignes de l’escadrille 111” e “Insignes métalliques” registram a heráldica da unidade.​\nMarcas e cores: Seções “Couleurs des avions” e “Insignes des escadrilles affectées au GB 6” documentam a padronização no grupo.​\nLegado: “Unités détentrices des traditions” e “Monuments commémoratifs” preservam a memória e a continuidade histórica da Escadrille 111.​",
+  "emblemImage": "squadrons\\images\\Esc 111.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160301",
+      "airfield": "Gengoult"
+    },
+    {
+      "start": "19160301",
+      "end": "19160601",
+      "airfield": "Beauze sur Aire"
+    },
+    {
+      "start": "19160601",
+      "end": "19161201",
+      "airfield": "Rembercourt"
+    },
+    {
+      "start": "19161201",
+      "end": "19170101",
+      "airfield": "Froides"
+    },
+    {
+      "start": "19170101",
+      "end": "19170201",
+      "airfield": "Quinquempoix"
+    },
+    {
+      "start": "19170201",
+      "end": "19170401",
+      "airfield": "Lhery"
+    },
+    {
+      "start": "19170401",
+      "end": "19170601",
+      "airfield": "Somme Vesle"
+    },
+    {
+      "start": "19170601",
+      "end": "19170901",
+      "airfield": "Froides"
+    },
+    {
+      "start": "19170901",
+      "end": "19180101",
+      "airfield": "Belrain"
+    },
+    {
+      "start": "19180101",
+      "end": "19180201",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19180201",
+      "end": "19180301",
+      "airfield": "Vauxcere"
+    },
+    {
+      "start": "19180301",
+      "end": "19180701",
+      "airfield": "Saint Just"
+    },
+    {
+      "start": "19180701",
+      "end": "19181001",
+      "airfield": "Fouquerolles"
+    },
+    {
+      "start": "19181001",
+      "end": "",
+      "airfield": "Beaucourt"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 111.json"
+  }
+}

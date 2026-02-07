@@ -1,0 +1,175 @@
+{
+  "_comment": "V2 - Estrutura JSON otimizada para normalização, consistência e escalabilidade. O campo 'history' foi desmembrado em dados estruturados para melhor processamento.",
+  "squadronInfo": {
+    "id": "esc_3_france",
+    "name": "Escadrille 3",
+    "countryIsoCode": "FRA"
+  },
+  "history": {
+    "summary": "A Escadrille 3 foi uma esquadrilha de caça da Aeronáutica Militar Francesa, criada em 1912. Tornou-se o núcleo das 'Cigognes' do GC 12, celebrizada por ases como Guynemer, Dorme, Heurtaux e Deullin. Seu estandarte ostenta a Croix de guerre 1914–1918 com quatro palmas e a fourragère, um testemunho de seu excepcional desempenho em combate.",
+    "formation": {
+      "date": "1912",
+      "context": "Constituída no pré-guerra e orientada ao combate aéreo, ingressou no Groupe de Chasse 12 no fim de 1916 como 'Les Cigognes', com a cegonha como insígnia coletiva do grupo."
+    },
+    "designations": [
+      {
+        "name": "Escadrille BL 3",
+        "period": "1912 onwards"
+      },
+      {
+        "name": "Escadrille MS 3"
+      },
+      {
+        "name": "Escadrille N 3"
+      },
+      {
+        "name": "Escadrille SPA 3"
+      }
+    ],
+    "notableEvents": [
+      {
+        "date": "1916",
+        "description": "Destacamento experiente parte para Vadelaincourt e combate sobre Verdun, marcando a virada para a supremacia aérea com Nieuport e, depois, SPAD."
+      },
+      {
+        "date": "1917",
+        "description": "Integrada ao GC 12, opera na Aisne e na Lorena, com grandes concentrações aéreas na ofensiva do Chemin des Dames."
+      },
+      {
+        "date": "1918",
+        "description": "Atua nas batalhas do Matz, na contra-ofensiva de Champagne e nas ofensivas finais na Argonne até o Armistício."
+      }
+    ]
+  },
+  "keyPersonnel": [
+    {
+      "name": "Capitaine Antonin Brocard",
+      "roles": ["Commander"],
+      "details": "Comandante até novembro de 1916."
+    },
+    {
+      "name": "Capitaine Alfred Heurtaux",
+      "roles": ["Commander", "Notable Pilot"],
+      "details": "Sucedendo Brocard como comandante."
+    },
+    {
+      "name": "Capitaine Bellenger",
+      "roles": ["Commander"],
+      "details": "Comandante no pré-guerra."
+    },
+    {
+      "name": "Georges Guynemer",
+      "roles": ["Notable Pilot"]
+    },
+    {
+      "name": "René Fonck",
+      "roles": ["Notable Pilot"]
+    },
+    {
+      "name": "René Dorme",
+      "roles": ["Notable Pilot"]
+    },
+    {
+      "name": "Albert Deullin",
+      "roles": ["Notable Pilot"]
+    },
+    {
+      "name": "Mathieu Tenant de La Tour",
+      "roles": ["Notable Pilot"]
+    },
+    {
+      "name": "Joseph-Henri Guiguet",
+      "roles": ["Notable Pilot"]
+    }
+  ],
+  "statistics": {
+    "victories": {
+      "confirmed": 175,
+      "probable": 160
+    },
+    "recognitions": {
+      "croixDeGuerre1914_1918": {
+        "award": "Croix de guerre 1914–1918",
+        "device": "Quatro palmas (fourragère)"
+      }
+    }
+  },
+  "equipment": {
+    "aircraftUsed": [
+      "Blériot XI-2",
+      "Morane-Saulnier (Parasol)",
+      "Nieuport 10",
+      "Nieuport 11",
+      "Nieuport Bébé",
+      "SPAD VII",
+      "SPAD XIII"
+    ],
+    "markings": {
+      "insignia": "Cegonha ('Cigogne')",
+      "description": "Símbolo adotado pelo GC 12 e perpetuado como 'Cigogne de Guynemer' na SPA 3."
+    }
+  },
+  "media": {
+    "emblemImagePath": "squadrons/images/Esc 3.jpg"
+  },
+  "deploymentHistory": [
+    {
+      "airfieldId": "sainte_menehould",
+      "startDate": "1916-01-01",
+      "endDate": "1916-03-01"
+    },
+    {
+      "airfieldId": "souilly",
+      "startDate": "1916-03-01",
+      "endDate": "1916-06-01"
+    },
+    {
+      "airfieldId": "villers_bretonneux",
+      "startDate": "1916-06-01",
+      "endDate": "1917-02-01"
+    },
+    {
+      "airfieldId": "brabant_en_argonne",
+      "startDate": "1917-02-01",
+      "endDate": "1917-04-01"
+    },
+    {
+      "airfieldId": "villers_bretonneux",
+      "startDate": "1917-04-01",
+      "endDate": "1917-07-01"
+    },
+    {
+      "airfieldId": "beaucourt",
+      "startDate": "1917-07-01",
+      "endDate": "1917-12-01"
+    },
+    {
+      "airfieldId": "ferme_de_corbeaulieu",
+      "startDate": "1917-12-01",
+      "endDate": "1918-01-01"
+    },
+    {
+      "airfieldId": "ancemont",
+      "startDate": "1918-01-01",
+      "endDate": "1918-03-01"
+    },
+    {
+      "airfieldId": "vauxcere",
+      "startDate": "1918-03-01",
+      "endDate": "1918-04-01"
+    },
+    {
+      "airfieldId": "esquennoy",
+      "startDate": "1918-04-01",
+      "endDate": "1918-10-01"
+    },
+    {
+      "airfieldId": "champien",
+      "startDate": "1918-10-01"
+    }
+  ],
+  "source": {
+    "pwcgSquadronFile": "pwcg_files/Esc 3.json",
+    "comment": "Caminho absoluto original alterado para um caminho relativo para portabilidade."
+  }
+}

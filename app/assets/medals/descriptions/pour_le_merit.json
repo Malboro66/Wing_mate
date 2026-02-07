@@ -1,0 +1,81 @@
+{
+  "id": "ordem_pour_le_merite",
+  "nome": "Ordem Pour le Mérite",
+  "nomeOriginal": "Pour le Mérite",
+  "apelido": "Blue Max",
+  "resumo": "Famosa ordem prussiana de mérito, a mais alta condecoração militar por bravura e um grande reconhecimento civil. Conhecida como 'Blue Max' durante a Primeira Guerra Mundial.",
+  "historia": {
+    "fundacao": {
+      "data": "1740",
+      "fundador": "Rei Frederico II da Prússia",
+      "contexto": "Nomeada em francês, a língua principal da época e favorita na corte de Frederico. O nome foi mantido apesar do nacionalismo crescente."
+    },
+    "evolucao": [
+      {
+        "ano": 1810,
+        "detalhes": "A ordem foi dividida em classes militares e civis."
+      },
+      {
+        "ano": 1842,
+        "detalhes": "Uma classe civil para méritos em ciências, humanidades e artes foi estabelecida pelo Rei Frederico Guilherme IV."
+      },
+      {
+        "ano": 1923,
+        "detalhes": "A classe civil foi revivida como uma organização independente (Pour le Mérite für Wissenschaften und Künste), com o Presidente da Alemanha como chefe da ordem."
+      },
+      {
+        "ano": 1952,
+        "detalhes": "Após a Segunda Guerra Mundial, a classe civil foi restabelecida e é esta manifestação que permanece ativa."
+      }
+    ],
+    "fimDaOrdemMilitar": {
+      "data": "9 de novembro de 1918",
+      "motivo": "Abdicação do Kaiser Guilherme II como Rei da Prússia e Imperador Alemão, marcando o fim da monarquia prussiana.",
+      "ultimoReceptorVivo": "O autor alemão Ernst Jünger, que morreu em 1998, foi o último receptor vivo da classe militar."
+    }
+  },
+  "classes": {
+    "militar": {
+      "status": "Extinta",
+      "descricao": "Era a mais alta ordem de bravura para oficiais de todas as patentes, concedida como reconhecimento de realização pessoal extraordinária."
+    },
+    "civil": {
+      "status": "Ativa",
+      "descricao": "Concedida por realizações extraordinárias em ciências, humanidades e artes. Continua sendo concedida pelo estado alemão sob a supervisão do Ministro de Estado da Cultura e a critério do Presidente Federal."
+    }
+  },
+  "insignia": {
+    "descricao": "Uma cruz de Malta esmaltada de azul com águias douradas entre os braços (baseada no símbolo da Ordem Johanniter).",
+    "detalhes": "O corpo da cruz continha o cifrão real prussiano e as palavras 'Pour le Mérite' ('Por Mérito' em francês) em letras douradas.",
+    "fita": "Preta com listras de prata-branco nas bordas."
+  },
+  "destaqueNaPrimeiraGuerra": {
+    "fama": "Ganhou fama internacional durante a Primeira Guerra Mundial, especialmente entre os pilotos do Serviço Aéreo do Exército Alemão (Luftstreitkräfte).",
+    "criteriosPilotos": {
+      "inicial": "Um piloto de caça tinha direito à condecoração ao abater oito aeronaves inimigas.",
+      "evolucao": "O número de vitórias aéreas necessário continuou a aumentar durante a guerra; no início de 1917, exigia geralmente 16-20 aeronaves, e no final do conflito, a cifra aproximada era de 30."
+    },
+    "receptoresNotaveis": [
+      {
+        "nome": "Max Immelmann",
+        "contexto": "Um dos primeiros aviadores a recebê-la, em 12 de janeiro de 1916."
+      },
+      {
+        "nome": "Oswald Boelcke",
+        "contexto": "Um dos primeiros aviadores a recebê-la, em 12 de janeiro de 1916."
+      },
+      {
+        "nome": "Manfred von Richthofen",
+        "contexto": "O ás com maior pontuação da Alemanha, recebeu-a em janeiro de 1917."
+      }
+    ],
+    "outrosReceptores": [
+      "Comandantes de zepelim, tripulações de bombardeiro e observadores de balão.",
+      "Famosos comandantes de U-boat, como Lothar von Arnauld de la Perière (U-35), Walther Schwieger (U-20) e Otto Weddigen."
+    ],
+    "estatisticasEObservacoes": {
+      "usoObrigatorio": "Os recipientes do 'Blue Max' eram obrigados a usar a condecoração sempre que estivessem de uniforme.",
+      "distribuicaoPorPatente": "Mais de um terço de todas as condecorações na Primeira Guerra foram para generais e almirantes, frequentemente por liderança em combate. Oficiais subalternos (capitães e tenentes) representaram apenas cerca de um quarto de todas as concessões."
+    }
+  }
+}

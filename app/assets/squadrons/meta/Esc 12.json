@@ -1,0 +1,119 @@
+{
+  "_comment": "V2 - Estrutura JSON otimizada para normalização, consistência e escalabilidade. O campo 'history' foi desmembrado em dados estruturados para melhor processamento.",
+  "squadronInfo": {
+    "id": "esc_12_france",
+    "name": "Escadrille 12",
+    "countryIsoCode": "FRA"
+  },
+  "history": {
+    "summary": "A Escadrille SPA 12 foi uma esquadrilha de caça da Aeronáutica Militar Francesa na Primeira Guerra Mundial. Documentada com um rico acervo fotográfico e testemunhal, a unidade evoluiu de caças Nieuport para SPAD, participando de missões de combate aéreo, escolta e reconhecimento.",
+    "formation": {
+      "context": "Unidade de caça com evolução de material e tradição heráldica registradas em seções de insígnias, cores e unidades detentoras da tradição."
+    },
+    "designations": [
+      {
+        "name": "Escadrille N 12",
+        "period": "Fase com Nieuport"
+      },
+      {
+        "name": "Escadrille SPA 12",
+        "period": "Fase final com SPAD"
+      }
+    ],
+    "notableEvents": [
+      {
+        "date": "1917",
+        "description": "Atuação como caça com Nieuport, com documentação fotográfica e operacional."
+      },
+      {
+        "date": "1917-1918",
+        "description": "Reequipamento e adoção do SPAD XIII, consolidando sua especialização em caça."
+      }
+    ]
+  },
+  "keyPersonnel": [
+    {
+      "name": "Slt Alexandre Bouzac",
+      "roles": ["Notable Pilot"]
+    },
+    {
+      "name": "Ltt Robert Jacottet",
+      "roles": ["Notable Pilot"]
+    },
+    {
+      "name": "Ltt Renaud Bernard",
+      "roles": ["Notable Pilot"]
+    },
+    {
+      "name": "Sous-Lieutenant Henri Languedoc",
+      "roles": ["Notable Pilot", "Ace"]
+    }
+  ],
+  "statistics": {
+    "comment": "O foco operacional era combate aéreo, escolta e intercepção. A página de referência menciona 'Relevés quantitatifs' e listas de baixas, mas não fornece um resumo numérico no texto."
+  },
+  "equipment": {
+    "aircraftUsed": [
+      "Nieuport 11",
+      "Nieuport 17",
+      "SPAD XIII"
+    ],
+    "markings": {
+      "insignia": "Insignia da Escadrille 12",
+      "description": "A unidade possuía insígnias pintadas e metálicas, com padronizações cromáticas registradas em 'Couleurs des avions'."
+    }
+  },
+  "media": {
+    "emblemImagePath": "squadrons/images/Esc 12.jpg"
+  },
+  "deploymentHistory": [
+    {
+      "airfieldId": "villers_bretonneux",
+      "startDate": "1917-01-01",
+      "endDate": "1917-02-01"
+    },
+    {
+      "airfieldId": "la_cheppe",
+      "startDate": "1917-02-01",
+      "endDate": "1917-04-01"
+    },
+    {
+      "airfieldId": "grivesnes",
+      "startDate": "1917-04-01",
+      "endDate": "1917-11-01"
+    },
+    {
+      "airfieldId": "ferme_cravancon",
+      "startDate": "1917-11-01",
+      "endDate": "1917-12-01"
+    },
+    {
+      "airfieldId": "cachy",
+      "startDate": "1917-12-01",
+      "endDate": "1918-01-01"
+    },
+    {
+      "airfieldId": "erize_la_petite",
+      "startDate": "1918-01-01",
+      "endDate": "1918-02-01"
+    },
+    {
+      "airfieldId": "brabant_en_argonne",
+      "startDate": "1918-02-01",
+      "endDate": "1918-03-01"
+    },
+    {
+      "airfieldId": "bonne_maison",
+      "startDate": "1918-03-01",
+      "endDate": "1918-09-01"
+    },
+    {
+      "airfieldId": "saizerais",
+      "startDate": "1918-09-01"
+    }
+  ],
+  "source": {
+    "pwcgSquadronFile": "pwcg_files/Esc 12.json",
+    "comment": "Caminho absoluto original alterado para um caminho relativo para portabilidade."
+  }
+}

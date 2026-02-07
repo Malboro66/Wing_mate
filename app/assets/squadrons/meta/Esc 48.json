@@ -1,0 +1,57 @@
+{
+  "squadronId": "Esc 48",
+  "squadronName": "Esc 48",
+  "country": "FRANCE",
+  "history": "A Escadrille 48 foi uma esquadrilha de caça da Aeronáutica Militar Francesa criada em 29 de março de 1915 em Villacoublay como MS 48, passando a N 48 em setembro de 1915 e a SPA 48 no início de 1918, adotando o emblema “Tête de coq” em outubro de 1916 e operando no Front Ocidental até o Armistício. Ao final da guerra somava 54 vitórias confirmadas e 48 prováveis em 9.826 horas de voo, com 11 mortos e 12 feridos, sendo o Cne Gilbert Sardier um de seus chefes em 1918, conforme acervo fotográfico e registros de comando.​\nIdentificação e formação\nDesignação original: Escadrille MS 48 (Morane‑Saulnier), 29/03/1915, Villacoublay.​\nDesignação intermediária: Escadrille N 48 (Nieuport), setembro de 1915.​\nDesignação final: Escadrille SPA 48 (SPAD), início de 1918; rearmamento com SPAD ao fim de 1916.​\nEmblema: “Tête de coq” homologado, adotado em outubro de 1916.​\nPaís: França.​\nHistória operacional\n1915–1916: Conversão de Morane L para Nieuport, intensificando missões de caça e escolta em diversos setores do Front Ocidental.​\n1917: Continuidade das operações de supremacia aérea com Nieuport e início da transição para SPAD no fim de 1916/princípio de 1917.​\n1918: Fase SPA 48 estabilizada; liderança alternando entre Lt Thobie (fev.) e Lt/Cne Gilbert Sardier (jul.), com elevado ritmo de vitórias até o Armistício.​\nEstatísticas e desempenho\nBalanço até 11/11/1918: 54 vitórias confirmadas e 48 prováveis em 9.826 horas de voo.​\nBaixas: 11 mortos e 12 feridos durante a campanha.​\nPerfil: Caça, escolta e intercepção com incremento de performance após a adoção do SPAD.​\nComandantes\nCne Paul du Peuty (29/03/1915).​\nCne François de Thonel d’Orgeix (05/09/1915).​\nCne Jean G. F. Matton (08/10/1916), KIA 10/09/1917.​\nCne Jacques Sabattier de Vignolle (12/09/1917).​\nLt Jean‑Marie Thobie (13/02/1918).​\nLt/Cne Gilbert Sardier (23/07/1918).​\nPessoal notável\nGilbert Sardier, chefe da unidade em 1918, associado a SPAD XIII “1” em registros fotográficos de Albin Denis.​\nO quadro de ases e veteranos é detalhado em compilações especializadas com seções de “Victoires et pertes” e retratos.​\nAeronaves utilizadas\nMorane‑Saulnier L e variantes (fase MS 48).​\nNieuport (fase N 48, a partir de 09/1915).​\nSPAD VII/XIII (fase SPA 48; rearmamento a partir do fim de 1916 e redesignação em 1918).​\nInsígnia e tradição\n“Tête de coq” (A‑1040), adotado em outubro de 1916 e preservado na linhagem de tradições da unidade.​\nA SPA 48 foi mantida em diferentes esquadrões no pós‑guerra (ex.: GC I/1 e “Argonne”), encontrando‑se em sono operacional desde 27/05/2021 nas listagens de tradição.",
+  "emblemImage": "squadrons\\images\\Esc 48.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160301",
+      "airfield": "Ferme de Alger"
+    },
+    {
+      "start": "19160301",
+      "end": "19170201",
+      "airfield": "Lemmes"
+    },
+    {
+      "start": "19170201",
+      "end": "19170301",
+      "airfield": "Ferme de Corbeaulieu"
+    },
+    {
+      "start": "19170301",
+      "end": "19170401",
+      "airfield": "Montgobert"
+    },
+    {
+      "start": "19170401",
+      "end": "19170901",
+      "airfield": "Muizon"
+    },
+    {
+      "start": "19170901",
+      "end": "19171101",
+      "airfield": "Maizy"
+    },
+    {
+      "start": "19171101",
+      "end": "19171201",
+      "airfield": "Chalons sur Vesle"
+    },
+    {
+      "start": "19171201",
+      "end": "19180101",
+      "airfield": "Ferme de Rosnay"
+    },
+    {
+      "start": "19180101",
+      "end": "",
+      "airfield": "La Cheppe"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 48.json"
+  }
+}

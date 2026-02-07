@@ -1,0 +1,67 @@
+{
+  "squadronId": "Esc 45",
+  "squadronName": "Esc 45",
+  "country": "FRANCE",
+  "history": "A Escadrille 45 foi uma esquadrilha francesa de reconhecimento/bombardeio que evoluiu por MF 45, F 45, AR 45 e, em 1918, BR 45 com Breguet 14, encerrando a guerra com 2 vitórias homologadas e perdas de 10 mortos em combate, 2 pela DCA e 3 por acidente. Sua trajetória e tradições estão documentadas em repositórios especializados de escadrilhas francesas 1914–1918 e em listagens oficiais de tradições da Armée de l’Air.​\nIdentificação e Formação\nDesignação original: MF 45 (Farman) e, em seguida, F 45, refletindo a linhagem Farman inicial da unidade.​\nDesignação intermediária: AR 45 (Dorand AR), acompanhando o reequipamento para missões de observação e ligação.​\nDesignação final: BR 45 (Breguet 14), adotada em 1918 com a entrada em serviço do Breguet A2/B2 na unidade.​\nPaís: França; pertencente à Aeronáutica Militar na Primeira Guerra Mundial.​\nData de criação: não explicitada no excerto consultado; indicada nas seções históricas da unidade nas páginas dedicadas.​\nHistória Operacional\n1915–1917: Emprego em reconhecimento, regulação de tiro e fotografia aérea com Farman e depois Dorand AR, conforme a prática de redesignar pelo tipo principal em serviço.​\n1918: Transição para Breguet 14 e consolidação como BR 45, mantendo perfil A2/B2 em apoio às grandes unidades do Exército até o Armistício.​\nPós‑guerra: A tradição da BR 45 foi oficialmente atribuída em 1933 à 1ª escadrille do 2e GAA, embora o pessoal não tenha retido o insigne à época, registrando o legado administrativo da unidade.​\nEstatísticas e Desempenho\nBalanço final: 2 vitórias aéreas homologadas até 11/11/1918, indicador de foco em missões táticas e não em combate ar‑ar sistemático.​\nPerdas: 10 mortos em combate, 2 abatidos pela DCA e 3 mortos em acidente, conforme síntese do histórico da BR 45.​\nRegistros: Detalhes de “Victoires et pertes”, efetivos e estacionamentos constam na página temática da MF/F/AR/BR 45.​\nComandantes\nA relação de chefes de esquadrilha e períodos de comando é apresentada nas páginas históricas dedicadas à unidade.​\nEssas listagens permitem relacionar mudanças de chefia com fases de reequipamento e deslocamentos operacionais.​\nPessoal notável\nAs seções de “Portraits/Personnel” reúnem nomes e imagens de tripulantes, observadores e mecânicos associados às fases MF, AR e BR.​\nConjuntos fotográficos e documentos de época complementam o quadro humano da unidade durante a campanha.​\nAeronaves utilizadas\nFarman (MF/F 45) nas fases iniciais, típicos de reconhecimento e ligação em 1915–1916.​\nDorand AR (AR 45) como vetor A2 de observação em 1917.​\nBreguet 14 (BR 45) na fase final, padrão francês para A2/B2 em 1918.​\nInsígnias e tradição\nInsígnias e marcas de unidade são referenciadas nas páginas de tradição e nos sumários de escadrilhas por número.​\nA afiliação de tradições em 1933 à 1ª escadrille do 2e GAA evidencia a continuidade administrativa e heraldizada da BR 45 no entre‑guerras.",
+  "emblemImage": "squadrons\\images\\Esc 45.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160801",
+      "airfield": "Senard en Argonne"
+    },
+    {
+      "start": "19160801",
+      "end": "19170301",
+      "airfield": "Arcy Sainte Restitue"
+    },
+    {
+      "start": "19170301",
+      "end": "19170401",
+      "airfield": "Grivesnes"
+    },
+    {
+      "start": "19170401",
+      "end": "19170501",
+      "airfield": "Allonville"
+    },
+    {
+      "start": "19170501",
+      "end": "19170601",
+      "airfield": "Grivesnes"
+    },
+    {
+      "start": "19170601",
+      "end": "19170801",
+      "airfield": "Somme Vesle"
+    },
+    {
+      "start": "19170801",
+      "end": "19170901",
+      "airfield": "Lemmes"
+    },
+    {
+      "start": "19170901",
+      "end": "19171201",
+      "airfield": "La Noblette"
+    },
+    {
+      "start": "19171201",
+      "end": "19180101",
+      "airfield": "Ville en Tardenois"
+    },
+    {
+      "start": "19180101",
+      "end": "19180901",
+      "airfield": "Somme Vesle"
+    },
+    {
+      "start": "19180901",
+      "end": "",
+      "airfield": "Gengoult"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 45.json"
+  }
+}

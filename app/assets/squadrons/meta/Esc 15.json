@@ -1,0 +1,170 @@
+{
+  "_comment": "V2 - Estrutura JSON otimizada para normalização, consistência e escalabilidade. O campo 'history' foi desmembrado em dados estruturados para melhor processamento.",
+  "squadronInfo": {
+    "id": "esc_15_france",
+    "name": "Escadrille 15",
+    "countryIsoCode": "FRA"
+  },
+  "history": {
+    "summary": "A Escadrille 15 foi uma esquadrilha de caça da Aeronáutica Militar Francesa, fundada em 22 de agosto de 1912. Uma das unidades mais antigas, evoluiu através de várias designações (REP, MS, N, SPA) e aeronaves, tornando-se uma unidade de elite do Groupe de Chasse 13, famosa por sua insígnia 'Casque de Bayard'. Participou de todas as principais ofensivas na Frente Ocidental.",
+    "formation": {
+      "date": "1912-08-22",
+      "location": "Reims, France",
+      "context": "Criada no pré-guerra como Escadrille REP 15, com redesignações sucessivas conforme o material de voo adotado."
+    },
+    "designations": [
+      {
+        "name": "Escadrille REP 15",
+        "period": "1912-08-22 onwards"
+      },
+      {
+        "name": "Escadrille MS 15",
+        "period": "From 1915-03-30"
+      },
+      {
+        "name": "Escadrille N 15",
+        "period": "1916"
+      },
+      {
+        "name": "Escadrille SPA 15",
+        "period": "1917-10-17 onwards"
+      }
+    ],
+    "notableEvents": [
+      {
+        "date": "1915-10-24",
+        "description": "Citação em ordem do dia por operações em Artois."
+      },
+      {
+        "date": "1916-06",
+        "description": "Adoção do emblema 'Casque de Bayard' sob o Capitaine Turin."
+      },
+      {
+        "date": "1917-03",
+        "description": "Integração ao Groupe de Chasse 13."
+      },
+      {
+        "date": "1918-09-10",
+        "description": "Citação coletiva do Groupe de Chasse 13, reconhecendo a eficácia da unidade."
+      }
+    ]
+  },
+  "keyPersonnel": [
+    {
+      "name": "Capitaine Turin",
+      "roles": ["Commander"],
+      "details": "Associado à escolha do emblema 'Casque de Bayard' em meados de 1916."
+    },
+    {
+      "name": "Capitaine Paul de Peuty",
+      "roles": ["Group Commander"],
+      "details": "Liderou um groupe ad hoc em Artois em 1915, que incluía a MS 15."
+    },
+    {
+      "name": "Adjudant Bernard Artigau",
+      "roles": ["Notable Pilot"],
+      "details": "Piloto notável com 12 vitórias confirmadas na Grande Guerra."
+    }
+  ],
+  "statistics": {
+    "totalVictories": 80,
+    "victoryBreakdown": {
+      "aircraft": 73,
+      "balloons": 7
+    },
+    "citations": 3
+  },
+  "equipment": {
+    "aircraftUsed": [
+      "REP K 80",
+      "Morane-Saulnier L",
+      "Nieuport 10",
+      "Nieuport 11",
+      "SPAD VII",
+      "SPAD XIII"
+    ],
+    "markings": {
+      "insignia": "Casque de Bayard",
+      "insigniaId": "A-1093",
+      "description": "Emblema distintivo da escadrille, com marcações de fuselagem e números individuais documentados em aeronaves SPAD VII/XIII."
+    }
+  },
+  "media": {
+    "emblemImagePath": "squadrons/images/Esc 15.jpg"
+  },
+  "deploymentHistory": [
+    {
+      "airfieldId": "vauxcere",
+      "startDate": "1916-01-01",
+      "endDate": "1916-03-01"
+    },
+    {
+      "airfieldId": "la_noblette",
+      "startDate": "1916-03-01",
+      "endDate": "1916-04-01"
+    },
+    {
+      "airfieldId": "lemmes",
+      "startDate": "1916-04-01",
+      "endDate": "1916-05-01"
+    },
+    {
+      "airfieldId": "grivesnes",
+      "startDate": "1916-05-01",
+      "endDate": "1916-06-01"
+    },
+    {
+      "airfieldId": "bonne_maison",
+      "startDate": "1916-06-01",
+      "endDate": "1916-09-01"
+    },
+    {
+      "airfieldId": "saconin_breuil",
+      "startDate": "1916-09-01",
+      "endDate": "1917-02-01"
+    },
+    {
+      "airfieldId": "ravenel",
+      "startDate": "1917-02-01",
+      "endDate": "1917-04-01"
+    },
+    {
+      "airfieldId": "bonne_maison",
+      "startDate": "1917-04-01",
+      "endDate": "1917-05-01"
+    },
+    {
+      "airfieldId": "bouy",
+      "startDate": "1917-05-01",
+      "endDate": "1917-07-01"
+    },
+    {
+      "airfieldId": "saconin_breuil",
+      "startDate": "1917-07-01",
+      "endDate": "1917-08-01"
+    },
+    {
+      "airfieldId": "julvecourt",
+      "startDate": "1917-08-01",
+      "endDate": "1917-09-01"
+    },
+    {
+      "airfieldId": "ferme_cravancon",
+      "startDate": "1917-09-01",
+      "endDate": "1918-09-01"
+    },
+    {
+      "airfieldId": "saconin_breuil",
+      "startDate": "1918-09-01",
+      "endDate": "1918-10-01"
+    },
+    {
+      "airfieldId": "mesnil_sw",
+      "startDate": "1918-10-01"
+    }
+  ],
+  "source": {
+    "pwcgSquadronFile": "pwcg_files/Esc 15.json",
+    "comment": "Caminho absoluto original alterado para um caminho relativo para portabilidade."
+  }
+}

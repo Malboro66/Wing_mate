@@ -1,0 +1,122 @@
+{
+  "_comment": "V2 - Estrutura JSON otimizada para normalização, consistência e escalabilidade. O campo 'history' foi desmembrado em dados estruturados para melhor processamento.",
+  "squadronInfo": {
+    "id": "esc_8_france",
+    "name": "Escadrille 8",
+    "countryIsoCode": "FRA"
+  },
+  "history": {
+    "summary": "A Escadrille 8 foi uma esquadrilha francesa de observação e reconhecimento, criada em 1912. Operou throughout the Grande Guerra, terminando o conflito como SAL 8 após a adoção de aeronaves Salmson. Sua principal função era observação, regulação de tiro, ligação e reconhecimento fotográfico para o Corpo de Exército ao qual estava subordinada.",
+    "formation": {
+      "date": "1912-12-10",
+      "location": "Nancy, France",
+      "context": "Criada no 1º Grupo de Aviação e afetada ao 11º Corpo de Exército em janeiro de 1915."
+    },
+    "designations": [
+      {
+        "name": "Initial Designation (pre-SAL)",
+        "period": "1912-12-10 onwards"
+      },
+      {
+        "name": "Escadrille SAL 8",
+        "period": "Final phase of the war"
+      }
+    ],
+    "notableEvents": [
+      {
+        "date": "1915-01",
+        "description": "Afetada ao 11º Corpo de Exército, definindo seu papel de apoio tático."
+      }
+    ]
+  },
+  "keyPersonnel": [
+    {
+      "name": "Cne Fernand Wiedemann",
+      "roles": ["Commander", "Notable Personnel"]
+    },
+    {
+      "name": "Slt Pierre de La Sudrie de Calvayrac",
+      "roles": ["Notable Personnel"]
+    }
+  ],
+  "statistics": {
+    "comment": "O texto de origem menciona a existência de 'Relevés quantitatifs' e 'Décorações', mas não fornece os dados específicos no corpo do texto. A estrutura está pronta para preencher quando os dados estiverem disponíveis."
+  },
+  "equipment": {
+    "aircraftUsed": [
+      "Salmson 2 A2"
+    ],
+    "markings": {
+      "insignia": "Insigne de l'escadrille 8",
+      "description": "A unidade possuía insígnias documentadas aplicadas aos fuselagens, incluindo um 'Insigne métallique' distintivo."
+    }
+  },
+  "media": {
+    "emblemImagePath": "squadrons/images/Esc 8.jpg"
+  },
+  "deploymentHistory": [
+    {
+      "airfieldId": "allonville",
+      "startDate": "1916-01-01",
+      "endDate": "1916-03-01"
+    },
+    {
+      "airfieldId": "bonne_maison",
+      "startDate": "1916-03-01",
+      "endDate": "1916-05-01"
+    },
+    {
+      "airfieldId": "villers_bretonneu_2",
+      "startDate": "1916-05-01",
+      "endDate": "1916-06-01"
+    },
+    {
+      "airfieldId": "vadelaincourt",
+      "startDate": "1916-06-01",
+      "endDate": "1917-02-01"
+    },
+    {
+      "airfieldId": "pretz_en_argonne",
+      "startDate": "1917-02-01",
+      "endDate": "1917-03-01"
+    },
+    {
+      "airfieldId": "saint_just",
+      "startDate": "1917-03-01",
+      "endDate": "1917-04-01"
+    },
+    {
+      "airfieldId": "vauxcere",
+      "startDate": "1917-04-01",
+      "endDate": "1917-06-01"
+    },
+    {
+      "airfieldId": "cachy",
+      "startDate": "1917-06-01",
+      "endDate": "1917-09-01"
+    },
+    {
+      "airfieldId": "mont_de_soissons",
+      "startDate": "1917-09-01",
+      "endDate": "1918-03-01"
+    },
+    {
+      "airfieldId": "vauciennes",
+      "startDate": "1918-03-01",
+      "endDate": "1918-10-01"
+    },
+    {
+      "airfieldId": "pierrefonds",
+      "startDate": "1918-10-01",
+      "endDate": "1918-11-01"
+    },
+    {
+      "airfieldId": "fouvry",
+      "startDate": "1918-11-01"
+    }
+  ],
+  "source": {
+    "pwcgSquadronFile": "pwcg_files/Esc 8.json",
+    "comment": "Caminho absoluto original alterado para um caminho relativo para portabilidade."
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "squadronId": "Esc 37",
+  "squadronName": "Esc 37",
+  "country": "FRANCE",
+  "history": "A Escadrille 37 foi uma esquadrilha de caça criada em 23 de janeiro de 1915 em Châteaufort como MS 37, redesignada N 37 em setembro de 1915 e SPA 37 em maio de 1917, conhecida pelo emblema do “Charognard” e atuação nos setores da Argonne, Champagne, Verdun, Somme e Chemin des Dames até o Armistício de 1918. Ao final da guerra, registrou 39 vitórias homologadas, recebeu uma citação à ordem do Exército e lamentou 23 mortos em combate e 3 por acidente, com passagens pelos grupos de caça GC 12 e GC 15 conforme as grandes ofensivas de 1916–1918.​\nIdentificação e Formação\nDesignação Original: Escadrille MS 37 (MS para Morane‑Saulnier).​\nDesignação Intermediária: Escadrille N 37 (N para Nieuport) em setembro de 1915.​\nDesignação Final: Escadrille SPA 37 (SPA para SPAD) em maio de 1917.​\nPaís: França.​\nData de Criação: 23 de janeiro de 1915 (Châteaufort).​\nContexto de Formação: Constituída sob a IIIe Armée para reconhecimento na Argonne e rapidamente orientada para caça com a adoção dos Nieuport.​\nHistória Operacional\n1915: Recebe Nieuport X/XII, participa da Ofensiva de Champagne e inverna em Sainte‑Menehould após Lisle‑en‑Barrois.​\n1916: Engaja‑se em Verdun, recebe Nieuport 11, integra o GC 12 em Cachy sob a VIe Armée, com perdas elevadas na Somme.​\n1917: Regressa à IIIe Armée, passa ao GC 15 em La Cheppe, equipa‑se com SPAD VII e combate na Ofensiva Nivelle (Auberive–Prosnes e Mont Cornillet), adotando o “Charognard” para singularização no grupo.​\n1918: Move‑se para Ochey em setembro e combate nas operações finais até o Armistício em novembro.​\nEstatísticas e Desempenho\nVitórias homologadas: 39 até o fim de 1918.​\nPerdas: 23 mortos em combate e 3 por acidente na campanha.​\nCitações: 1 citação à ordem do Exército pelo conjunto de operações.​\nComandantes (Chefs d’escadrille)\nCapitaine Louis Quillien no comando inicial, abatido no começo de 1916, sendo sucedido pelo Capitaine Feierstein no ciclo de transição para caça plena.​\nDemais chefias e períodos constam na página de referência da unidade.​\nPessoal Notável\nBernard Barny de Romanet integrou a escadrilha no fim de março de 1917 e obteve a primeira vitória em 3 de maio de 1917 no Chemin des Dames, sendo condecorado com a Médaille Militaire em 23 de maio.​\nO acervo reúne perfis e imagens de pilotos e mecânicos, como o Ltt Michel Marinkovitch e o Ltt Henri Dagonet, preservando a memória operacional da 37.​\nAeronaves Utilizadas\nMorane‑Saulnier L biplace (parasol) na fase MS 37.​\nNieuport X e XII, seguidos de Nieuport 11 monoplaces na fase N 37.​\nSPAD VII (e emprego subsequente de SPAD na fase SPA 37) a partir de 1917.​\nInsígnia e Tradição\nInsígnia: “Charognard” (condor) adotado para distinguir a escadrilha no GC 15, originando o apelido “escadrille des Charognards”.​\nLegado: Tradições e continuidade documentadas no pós‑guerra, com histórico consolidado até a era moderna em publicações e páginas institucionais.​",
+  "emblemImage": "squadrons\\images\\Esc 37.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160301",
+      "airfield": "Vadelaincourt"
+    },
+    {
+      "start": "19160301",
+      "end": "19170101",
+      "airfield": "Vadelaincourt"
+    },
+    {
+      "start": "19170101",
+      "end": "19170201",
+      "airfield": "Bouy"
+    },
+    {
+      "start": "19170201",
+      "end": "19170401",
+      "airfield": "Saconin Breuil"
+    },
+    {
+      "start": "19170401",
+      "end": "19170701",
+      "airfield": "La Noblette"
+    },
+    {
+      "start": "19170701",
+      "end": "19170901",
+      "airfield": "Julvecourt"
+    },
+    {
+      "start": "19170901",
+      "end": "19171001",
+      "airfield": "Muizon"
+    },
+    {
+      "start": "19171001",
+      "end": "19180201",
+      "airfield": "Brabant en Argonne"
+    },
+    {
+      "start": "19180201",
+      "end": "19180401",
+      "airfield": "Ferme Cravancon"
+    },
+    {
+      "start": "19180401",
+      "end": "19180701",
+      "airfield": "Ansauvillers"
+    },
+    {
+      "start": "19180701",
+      "end": "19181001",
+      "airfield": "Breuil le Sec"
+    },
+    {
+      "start": "19181001",
+      "end": "",
+      "airfield": "Mesnil NW"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 37.json"
+  }
+}

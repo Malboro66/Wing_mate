@@ -1,0 +1,119 @@
+{
+  "_comment": "V2 - Estrutura JSON otimizada para normalização, consistência e escalabilidade. O campo 'history' foi desmembrado em dados estruturados para melhor processamento.",
+  "squadronInfo": {
+    "id": "esc_13_france",
+    "name": "Escadrille 13",
+    "countryIsoCode": "FRA"
+  },
+  "history": {
+    "summary": "A Escadrille 13 foi uma esquadrilha de caça da Aeronáutica Militar Francesa na Primeira Guerra Mundial, identificada pelo insígnia com o número '13' em um círculo negro. A unidade evoluiu de caças Nieuport para SPAD, atuando em missões de caça, escolta e intercepção na Frente Ocidental.",
+    "formation": {
+      "context": "Unidade de caça com evolução do material (Nieuport para SPAD) e insígnia numérica característica '13' em círculo negro."
+    },
+    "designations": [
+      {
+        "name": "Escadrille N 13",
+        "period": "Fase com Nieuport"
+      },
+      {
+        "name": "Escadrille SPA 13",
+        "period": "Fase final com SPAD"
+      }
+    ],
+    "notableEvents": [
+      {
+        "date": "1914-1918",
+        "description": "Atuação na Frente Ocidental em missões de caça, escolta e intercepção."
+      },
+      {
+        "date": "1917-1918",
+        "description": "Reequipamento progressivo de Nieuport para SPAD, consolidando a designação SPA 13."
+      }
+    ]
+  },
+  "keyPersonnel": {
+    "comment": "A página lista sucessivos comandantes e pessoal notável em 'Les Hommes', mas não fornece os nomes no texto de origem."
+  },
+  "statistics": {
+    "comment": "Registos de baixas e feitos existem em quadros e listagens, mas não há uma síntese numérica única no corpo do texto."
+  },
+  "equipment": {
+    "aircraftUsed": [
+      "Nieuport",
+      "SPAD VII",
+      "SPAD XIII"
+    ],
+    "markings": {
+      "insignia": "Número '13' em círculo negro",
+      "description": "Marca distintiva de fuselagem, com variantes ilustradas na página de referência."
+    }
+  },
+  "media": {
+    "emblemImagePath": "squadrons/images/Esc 13.jpg"
+  },
+  "deploymentHistory": [
+    {
+      "airfieldId": "la_cheppe",
+      "startDate": "1916-01-01",
+      "endDate": "1916-02-01"
+    },
+    {
+      "airfieldId": "bouleuse",
+      "startDate": "1916-02-01",
+      "endDate": "1916-06-01"
+    },
+    {
+      "airfieldId": "tilloy",
+      "startDate": "1916-06-01",
+      "endDate": "1916-09-01"
+    },
+    {
+      "airfieldId": "julvecourt",
+      "startDate": "1916-09-01",
+      "endDate": "1916-12-01"
+    },
+    {
+      "airfieldId": "froides",
+      "startDate": "1916-12-01",
+      "endDate": "1917-10-01"
+    },
+    {
+      "airfieldId": "lemmes",
+      "startDate": "1917-01-01",
+      "endDate": "1917-02-01"
+    },
+    {
+      "airfieldId": "vadelaincourt",
+      "startDate": "1917-02-01",
+      "endDate": "1917-04-01"
+    },
+    {
+      "airfieldId": "lemmes",
+      "startDate": "1917-04-01",
+      "endDate": "1917-07-01"
+    },
+    {
+      "airfieldId": "vadelaincourt",
+      "startDate": "1917-07-01",
+      "endDate": "1917-09-01"
+    },
+    {
+      "airfieldId": "froides",
+      "startDate": "1917-09-01",
+      "endDate": "1917-12-01"
+    },
+    {
+      "airfieldId": "beauze_sur_aire",
+      "startDate": "1917-12-01",
+      "endDate": "1918-09-01"
+    },
+    {
+      "airfieldId": "la_mellette",
+      "startDate": "1918-09-01"
+    }
+  ],
+  "source": {
+    "pwcgSquadronFile": "pwcg_files/Esc 13.json",
+    "comment": "Caminho absoluto original alterado para um caminho relativo para portabilidade."
+  }
+}

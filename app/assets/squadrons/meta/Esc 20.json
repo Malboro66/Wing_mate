@@ -1,0 +1,72 @@
+{
+  "squadronId": "Esc 20",
+  "squadronName": "Esc 20",
+  "country": "FRANCE",
+  "history": "A Escadrille 20 foi uma esquadrilha de observação e reconhecimento da Aeronáutica Militar Francesa, criada em Lyon‑Bron em dezembro de 1913 como MF 20, que atuou intensamente na Frente Ocidental com Farman e Dorand antes de receber SPAD biplace em 1918, sendo destacada por duas citações à ordem do Exército e por operações exigentes na Lorena, Alsácia, Flandres (Kemmel) e Champagne até o Armistício.​\nIdentificação e Formação\nDesignação Original: Escadrille MF 20 (MF para Maurice Farman).​\nDesignação Intermediária: Escadrille AR 20 (AR para Dorand).​\nDesignação Final: Escadrille SPAbi 20 (SPAD biplace).​\nPaís: França.​\nData de Criação: dezembro de 1913 (Lyon‑Bron); movimento para Dijon‑Longvic em abril de 1914.​\nContexto de Formação: Última esquadrilha criada em tempo de paz, atribuída em 7 de agosto de 1914 à Armée de Lorraine sob o Capitaine Gignoux.​\nHistória Operacional\n1914–1916: Reconhecimento e regulação de tiro na Lorena e Alsácia; citada à ordem do Exército em 22/11/1915 (assinada por Pétain) por audácia e serviços excepcionais.​\n1917: Setor do Chemin des Dames; nova citação à ordem do Exército (Ass. Maistre) pelas ações de 23–25 de outubro de 1917, com direito à fourragère.​\n1918: Combates frequentes na Alsácia; depois Hondschoote e batalha do Kemmel (junho), seguida de operações na Champagne (Matougues e Champaubert) já em SPAD biplace, incluindo ataques a tropas no solo.​\nArmistício: Manteve perfil de reconhecimento, ajustes de artilharia, ligações e fotografia aérea até novembro de 1918.​\nEstatísticas e Desempenho\nRegistros de perdas: Listagens nominativas e página dedicada de vitórias/perdas, sem síntese numérica única consolidada.​\nFoco operacional: Reconhecimento, regulação de artilharia, ligação e fotografia aérea, com vitórias aéreas ocasionais registradas.​\nReconhecimentos: Duas citações à ordem do Exército (1915 e 1917), incluindo direito à fourragère pela atuação sustentada.​\nComandantes (Chefs d’escadrille)\nCapitaine Gignoux; Capitaine Fayet; Capitaine Delanney na fase final, conforme histórico consolidado.​\nPessoal Notável\nRegistros de 1918 mencionam baixas em combate aéreo e derrubadas de aparelhos inimigos, detalhadas nominalmente nos quadros de vitórias/perdas.​\nAeronaves Utilizadas\nMaurice Farman (MF) na fase inicial de 1914–1916.​\nDorand AR (AR 20) na fase intermediária de 1917.​\nSPAD biplace (SPAbi 20) a partir de 1918.​\nInsígnia e Tradição\nInsígnias pintadas e metálicas e “Couleurs des avions” documentadas na página da unidade.​\nTradição preservada em compilações de escadrilhas e listagens por número, incluindo referência explícita a SPAbi 20.​",
+  "emblemImage": "squadrons\\images\\Esc 20.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160301",
+      "airfield": "Belrain"
+    },
+    {
+      "start": "19160301",
+      "end": "19160601",
+      "airfield": "Erize la Petite"
+    },
+    {
+      "start": "19160601",
+      "end": "19161201",
+      "airfield": "Fouvry"
+    },
+    {
+      "start": "19161201",
+      "end": "19170301",
+      "airfield": "Ferme de Corbeaulieu"
+    },
+    {
+      "start": "19170301",
+      "end": "19170601",
+      "airfield": "Fouvry"
+    },
+    {
+      "start": "19170601",
+      "end": "19170801",
+      "airfield": "Fouvry"
+    },
+    {
+      "start": "19170801",
+      "end": "19180101",
+      "airfield": "Arcy Sainte Restitue"
+    },
+    {
+      "start": "19180101",
+      "end": "19180301",
+      "airfield": "Vauxcere"
+    },
+    {
+      "start": "19180301",
+      "end": "19180701",
+      "airfield": "Fere en Tardenois"
+    },
+    {
+      "start": "19180701",
+      "end": "19181001",
+      "airfield": "Le Fay Saint Quentin"
+    },
+    {
+      "start": "19181001",
+      "end": "19181101",
+      "airfield": "Cachy"
+    },
+    {
+      "start": "19181101",
+      "end": "",
+      "airfield": "Foucaucourt en Santerre"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 20.json"
+  }
+}

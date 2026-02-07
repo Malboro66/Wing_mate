@@ -1,0 +1,82 @@
+{
+  "squadronId": "Esc 21",
+  "squadronName": "Esc 21",
+  "country": "FRANCE",
+  "history": "A Escadrille 21 foi uma esquadrilha de observação e reconhecimento da Aeronáutica Militar Francesa na Primeira Guerra, criada como C 21 em 4 de janeiro de 1917 no Le Bourget, evoluindo para AR 21 em março de 1918 e para SPAbi 21 em junho de 1918, com dissolução em 27 de fevereiro de 1919 após operações intensas em Aisne e Champagne. A página dedicada reúne insígnia, histórico sucinto, designações, bases, comandantes, tipos de aeronaves, “Batailles et missions importantes”, “Les hommes” e documentação administrativa, incluindo fotos de Slt Charles de Saint‑Savin, Adj Pierre Martin e Slt Marcel Hébert.​\nIdentificação e Formação\nDesignação Original: Escadrille C 21 (C para Caudron).​\nDesignação Intermediária: Escadrille AR 21 (AR para Dorand AR).​\nDesignação Final: Escadrille SPAbi 21 (SPAD biplace).​\nPaís: França.​\nData de Criação: 4 de janeiro de 1917 (Le Bourget).​\nContexto de Formação: Unidade de observação/reconhecimento equipada com Caudron G.4/G.6, mobilizada e deslocada a Arcy‑Sainte‑Restitue e Villeneuve‑lès‑Vertus em janeiro de 1917, seguindo a prática francesa de redesignar pela aeronave principal.​\nHistória Operacional\n1917: Engajada na “bataille des Monts” na região de Auberive‑sur‑Suippe a partir de 17 de abril, estacionada em Bouy (Marne), transferida para Valdahon em 25 de julho e afetada ao 17º Corpo de Exército em 30 de março de 1917.​\n1918: Reequipada com Dorand AR 1 em 7 de março (AR 21), serviu ao 1º Corpo de Exército da VIª Armée de 15 de março a 24 de junho, combatendo na 3ª Batalha do Aisne em 28 de maio e, em 14 de junho, reequipada com SPAD XVI (SPAbi 21), sendo destacada à 37ª Divisão de Infantaria até o fim da guerra.​\nArmistício e pós‑guerra: Permaneceu com a 37ª DI até janeiro de 1919, quando passou à 2ª Armée; a SPAbi 21 foi dissolvida em 27 de fevereiro de 1919.​\nEstatísticas e Desempenho\nCitações e condecorações: 1 citação à ordem do Corpo de Exército e Croix de guerre 1914‑1918 com estrela de vermeil reconhecidas para a Escadrille 21 do período 1917–1919.​\nVitórias: Registros que atribuem 5 vitórias homologadas referem‑se muito provavelmente à V 21/C 219 anterior, e não à futura C 21/AR 21/SPAbi 21 criada em 1917, conforme esclarecimento crítico de pesquisa histórica.​\nRegistros operacionais: A página reúne “Batailles et missions importantes”, “Numéros des avions connus” e “Photos aériennes prises”, sem uma síntese numérica única de perdas no corpo do texto.​\nComandantes (Chefs d’escadrille)\nCapitaine Pierre Bloch no estabelecimento e primeiros deslocamentos em 1917, sucedido pelo Lieutenant Pierre Escudier em 3 de julho de 1918, com demais chefias listadas na página da unidade.​\nPessoal Notável\nA seção “Les hommes” apresenta fotos e perfis de tripulantes como Slt Charles de Saint‑Savin, Adj Pierre Martin e Slt Marcel Hébert, além de documentos e citações coletivas preservadas.​\nAeronaves Utilizadas\nCaudron G.4 e G.6 na fase C 21 em 1917.​\nDorand AR 1 na fase AR 21 a partir de 7 de março de 1918.​\nSPAD XVI biplace na fase SPAbi 21 a partir de 14 de junho de 1918.​\nInsígnia e Tradição\nInsígnia: “Insigne de l’escadrille” e “Insigne métallique” documentados na página com variantes e uso em aeronaves.​\nMarcas e cores: Seções “Couleurs des avions” e “Les avions” registram a heráldica e padronizações por fase de material.​\nLegado: A memória institucional é preservada por citações coletivas, monumentos e documentação administrativa, com acervo iconográfico e colaborações familiares e institucionais.​",
+  "emblemImage": "squadrons\\images\\Esc 21.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160201",
+      "airfield": "Villers Bretonneux"
+    },
+    {
+      "start": "19160201",
+      "end": "19160301",
+      "airfield": "Marieux"
+    },
+    {
+      "start": "19160301",
+      "end": "19160601",
+      "airfield": "Villers Bretonneux"
+    },
+    {
+      "start": "19160601",
+      "end": "19160901",
+      "airfield": "Valheureux"
+    },
+    {
+      "start": "19160901",
+      "end": "19161101",
+      "airfield": "Bertangles"
+    },
+    {
+      "start": "19161101",
+      "end": "19170101",
+      "airfield": "Allonville"
+    },
+    {
+      "start": "19170101",
+      "end": "19170201",
+      "airfield": "Villesavoye"
+    },
+    {
+      "start": "19170201",
+      "end": "19170401",
+      "airfield": "La Mellette"
+    },
+    {
+      "start": "19170401",
+      "end": "19170701",
+      "airfield": "Ravenel"
+    },
+    {
+      "start": "19170701",
+      "end": "19170901",
+      "airfield": "Villesavoye"
+    },
+    {
+      "start": "19170901",
+      "end": "19171201",
+      "airfield": "Ansauvillers"
+    },
+    {
+      "start": "19171201",
+      "end": "19180301",
+      "airfield": "Fere en Tardenois"
+    },
+    {
+      "start": "19180301",
+      "end": "19181101",
+      "airfield": "Montgobert"
+    },
+    {
+      "start": "19181101",
+      "end": "",
+      "airfield": "Ferme Cravancon"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 21.json"
+  }
+}

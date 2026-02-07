@@ -1,0 +1,67 @@
+{
+  "squadronId": "Esc 49",
+  "squadronName": "Esc 49",
+  "country": "FRANCE",
+  "history": "A Escadrille 49 foi uma esquadrilha de caça da Aeronáutica Militar Francesa criada em 18 de abril de 1915 em Belfort como MS 49, redesignada N 49 em 20 de setembro de 1915 e SPA 49 em dezembro de 1917, operando majoritariamente no setor de Belfort até julho de 1918 sob a 7ª Armée. A página dedicada registra insígnia e fanion da unidade, cronologia, bases, comandantes, material voado e eventos, com ligações a arquivos locais e dossiês de operações no Território de Belfort.​\nIdentificação e formação\nDesignação Original: Escadrille MS 49 (MS para Morane‑Saulnier).​\nDesignação Intermediária: Escadrille N 49 (N para Nieuport), a partir de 20/09/1915.​\nDesignação Final: Escadrille SPA 49 (SPA para SPAD), a partir de 12/1917.​\nPaís: França.​\nData de Criação: 18 de abril de 1915 (Belfort).​\nContexto de Formação: Unidade de caça do 1º Groupe d’Aviation destacada para a defesa e cobertura aérea do DA Lorraine, com instalação inicial em Belfort e destacamentos táticos na região.​\nHistória operacional\n1915: Transferida de Lyon para Belfort em 22/04; criação de um destacamento de caça em Corcieux em 23/05/1915, embrião da futura Escadrille N 73 em 22/07/1916.​\n1916: Emprego contínuo no DA Lorraine (Lunéville–Vosges) e setor de Belfort, com rotação por campos como Corcieux, Chaux e Fontaine conforme a manobra da 7ª Armée.​\n1917–1918: Recebimento de SPAD e redesignação para SPA 49 em 12/1917, mantendo missões de caça e escolta até deixar o setor de Belfort no verão de 1918, com registros de fanion e citações na página de tradição.​\nEstatísticas e desempenho\nRegistros de vitórias e perdas constam nas seções de “Victoires/Événements/Avions” e nos JMO correlatos, sem síntese numérica única apresentada nas referências consultadas.​\nFoco operacional: Caça, escolta e intercepção ao nível de Exército, com presença prolongada no dispositivo de Belfort e missões de proteção a reconhecimentos.​\nDocumentação: A página de tradição reúne foto de fanion, listas de estacionamentos e notas operacionais que balizam a atuação da unidade.​\nComandantes (Chefs d’escadrille)\nSequência de comando indicada nas compilações regionais: Capitaine Constantin Zarapoff, seguido pelo Capitaine Jules de Boutigny e pelo Capitaine Charles Tavera.​\nOutros oficiais de comando e períodos específicos aparecem nos dossiês locais e nas contribuições de acervos fotográficos de Belfort.​\nPessoal notável\nAdolphe Pégoud, pioneiro da acrobacia e considerado primeiro ás francês, foi destacado para a MS 49 em abril de 1915, período em que atuou no setor de Belfort antes de ser abatido em 31/08/1915, fato extensamente lembrado na memória local.​\nAs listas de pessoal incluem pilotos transferidos para formar a futura N 73, bem como quadros que aparecem em retratos e notas de operações da unidade.​\nAeronaves utilizadas\nMorane‑Saulnier (fase MS 49, 1915).​\nNieuport tipos X, XII e XI (fase N 49, a partir de 20/09/1915).​\nSPAD (fase SPA 49, a partir de 12/1917).​\nInsígnia e tradição\nInsígnias e fanions: A página registra variantes de fanion “ondulant au vent” e insígnias da 49, com fotografias e desenhos de referência.​\nLegado: O destacamento criado pela MS 49 em 23/05/1915 deu origem à Escadrille N 73, mais tarde integrante do grupo “Cigognes”, marcando a influência da 49 na geração de unidades de caça correlatas.​",
+  "emblemImage": "squadrons\\images\\Esc 49.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160301",
+      "airfield": "Lemmes"
+    },
+    {
+      "start": "19160301",
+      "end": "19160701",
+      "airfield": "Mont de Soissons"
+    },
+    {
+      "start": "19160701",
+      "end": "19160901",
+      "airfield": "Grivesnes"
+    },
+    {
+      "start": "19160901",
+      "end": "19161101",
+      "airfield": "Ravenel"
+    },
+    {
+      "start": "19161101",
+      "end": "19170401",
+      "airfield": "Beaucourt"
+    },
+    {
+      "start": "19170401",
+      "end": "19170901",
+      "airfield": "Froides"
+    },
+    {
+      "start": "19170901",
+      "end": "19171201",
+      "airfield": "Villers Bretonneux"
+    },
+    {
+      "start": "19171201",
+      "end": "19180101",
+      "airfield": "Muizon"
+    },
+    {
+      "start": "19180101",
+      "end": "19180301",
+      "airfield": "Tilloy"
+    },
+    {
+      "start": "19180301",
+      "end": "19180901",
+      "airfield": "Ancemont"
+    },
+    {
+      "start": "19180901",
+      "end": "",
+      "airfield": "Bonne Maison"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 49.json"
+  }
+}

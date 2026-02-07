@@ -1,0 +1,85 @@
+{
+  "id": "cruz_de_ferro",
+  "nome": "Cruz de Ferro",
+  "nomeOriginal": "Eisernes Kreuz",
+  "resumo": "Famosa condecoração militar prussiana e, posteriormente, alemã, instituída em 1813 e concedida em tempos de guerra. É um símbolo de longa data das forças armadas alemãs.",
+  "historia": {
+    "criacao": {
+      "data": "10 de março de 1813",
+      "local": "Breslau",
+      "instituidor": "Rei Frederico Guilherme III da Prússia",
+      "contexto": "Durante as Guerras Napoleônicas."
+    },
+    "reinstituicoes": [
+      {
+        "ano": 1870,
+        "conflito": "Guerra Franco-Prussiana",
+        "detalhes": "Autorizada pelo Rei Guilherme I. Um clasp de 25 anos foi autorizado em 1895 para os agraciados ainda em serviço."
+      },
+      {
+        "ano": 1914,
+        "conflito": "Primeira Guerra Mundial",
+        "detalhes": "Reinstituída pelo Imperador Guilherme II no início da guerra."
+      },
+      {
+        "ano": 1939,
+        "conflito": "Segunda Guerra Mundial",
+        "detalhes": "Reinstituída sob o Terceiro Reich. Seu uso foi suspenso após o armistício de 8 de maio de 1945."
+      }
+    ],
+    "posGuerra": {
+      "proibicao": "O uso da versão com a suástica (hakenkreuz) foi proibido após a Segunda Guerra Mundial.",
+      "alternativa": "Veteranos receberam uma réplica em miniatura com a suástica substituída por um ramo de folhas de carvalho, baseado no design de 1813.",
+      "usoModerno": "O símbolo da cruz (sem a suástica) é atualmente usado pelas forças armadas da Alemanha (Bundeswehr)."
+    }
+  },
+  "design": {
+    "descricao": "Cruz preta com ornamentos em branco e braços que se alargam nas extremidades, semelhante à Cruz Pátea.",
+    "inspiracao": "Desenhada pelo arquiteto Karl Friedrich Schinkel, inspirada na cruz dos cavaleiros teutônicos do século XIV.",
+    "materiais": "Tradicionalmente feita de ferro, mas também fundida em zinco e alumínio em alguns períodos.",
+    "fita": {
+      "descricao": "Preta com duas faixas brancas nas laterais para as versões de 1813, 1870 e 1914.",
+      "naoCombatentes": "A versão para não combatentes tinha as cores invertidas: branca com duas faixas pretas."
+    },
+    "numeracao": "O reverso das cruzes de 1870, 1914 e 1939 tem o ano '1813' no braço inferior, simbolizando a criação original."
+  },
+  "classes": [
+    {
+      "nome": "Cruz de Ferro de Segunda Classe",
+      "nomeOriginal": "Eisernes Kreuz 2. Klasse",
+      "formaDeUso": "Suspensa por uma fita, geralmente usada na segunda casa do botão do uniforme ou na barra de medalhas."
+    },
+    {
+      "nome": "Cruz de Ferro de Primeira Classe",
+      "nomeOriginal": "Eisernes Kreuz 1. Klasse",
+      "formaDeUso": "Presa diretamente no lado esquerdo do uniforme, sem fita."
+    },
+    {
+      "nome": "Grã-Cruz da Cruz de Ferro",
+      "nomeOriginal": "Großkreuz des Eisernen Kreuzes",
+      "formaDeUso": "Concedida principalmente a generais do exército alemão, suspensa por uma fita larga no pescoço."
+    },
+    {
+      "nome": "Estrela da Grã-Cruz da Cruz de Ferro",
+      "nomeOriginal": "Stern zum Großkreuz des Eisernen Kreuzes",
+      "formaDeUso": "Uma premiação superior à Grã-Cruz, concedida apenas duas vezes: para Gebhard von Blücher (1813) e Paul von Hindenburg (1918)."
+    }
+  ],
+  "criteriosDeConcessao": {
+    "progressao": "Era necessário receber a Cruz de Segunda Classe para posteriormente ser elegível à de Primeira Classe, embora em casos raros fossem concedidas simultaneamente.",
+    "igualdade": "A concessão era independente da patente do receptor, uma abordagem igualitária que contrastava com outras condecorações alemãs da época, que eram baseadas na hierarquia militar."
+  },
+  "estatisticasReceptores": {
+    "primeiraGuerraMundial": {
+      "segundaClasse": "Estimados 4 milhões de concessões.",
+      "primeiraClasse": "Estimadas 145 mil concessões.",
+      "observacao": "Os números exatos são desconhecidos devido à destruição dos arquivos prussianos na Segunda Guerra Mundial. A distribuição maciça reduziu o prestígio da premiação."
+    },
+    "receptoresNotaveis": [
+      {
+        "nome": "Adolf Hitler",
+        "contexto": "Recebeu a Cruz de Primeira Classe de 1914, uma distinção raramente atribuída a não oficiais."
+      }
+    ]
+  }
+}

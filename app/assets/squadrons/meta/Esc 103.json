@@ -1,0 +1,57 @@
+{
+  "squadronId": "Esc 103",
+  "squadronName": "Esc 103",
+  "country": "FRANCE",
+  "history": "A Escadrille 103 foi uma esquadrilha de observação e, posteriormente, uma esquadrilha de caça francesa durante a Primeira Guerra Mundial. É uma das unidades mais famosas da história da aviação, principalmente por ter sido a esquadrilha do maior ás da Entente, René Fonck, e por sua atuação no prestigiado Groupe de Combat 12 (GC 12) \"Les Cigognes\" (As Cegonhas).\nIdentificação e Formação\nDesignação Original: Escadrille C 103 (C para Corps d'Observation - Observação)\nDesignação Final: Escadrille SPA 103 (SPA para SPAD)\nPaís: França\nData de Criação: 1 de agosto de 1916\nContexto de Formação: Formada a partir da Escadrille C 46, iniciou suas operações como uma unidade de observação equipada com aviões Caudron G.4.\nHistória Operacional\nPrimeiros Meses (1916): Atuou como esquadrilha de observação na Frente de Verdun.\nTransição para Caça (Janeiro de 1917): Em 5 de janeiro de 1917, foi convertida em uma esquadrilha de caça, redesignada N 103 (N para Nieuport) e equipada com caças Nieuport.\nEntrada para as \"Cegonhas\" (1917): Juntou-se ao Groupe de Combat 12 (GC 12) \"Les Cigognes\", o grupo de caça de elite da França.\nReequipamento (1918): Em março de 1918, recebeu os modernos caças SPAD e foi redesignada SPA 103, mantendo essa designação até o final da guerra.\nEstatísticas e Desempenho\nVitórias Confirmadas: 91 vitórias aéreas homologuadas.\nPerdas:\nMortos em combate: 8 pilotos\nFeridos em combate: 7 pilotos\nFeitos prisioneiros: 2 pilotos\nComandantes (Chefs d'escadrille)\nA esquadrilha foi comandada por vários oficiais notáveis, muitos dos quais também eram ases:\nCapitaine de Romeuf\nCapitaine de la Tour\nCapitaine d'Olizy\nPilotos Notáveis\nA Escadrille 103 teve um dos mais notáveis grupos de pilotos da guerra, incluindo:\nRené Fonck: O maior ás da Entente e da França, com 75 vitórias confirmadas. A maioria de suas vitórias foi alcançada enquanto voava com a SPA 103.\nCapitaine de Romeuf (ás com 11 vitórias)\nCapitaine de la Tour (ás com 9 vitórias)\nLieutenant Haegelen (ás com 21 vitórias)\nAdjutant Herbelin (ás com 12 vitórias)\nAeronaves Utilizadas\nCaudron G.4 (observação)\nNieuport 11, 17, 24 (caça)\nSPAD S.VII, S.XIII (caça)\nInsígnia e Marcas\nA insígnia da esquadrilha era uma cegonha em voo, vista de frente, com asas abertas, sobre um disco. Este era o símbolo unificador do GC 12 \"Les Cigognes\".\nAs aeronaves da esquadrilha, assim como as do grupo, eram frequentemente pintadas com a fuselagem na cor vermelha, tornando-as imediatamente reconhecíveis.",
+  "emblemImage": "squadrons\\images\\Esc 103.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160601",
+      "airfield": "Julvecourt"
+    },
+    {
+      "start": "19160601",
+      "end": "19170401",
+      "airfield": "Cachy"
+    },
+    {
+      "start": "19170401",
+      "end": "19170601",
+      "airfield": "Cachy"
+    },
+    {
+      "start": "19170601",
+      "end": "19171001",
+      "airfield": "Vauxcere"
+    },
+    {
+      "start": "19171001",
+      "end": "19171201",
+      "airfield": "Beaucourt"
+    },
+    {
+      "start": "19171201",
+      "end": "19180401",
+      "airfield": "Chalons sur Vesle"
+    },
+    {
+      "start": "19180401",
+      "end": "19180701",
+      "airfield": "Grivesnes"
+    },
+    {
+      "start": "19180701",
+      "end": "19181001",
+      "airfield": "Ansauvillers"
+    },
+    {
+      "start": "19181001",
+      "end": "",
+      "airfield": "Balatre"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 103.json"
+  }
+}

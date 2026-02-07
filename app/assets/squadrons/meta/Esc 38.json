@@ -1,0 +1,32 @@
+{
+  "squadronId": "Esc 38",
+  "squadronName": "Esc 38",
+  "country": "FRANCE",
+  "history": "A Escadrille 38 foi uma esquadrilha de caça francesa criada em 8 de janeiro de 1915 como MS 38, redesignada N 38 em setembro de 1915 e SPA 38 em abril de 1917, notabilizada pelo emblema do chardon lorrain e pelos ases Georges Madon e Hector Garaud. A unidade operou no setor de La Noblette (Mourmelon‑le‑Grand), integrou agrupamentos de caça como o da Noblette/GC 15 e encerrou a guerra com cerca de 100 vitórias homologadas segundo o histórico de tradições do “Lorraine”.​\nIdentificação e Formação\nDesignação Original: Escadrille MS 38 (MS para Morane‑Saulnier).​\nDesignação Intermediária: Escadrille N 38 (N para Nieuport), a partir de setembro de 1915.​\nDesignação Final: Escadrille SPA 38 (SPA para SPAD), a partir de abril de 1917.​\nPaís: França.​\nData de Criação: 8 de janeiro de 1915.​\nContexto de Formação: Esquadrilha de caça cujas marcas de chardon surgem nos Nieuport em 1916, inspiradas no brasão da Lorena e de Nancy durante o destacamento em Vadelaincourt.​\nHistória Operacional\n1915–1916: Conversão para Nieuport e atuação no setor de La Noblette, com emprego crescente em caça e escolta a partir do segundo semestre de 1915.​\n1917: Redesignada SPA 38 em abril, combate em SPAD VII com crescimento do quadro de ases e consolidação do emblema do chardon lorrain.​\n1918: Reequipada com SPAD XIII, Madon assume o comando em 24 de março e lidera intensas operações de caça até o Armistício, mantendo a unidade baseada na área de Mourmelon.​\nEstatísticas e Desempenho\nVitórias homologadas: Cerca de 100 ao final da Grande Guerra, conforme histórico institucional do “Lorraine”.​\nReconhecimentos: Palmarés, citações e condecorações estão sintetizados nas seções de tradição e palmarés da página dedicada.​\nPerfil operacional: Missões de caça, escolta e intercepção com ênfase em supremacia aérea em 1917–1918.​\nComandantes (Chefs d’escadrille)\nChefia formal por Cne René Colcomb durante boa parte do período, com direção operacional crescente de Georges Madon e comando oficial a partir de 24 de março de 1918.​\nA página de tradição lista os demais comandantes com datas e movimentos por agrupamentos de caça.​\nPessoal Notável\nGeorges Madon, 41 vitórias homologadas e 64 prováveis, comandante em 1918 e figura central da SPA 38.​\nOutros destaques incluem Hector Garaud, Gustave Douchy e David Putnam, presentes em registros fotográficos e perfis de acervo.​\nAeronaves Utilizadas\nMorane‑Saulnier Type L (fase MS 38).​\nNieuport (fase N 38, a partir de 1915).​\nSPAD VII e SPAD XIII (fase SPA 38, 1917–1918).​\nInsígnia e Tradição\nInsígnia: Chardon lorrain, homologado sob n.º A‑1123, com aplicação em marcas pintadas e metálicas registradas no acervo.​\nTradição: A herança da SPA 38 é mantida pelo EC 3/30 “Lorraine”, no qual a esquadrilha foi reativada em 2010 como 2ª escadrilha em Rafale.​",
+  "emblemImage": "squadrons\\images\\Esc 38.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160301",
+      "airfield": "Saizerais"
+    },
+    {
+      "start": "19160301",
+      "end": "19180101",
+      "airfield": "Ancemont"
+    },
+    {
+      "start": "19180101",
+      "end": "19180201",
+      "airfield": "La Mellette"
+    },
+    {
+      "start": "19180201",
+      "end": "",
+      "airfield": "Sainte Menehould"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 38.json"
+  }
+}

@@ -1,0 +1,568 @@
+{
+  "metadata": {
+    "version": "2.0.0",
+    "lastUpdated": "2025-10-26T19:14:00Z",
+    "source": "Historical military records - House of Hohenzollern",
+    "schema": "medal-v2",
+    "language": "pt-BR",
+    "nation": "PRU"
+  },
+  "id": "ordem_casa_hohenzollern",
+  "localizations": {
+    "pt-BR": {
+      "nome": "Ordem da Casa de Hohenzollern",
+      "nomeOriginal": "Hausorden von Hohenzollern",
+      "resumo": "Uma ordem dinástica de cavalaria da Casa de Hohenzollern, concedida a oficiais militares comissionados e civis de status comparável. Estavam associadas à ordem diversas cruzes e medalhas para soldados e civis de patente inferior."
+    },
+    "en-US": {
+      "nome": "House Order of Hohenzollern",
+      "nomeOriginal": "Hausorden von Hohenzollern",
+      "resumo": "A dynastic order of knighthood of the House of Hohenzollern, awarded to commissioned military officers and civilians of comparable status. Various crosses and medals were associated with the order for soldiers and civilians of lower rank."
+    },
+    "de-DE": {
+      "nome": "Hausorden von Hohenzollern",
+      "nomeOriginal": "Hausorden von Hohenzollern",
+      "resumo": "Ein dynastischer Ritterorden des Hauses Hohenzollern, verliehen an beauftragte Militäroffiziere und Zivilisten vergleichbaren Status. Verschiedene Kreuze und Medaillen waren mit dem Orden für Soldaten und Zivilisten niedrigeren Ranges verbunden."
+    }
+  },
+  "historia": {
+    "versaoPrincipesca": {
+      "dataOrigem": "1841-04-05",
+      "dataOrigemFormatada": {
+        "pt-BR": "5 de abril de 1841",
+        "en-US": "April 5, 1841",
+        "de-DE": "5. April 1841"
+      },
+      "fundadores": [
+        {
+          "id": "konstantin_hohenzollern_hechingen",
+          "nome": "Príncipe Konstantin de Hohenzollern-Hechingen",
+          "ramo": "católico"
+        },
+        {
+          "id": "karl_anton_hohenzollern_sigmaringen",
+          "nome": "Príncipe Karl Anton de Hohenzollern-Sigmaringen",
+          "ramo": "católico"
+        }
+      ],
+      "contexto": "Esses dois principados no sul da Alemanha eram primos da casa governante protestante da Prússia.",
+      "localizacao": "Sul da Alemanha"
+    },
+    "versaoReal": {
+      "dataAdocao": "1851-08-23",
+      "dataAdocaoFormatada": {
+        "pt-BR": "23 de agosto de 1851",
+        "en-US": "August 23, 1851",
+        "de-DE": "23. August 1851"
+      },
+      "nomeCompleto": "Ordem Real da Casa de Hohenzollern",
+      "nomeCompletoOriginal": "Königlicher Hausorden von Hohenzollern",
+      "motivoAdocao": "Anexação dos dois principados pela Prússia",
+      "proposito": "Concedida principalmente por serviços prestados à família real",
+      "posGuerra": {
+        "dataAbdicacao": "1918-11-09",
+        "continuidade": "Mesmo após a abdicação do Kaiser Wilhelm II em 1918, ele continuou a conferir a ordem como chefe da casa. A versão principesca continuou a ser concedida unofficialmente."
+      }
+    },
+    "versaoRomena": {
+      "dataEstabelecimento": "1935-01-01",
+      "dataEstabelecimentoFormatada": {
+        "pt-BR": "1935",
+        "en-US": "1935",
+        "de-DE": "1935"
+      },
+      "nomeCompleto": "Ordem Bene Merenti da Casa Reinante",
+      "nomeCompletoOriginal": "Ordinul \"Bene Merenti\" al Casei Domnitoare",
+      "monarca": "Rei Carol II da Romênia",
+      "familia": "Hohenzollern-Sigmaringen",
+      "dataFim": "1947-12-30",
+      "motivoFim": "Abolição da monarquia romena"
+    }
+  },
+  "classes": [
+    {
+      "id": "ordem_real",
+      "tipo": "real",
+      "localizations": {
+        "pt-BR": {
+          "nome": "Ordem Real da Casa de Hohenzollern",
+          "nomeOriginal": "Königlicher Hausorden von Hohenzollern"
+        },
+        "en-US": {
+          "nome": "Royal House Order of Hohenzollern",
+          "nomeOriginal": "Königlicher Hausorden von Hohenzollern"
+        },
+        "de-DE": {
+          "nome": "Königlicher Hausorden von Hohenzollern",
+          "nomeOriginal": "Königlicher Hausorden von Hohenzollern"
+        }
+      },
+      "graus": [
+        {
+          "id": "grao_comandante",
+          "ordem": 1,
+          "localizations": {
+            "pt-BR": {
+              "nome": "Grão-Comandante",
+              "nomeOriginal": "Großkomtur"
+            },
+            "en-US": {
+              "nome": "Grand Commander",
+              "nomeOriginal": "Großkomtur"
+            },
+            "de-DE": {
+              "nome": "Großkomtur",
+              "nomeOriginal": "Großkomtur"
+            }
+          }
+        },
+        {
+          "id": "comendador",
+          "ordem": 2,
+          "localizations": {
+            "pt-BR": {
+              "nome": "Comendador",
+              "nomeOriginal": "Komtur"
+            },
+            "en-US": {
+              "nome": "Commander",
+              "nomeOriginal": "Komtur"
+            },
+            "de-DE": {
+              "nome": "Komtur",
+              "nomeOriginal": "Komtur"
+            }
+          }
+        },
+        {
+          "id": "cavaleiro",
+          "ordem": 3,
+          "localizations": {
+            "pt-BR": {
+              "nome": "Cavaleiro",
+              "nomeOriginal": "Ritter"
+            },
+            "en-US": {
+              "nome": "Knight",
+              "nomeOriginal": "Ritter"
+            },
+            "de-DE": {
+              "nome": "Ritter",
+              "nomeOriginal": "Ritter"
+            }
+          },
+          "observacoes": "Durante a Primeira Guerra Mundial, a Cruz de Cavaleiro com Espadas tornou-se uma condecoração intermediária entre a Cruz de Ferro de 1ª Classe e a Pour le Mérite para oficiais juniores prussianos."
+        },
+        {
+          "id": "membro",
+          "ordem": 4,
+          "localizations": {
+            "pt-BR": {
+              "nome": "Membro",
+              "nomeOriginal": "Inhaber"
+            },
+            "en-US": {
+              "nome": "Member",
+              "nomeOriginal": "Inhaber"
+            },
+            "de-DE": {
+              "nome": "Inhaber",
+              "nomeOriginal": "Inhaber"
+            }
+          },
+          "destinatarios": "Soldados não oficiais e civis",
+          "observacoes": "A Cruz de Membros, especialmente com espadas, era uma rara distinção. A 'Águia de Membros' era frequentemente uma condecoração por longo serviço."
+        }
+      ]
+    },
+    {
+      "id": "ordem_principesca",
+      "tipo": "principesca",
+      "localizations": {
+        "pt-BR": {
+          "nome": "Ordem Principesca da Casa de Hohenzollern",
+          "nomeOriginal": "Fürstlicher Hausorden von Hohenzollern"
+        },
+        "en-US": {
+          "nome": "Princely House Order of Hohenzollern",
+          "nomeOriginal": "Fürstlicher Hausorden von Hohenzollern"
+        },
+        "de-DE": {
+          "nome": "Fürstlicher Hausorden von Hohenzollern",
+          "nomeOriginal": "Fürstlicher Hausorden von Hohenzollern"
+        }
+      },
+      "graus": [
+        {
+          "id": "cruz_honra_1_classe",
+          "ordem": 1,
+          "localizations": {
+            "pt-BR": {
+              "nome": "Cruz de Honra de 1ª Classe",
+              "nomeOriginal": "Ehrenkreuz 1. Klasse"
+            },
+            "en-US": {
+              "nome": "Honor Cross 1st Class",
+              "nomeOriginal": "Ehrenkreuz 1. Klasse"
+            },
+            "de-DE": {
+              "nome": "Ehrenkreuz 1. Klasse",
+              "nomeOriginal": "Ehrenkreuz 1. Klasse"
+            }
+          }
+        },
+        {
+          "id": "cruz_comendador_honra",
+          "ordem": 2,
+          "localizations": {
+            "pt-BR": {
+              "nome": "Cruz de Comendador de Honra",
+              "nomeOriginal": "Ehrenkomturkreuz"
+            },
+            "en-US": {
+              "nome": "Commander's Honor Cross",
+              "nomeOriginal": "Ehrenkomturkreuz"
+            },
+            "de-DE": {
+              "nome": "Ehrenkomturkreuz",
+              "nomeOriginal": "Ehrenkomturkreuz"
+            }
+          }
+        },
+        {
+          "id": "cruz_honra_2_classe",
+          "ordem": 3,
+          "localizations": {
+            "pt-BR": {
+              "nome": "Cruz de Honra de 2ª Classe",
+              "nomeOriginal": "Ehrenkreuz 2. Klasse"
+            },
+            "en-US": {
+              "nome": "Honor Cross 2nd Class",
+              "nomeOriginal": "Ehrenkreuz 2. Klasse"
+            },
+            "de-DE": {
+              "nome": "Ehrenkreuz 2. Klasse",
+              "nomeOriginal": "Ehrenkreuz 2. Klasse"
+            }
+          }
+        },
+        {
+          "id": "cruz_honra_3_classe",
+          "ordem": 4,
+          "localizations": {
+            "pt-BR": {
+              "nome": "Cruz de Honra de 3ª Classe",
+              "nomeOriginal": "Ehrenkreuz 3. Klasse"
+            },
+            "en-US": {
+              "nome": "Honor Cross 3rd Class",
+              "nomeOriginal": "Ehrenkreuz 3. Klasse"
+            },
+            "de-DE": {
+              "nome": "Ehrenkreuz 3. Klasse",
+              "nomeOriginal": "Ehrenkreuz 3. Klasse"
+            }
+          }
+        },
+        {
+          "id": "cruz_merito_dourada",
+          "ordem": 5,
+          "localizations": {
+            "pt-BR": {
+              "nome": "Cruz de Mérito Dourada",
+              "nomeOriginal": "goldenes Verdienstkreuz"
+            },
+            "en-US": {
+              "nome": "Golden Merit Cross",
+              "nomeOriginal": "goldenes Verdienstkreuz"
+            },
+            "de-DE": {
+              "nome": "goldenes Verdienstkreuz",
+              "nomeOriginal": "goldenes Verdienstkreuz"
+            }
+          }
+        },
+        {
+          "id": "cruz_merito_prateada",
+          "ordem": 6,
+          "localizations": {
+            "pt-BR": {
+              "nome": "Cruz de Mérito Prateada",
+              "nomeOriginal": "silbernes Verdienstkreuz"
+            },
+            "en-US": {
+              "nome": "Silver Merit Cross",
+              "nomeOriginal": "silbernes Verdienstkreuz"
+            },
+            "de-DE": {
+              "nome": "silbernes Verdienstkreuz",
+              "nomeOriginal": "silbernes Verdienstkreuz"
+            }
+          }
+        },
+        {
+          "id": "medalha_honra_dourada",
+          "ordem": 7,
+          "localizations": {
+            "pt-BR": {
+              "nome": "Medalha de Honra Dourada",
+              "nomeOriginal": "goldene Ehrenmedaille"
+            },
+            "en-US": {
+              "nome": "Golden Honor Medal",
+              "nomeOriginal": "goldene Ehrenmedaille"
+            },
+            "de-DE": {
+              "nome": "goldene Ehrenmedaille",
+              "nomeOriginal": "goldene Ehrenmedaille"
+            }
+          }
+        },
+        {
+          "id": "medalha_merito_prateada",
+          "ordem": 8,
+          "localizations": {
+            "pt-BR": {
+              "nome": "Medalha de Mérito Prateada",
+              "nomeOriginal": "silberne Verdienstmedaille"
+            },
+            "en-US": {
+              "nome": "Silver Merit Medal",
+              "nomeOriginal": "silberne Verdienstmedaille"
+            },
+            "de-DE": {
+              "nome": "silberne Verdienstmedaille",
+              "nomeOriginal": "silberne Verdienstmedaille"
+            }
+          }
+        }
+      ],
+      "observacoes": "Durante a Primeira Guerra Mundial, a classe apropriada desta ordem foi frequentemente concedida a oficiais e soldados do Füsilier-Regiment Fürst Karl Anton von Hohenzollern (Hohenzollernsches) Nr. 40."
+    },
+    {
+      "id": "ordem_romena",
+      "tipo": "romena",
+      "localizations": {
+        "pt-BR": {
+          "nome": "Ordem da Casa Romena",
+          "nomeOriginal": "Ordinul \"Bene Merenti\" al Casei Domnitoare"
+        },
+        "en-US": {
+          "nome": "Order of the Romanian House",
+          "nomeOriginal": "Ordinul \"Bene Merenti\" al Casei Domnitoare"
+        },
+        "de-DE": {
+          "nome": "Orden des rumänischen Hauses",
+          "nomeOriginal": "Ordinul \"Bene Merenti\" al Casei Domnitoare"
+        }
+      },
+      "estrutura": "Essencialmente as mesmas da versão principesca",
+      "variacoes": {
+        "cruzHonra3Classe": "Possibilidade de concessão com folhas de carvalho",
+        "medalhas": "Possibilidade de concessão com Coroa"
+      },
+      "observacoes": "Devido à curta existência da ordem e a outras condecorações romenas, concessões com espadas são incomuns."
+    }
+  ],
+  "design": {
+    "formaGeral": {
+      "tipo": "Cruz pattée",
+      "caracteristicas": "Bordas convexas e braços curvados",
+      "esmalte": "Branco nos braços com lista preta perto das bordas",
+      "decoracao": "Entre os braços da cruz, grinalda de folhas de louro (esquerda) e carvalho (direita)"
+    },
+    "versaoReal": {
+      "tipo": "real",
+      "medalhaoCentral": {
+        "obverso": {
+          "escudo": {
+            "figura": "Águia real prussiana preta",
+            "peito": "Brasão da Casa de Hohenzollern"
+          },
+          "lema": {
+            "texto": "vom Fels zum Meer",
+            "traducao": {
+              "pt-BR": "Dos penhascos ao mar",
+              "en-US": "From the cliffs to the sea",
+              "de-DE": "vom Fels zum Meer"
+            },
+            "cor": "dourado",
+            "fundo": "esmalte azul"
+          }
+        },
+        "reverso": {
+          "cifra": "Cifra do Rei Frederick William IV da Prússia",
+          "data": "1851-01-18",
+          "dataFormatada": "den 18. Januar 1851"
+        }
+      },
+      "fita": {
+        "corPrincipal": "branca",
+        "listras": [
+          {
+            "cor": "preta",
+            "quantidade": 3,
+            "descricao": "Duas listras largas nas bordas e uma fina no centro"
+          }
+        ],
+        "variacao": "Pequenas variações em relação às versões Principesca e Romena"
+      }
+    },
+    "versaoPrincipesca": {
+      "tipo": "principesca",
+      "medalhaoCentral": {
+        "obverso": {
+          "escudo": {
+            "tipo": "Brasão de Hohenzollern",
+            "descricao": "Escudo quarterado de preto e branco",
+            "coroa": "Coroa principesca"
+          },
+          "lema": {
+            "texto": "für Treue und Verdienst",
+            "traducao": {
+              "pt-BR": "Por lealdade e mérito",
+              "en-US": "For loyalty and merit",
+              "de-DE": "für Treue und Verdienst"
+            },
+            "cor": "dourado",
+            "fundo": "esmalte azul"
+          }
+        },
+        "reverso": {
+          "cifra": "Cifras entrelaçadas ('F' e 'A') dos Príncipes Friedrich e Anton",
+          "data": "1844-04-05",
+          "dataFormatada": "den 5T April 1844",
+          "observacao": "Para 2ª e 3ª classes"
+        }
+      },
+      "fita": {
+        "corPrincipal": "branca",
+        "listras": [
+          {
+            "cor": "preta",
+            "quantidade": 3
+          }
+        ],
+        "variacao": "Pequenas variações em largura"
+      }
+    },
+    "versaoRomena": {
+      "tipo": "romena",
+      "medalhaoCentral": {
+        "obverso": {
+          "escudo": {
+            "figura": "Águia romena preta",
+            "peito": "Brasão de Hohenzollern"
+          },
+          "lema": {
+            "texto": "nihil sine Deo",
+            "traducao": {
+              "pt-BR": "Nada sem Deus",
+              "en-US": "Nothing without God",
+              "de-DE": "Nichts ohne Gott"
+            },
+            "cor": "dourado",
+            "fundo": "esmalte azul"
+          }
+        },
+        "reverso": {
+          "cifra": "Cifra coroada do Rei Carol",
+          "data": "1881-02-10",
+          "dataFormatada": "10 Februarie 1881",
+          "significado": "Fundação do reino romeno"
+        }
+      },
+      "fita": {
+        "corPrincipal": "branca",
+        "listras": [
+          {
+            "cor": "preta",
+            "quantidade": 3
+          }
+        ],
+        "variacao": "Pequenas variações"
+      }
+    }
+  },
+  "assets": {
+    "medalImages": {
+      "front": {
+        "thumbnail": "medals/ordem_casa_hohenzollern/house_hohenzollern_thumb.jpg",
+        "full": "medals/ordem_casa_hohenzollern/house_hohenzollern.jpg"
+      },
+      "back": {
+        "thumbnail": "medals/ordem_casa_hohenzollern/house_hohenzollern_back_thumb.jpg",
+        "full": "medals/ordem_casa_hohenzollern/house_hohenzollern_back.jpg"
+      }
+    },
+    "ribbonImage": "medals/ordem_casa_hohenzollern/house_hohenzollern_ribbon.jpg",
+    "icons": {
+      "small": "medals/ordem_casa_hohenzollern/house_hohenzollern_32x32.png",
+      "medium": "medals/ordem_casa_hohenzollern/house_hohenzollern_64x64.png",
+      "large": "medals/ordem_casa_hohenzollern/house_hohenzollern_128x128.png"
+    },
+    "variacoes": {
+      "real": {
+        "front": "medals/ordem_casa_hohenzollern/house_hohenzollern.jpg",
+        "ribbon": "medals/ordem_casa_hohenzollern/house_hohenzollern_ribbon.jpg"
+      },
+      "principesca": {
+        "front": "medals/ordem_casa_hohenzollern/princely_hohenzollern.jpg",
+        "ribbon": "medals/ordem_casa_hohenzollern/princely_hohenzollern_ribbon.jpg"
+      },
+      "romena": {
+        "front": "medals/ordem_casa_hohenzollern/romanian_hohenzollern.jpg",
+        "ribbon": "medals/ordem_casa_hohenzollern/romanian_hohenzollern_ribbon.jpg"
+      }
+    }
+  },
+  "relations": {
+    "requiredMedals": [],
+    "prerequisiteFor": [
+      "pour_le_merite"
+    ],
+    "relatedMedals": [
+      "cruz_de_ferro",
+      "pour_le_merite",
+      "ordem_aguia_vermelha"
+    ],
+    "awardsInCampaigns": [
+      "guerras_napoleonicas",
+      "guerra_austro_prussiana",
+      "guerra_franco_prussiana",
+      "primeira_guerra_mundial"
+    ],
+    "unidadesMilitares": [
+      "fusilier_regiment_40"
+    ]
+  },
+  "flags": {
+    "isActive": false,
+    "isHistorical": true,
+    "hasControversialSymbols": false,
+    "requiresContentWarning": false,
+    "isComplete": true,
+    "hasImages": true,
+    "hasRibbon": true,
+    "displayInPublicGallery": true,
+    "confersNobility": false,
+    "hasMultipleVersions": true,
+    "isDynastic": true
+  },
+  "statistics": {
+    "totalRecipients": {
+      "estimated": 50000,
+      "confirmed": null,
+      "period": "1841-1947"
+    },
+    "rarity": "rare",
+    "versaoRealWWI": {
+      "cruzCavaleiroComEspadas": {
+        "importancia": "Condecoração intermediária entre Cruz de Ferro 1ª Classe e Pour le Mérite",
+        "recipientes": "Oficiais juniores prussianos",
+        "apelido": "Leutnants-Pour-le-Mérite"
+      }
+    }
+  }
+}

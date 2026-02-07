@@ -1,0 +1,150 @@
+{
+  "_comment": "Improved JSON structure for better data organization and machine-readability.",
+  "squadronId": "jasta_8_germany",
+  "squadronName": "Jasta 8",
+  "country": "DEU",
+  "history": {
+    "summary": "A fighter squadron of the Luftstreitkräfte that scored at least 91 confirmed victories. Its formative experiences and personnel would go on to strongly influence the subsequent Luftwaffe.",
+    "formation": {
+      "date": "1916-09-10",
+      "location": "FEA 10, Böblingen",
+      "context": "Formed from a small element of single-seat fighters attached to Feldflieger Abteilung 6."
+    },
+    "notableEvents": [
+      {
+        "date": "1917-07-28",
+        "event": "Commanding Officer Gustav Stenzel was killed in action."
+      },
+      {
+        "date": "1917-08-09",
+        "event": "Constantin von Bentheim assumed command."
+      },
+      {
+        "date": "1917-09-30",
+        "event": "Moved to Jabbeke-Brügge to support the 4 Armee."
+      },
+      {
+        "date": "1917-12-01",
+        "event": "Became part of the ad hoc Jagdgruppe 'Etreux' with Jasta 35."
+      },
+      {
+        "date": "1918-03-27",
+        "event": "Moved to Balâtre-Roye for a 100-day stay during the Spring Offensive."
+      },
+      {
+        "date": "1918-04-04",
+        "event": "Future Luftwaffe Generalmajor Werner Junck assumed command."
+      },
+      {
+        "date": "1918-12-03",
+        "event": "Disbanded at FEA 11, Breslau-Gandau."
+      }
+    ],
+    "commanders": [
+      {
+        "name": "Gustav Stenzel",
+        "tenure": "Until 1917-07-28 (Killed in Action)"
+      },
+      {
+        "name": "Konrad Mettlich",
+        "tenure": "Temporary command, July-August 1917"
+      },
+      {
+        "name": "Constantin von Bentheim",
+        "tenure": "1917-08-09 to 1918-04-01"
+      },
+      {
+        "name": "Werner Junck",
+        "tenure": "1918-04-04 to 1918-12-03"
+      }
+    ],
+    "notablePilots": [
+      {
+        "name": "Werner Junck",
+        "note": "Later became a Luftwaffe Generalleutnant."
+      },
+      {
+        "name": "Walter Göttsch",
+        "note": "Notable ace."
+      },
+      {
+        "name": "Rudolf Francke",
+        "note": "Notable ace."
+      },
+      {
+        "name": "Wilhelm Seitz",
+        "note": "Notable ace."
+      },
+      {
+        "name": "Rudolf Wendelmuth",
+        "note": "Notable ace."
+      }
+    ],
+    "aircraftUsed": [
+      "Albatros D.V"
+    ]
+  },
+  "statistics": {
+    "victories": {
+      "total": 91
+    },
+    "casualties": {
+      "killedInAction": 4,
+      "killedInAccident": 1,
+      "woundedInAction": 8,
+      "total": 13
+    }
+  },
+  "emblemImage": "squadrons/images/Jasta 8.png",
+  "airfields": [
+    {
+      "start": "1916-09-10",
+      "end": "1917-04-01",
+      "airfield": "St Marguerite"
+    },
+    {
+      "start": "1917-04-01",
+      "end": "1917-09-01",
+      "airfield": "Lomme"
+    },
+    {
+      "start": "1917-09-01",
+      "end": "1917-10-01",
+      "airfield": "La Neuville"
+    },
+    {
+      "start": "1917-10-01",
+      "end": "1917-11-01",
+      "airfield": "Rumbeke"
+    },
+    {
+      "start": "1917-11-01",
+      "end": "1917-12-01",
+      "airfield": "Beugnatre"
+    },
+    {
+      "start": "1917-12-01",
+      "end": "1918-03-01",
+      "airfield": "Falvy"
+    },
+    {
+      "start": "1918-03-01",
+      "end": "1918-10-01",
+      "airfield": "Beugnatre"
+    },
+    {
+      "start": "1918-10-01",
+      "end": "1918-11-01",
+      "airfield": "Epinoy"
+    },
+    {
+      "start": "1918-11-01",
+      "end": "1918-11-11",
+      "airfield": "Eswars"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "pwcg_files/Jasta 8.json",
+    "comment": "Original source path was an absolute path, changed to a relative one for portability."
+  }
+}

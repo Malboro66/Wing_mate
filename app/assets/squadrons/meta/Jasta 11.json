@@ -1,0 +1,166 @@
+{
+  "_comment": "Improved JSON structure for better data organization and machine-readability.",
+  "squadronId": "jasta_11_germany",
+  "squadronName": "Jasta 11",
+  "country": "DEU",
+  "parentUnit": {
+    "unit": "Jagdgeschwader 1",
+    "commonName": "Richthofen's Flying Circus",
+    "joinedDate": "1917-07-26"
+  },
+  "history": {
+    "summary": "The most successful fighter squadron in the Luftstreitkräfte, famed for being commanded by the 'Red Baron', Manfred von Richthofen, and as the leading squadron of the 'Flying Circus'. It scored 350 confirmed victories during the war.",
+    "formation": {
+      "date": "1916-09-28",
+      "context": "Founded from elements of 4 Armee's Kampfeinsitzerkommandos (KEKs) 1, 2, and 3. Mobilized on 11 October 1916."
+    },
+    "notableEvents": [
+      {
+        "date": "1917-01-16",
+        "event": "Manfred von Richthofen assumes command, beginning the unit's rise to fame."
+      },
+      {
+        "date": "1917-04-01",
+        "event": "'Bloody April' begins; Jasta 11 claims 89 victories, contributing heavily to the decimation of the Royal Flying Corps."
+      },
+      {
+        "date": "1917-07-26",
+        "event": "Becomes part of the newly formed Jagdgeschwader I, the 'Flying Circus'."
+      },
+      {
+        "date": "1917-09-01",
+        "event": "Equipped with the iconic Fokker Dr.I triplane."
+      },
+      {
+        "date": "1918-05-01",
+        "event": "Re-equipped with the superior Fokker D.VII fighters, which it used until war's end."
+      },
+      {
+        "date": "1918-11-16",
+        "event": "Demobilised at Darmstadt."
+      }
+    ],
+    "commanders": [
+      {
+        "name": "Rudolf Lang",
+        "tenure": "1916-10-11 to 1917-01-14"
+      },
+      {
+        "name": "Manfred von Richthofen",
+        "tenure": "1917-01-16 to 1917-06-26"
+      },
+      {
+        "name": "Karl Allmenröder",
+        "tenure": "1917-06-26 to 1917-06-27 (Killed in Action)"
+      },
+      {
+        "name": "Kurt Wolff",
+        "tenure": "1917-06-27 to 1917-09-15 (Killed in Action)"
+      },
+      {
+        "name": "Wilhelm Reinhard",
+        "tenure": "Temporary command during 1917"
+      },
+      {
+        "name": "Lothar von Richthofen",
+        "tenure": "1917-09-15 to 1918 (frequent absences due to wounds)"
+      },
+      {
+        "name": "Erich Rüdiger von Wedel",
+        "tenure": "1918-09 to 1918-11-11"
+      }
+    ],
+    "notablePilots": [
+      "Manfred von Richthofen",
+      "Kurt Wolff",
+      "Karl Schäfer",
+      "Lothar von Richthofen",
+      "Sebastian Festner"
+    ],
+    "aircraftUsed": [
+      "Albatros D.III",
+      "Fokker Dr.I",
+      "Fokker D.VII"
+    ]
+  },
+  "statistics": {
+    "victories": {
+      "total": 350,
+      "milestones": [
+        {"victory": 1, "date": "1917-01-23"},
+        {"victory": 100, "date": "1917-04-23"},
+        {"victory": 200, "date": "1917-08-17"},
+        {"victory": 250, "date": "1918-04-02"},
+        {"victory": 300, "date": "1918-06-28"},
+        {"victory": 350, "date": "1918-09-19"}
+      ]
+    },
+    "casualties": {
+      "killedInAction": 17,
+      "killedInAccident": 2,
+      "prisonersOfWar": 2,
+      "woundedInAction": 19,
+      "total": 40
+    }
+  },
+  "markings": {
+    "description": "Famously associated with all-red aircraft due to its commander, Manfred von Richthofen. As part of JG I, the squadron featured vividly painted aircraft."
+  },
+  "emblemImage": "squadrons/images/Jasta 11.png",
+  "airfields": [
+    {
+      "start": "1916-10-01",
+      "end": "1917-04-01",
+      "airfield": "Douai"
+    },
+    {
+      "start": "1917-04-01",
+      "end": "1917-06-01",
+      "airfield": "Roucourt"
+    },
+    {
+      "start": "1917-06-01",
+      "end": "1917-07-01",
+      "airfield": "La Neuville"
+    },
+    {
+      "start": "1917-07-01",
+      "end": "1917-11-01",
+      "airfield": "Beugnatre"
+    },
+    {
+      "start": "1917-11-01",
+      "end": "1918-03-01",
+      "airfield": "Beaucamp"
+    },
+    {
+      "start": "1918-03-01",
+      "end": "1918-06-01",
+      "airfield": "Foucaucourt en Santerre"
+    },
+    {
+      "start": "1918-06-01",
+      "end": "1918-09-01",
+      "airfield": "Villers Bretonneux"
+    },
+    {
+      "start": "1918-09-01",
+      "end": "1918-10-01",
+      "airfield": "Cappy SW"
+    },
+    {
+      "start": "1918-10-01",
+      "end": "1918-11-01",
+      "airfield": "Ronssoy"
+    },
+    {
+      "start": "1918-11-01",
+      "end": "1918-11-11",
+      "airfield": "Bony"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "pwcg_files/Jasta 11.json",
+    "comment": "Original source path was an absolute path, changed to a relative one for portability."
+  }
+}

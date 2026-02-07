@@ -1,0 +1,27 @@
+{
+  "id": "distintivo_piloto_prussiano",
+  "nome": "Distintivo de Piloto Militar Prussiano",
+  "nomeOriginal": "Königlich Preußisches Militär-Flugzeugführer-Abzeichen",
+  "resumo": "Distintivo militar criado em 1913 para qualificar pilotos que haviam concluído seu treinamento e exames no Reino da Prússia.",
+  "historia": {
+    "dataCriacao": "27 de janeiro de 1913",
+    "criador": "Kaiser Guilherme II",
+    "criteriosConcessao": "Podia ser concedido a oficiais, suboficiais e soldados que, após passar nos dois exames obrigatórios para pilotos e completar seu treinamento em uma estação de pilotos militares, adquirissem o certificado de competência como piloto militar."
+  },
+  "caracteristicasFisicas": {
+    "materiais": [
+      "prata",
+      "metal não ferroso prateado",
+      "ferro prateado"
+    ],
+    "variacoes": "Devido à diferente fabricação e material, o tamanho varia de 1 a 3 mm. Além disso, foram feitos meios-tamanhos para prender ou para a fivela de medalha (tamanho: 50 x 30 mm).",
+    "versoesRaras": "Desenhos bordados com fio de metal são raros."
+  },
+  "design": {
+    "formato": "Oval",
+    "descricao": "O distintivo mostra uma paisagem acidentada com edifícios no meio, sobre a qual voa um avião Etrich-Rumpler Taube. É cercado por uma grinalda de folhas de carvalho do lado direito e louro do lado esquerdo e é encimado pela Coroa do Estado Alemão."
+  },
+  "formaDeUso": {
+    "posicao": "Usado como broche no lado esquerdo do peito."
+  }
+}

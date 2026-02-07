@@ -1,0 +1,67 @@
+{
+  "squadronId": "Esc 19",
+  "squadronName": "Esc 19",
+  "country": "FRANCE",
+  "history": "A Escadrille 19 foi criada em maio de 1913 no campo de Lyon‑Bron como HF 19, equipada inicialmente com seis Henri Farman HF 20, e ao longo da Primeira Guerra evoluiu por redesignações até a fase final como SAL 19, em consonância com a adoção de material Salmson para missões de reconhecimento e observação. A página dedicada reúne histórico, insígnias, comandantes, pessoal, aviões e estacionamentos, permitindo acompanhar a trajetória operacional da unidade do pré‑guerra até o Armistício.​\nIdentificação e Formação\nDesignação Original: Escadrille HF 19 (HF para Henri Farman).​\nDesignação Final: Escadrille SAL 19 (SAL para Salmson).​\nPaís: França.​\nData de Criação: maio de 1913 (Lyon‑Bron).​\nContexto de Formação: Unidade criada no pré‑guerra e sujeita à prática francesa de redesignação conforme o tipo de aeronave em serviço, documentada nas seções de “Appellations successives”.​\nHistória Operacional\n1914–1917: Atuação em observação, regulação de tiro e reconhecimento fotográfico na Frente Ocidental, conforme as seções de histórico e missões da página.​\nInício de 1918: Consolidação da fase SAL 19 com material Salmson, refletindo a missão de reconhecimento de curto e médio alcance típica das “SAL”.​\nArmistício: Manteve o perfil de reconhecimento e observação até o fim das hostilidades, com registros de estacionamentos e vínculos hierárquicos na página.​\nEstatísticas e Desempenho\nRegistros de perdas: Listagens nominativas em “Les Hommes”, sem síntese numérica única consolidada no corpo da página.​\nFoco operacional: Missões de observação, regulação de artilharia e fotografia aérea priorizadas sobre a contagem de vitórias aéreas.​\nDocumentação: Quadros de aeronaves conhecidas, citações e decoraciones coletivas indicadas quando aplicável.​\nComandantes (Chefs d’escadrille)\nA página lista os sucessivos comandantes com seus períodos, permitindo rastrear mudanças de chefia ao longo da guerra.​\nPessoal Notável\n“Les Hommes” reúne perfis, fotos e testemunhos preservados por arquivos familiares e coleções, contribuindo para a memória da unidade.​\nAeronaves Utilizadas\nHenri Farman HF 20 – dotação inicial na fase HF 19.​\nSalmson 2A2 – aeronave característica das escadrilhas SAL na fase final.​\nInsígnia e Tradição\nInsígnias: Insígnias pintadas e metálicas documentadas, com variantes por período operacional.​\nMarcas e cores: Seções dedicadas às “Couleurs des avions” e aos emblemas por fase de material.​\nLegado: A tradição da Escadrille 19 é preservada em compilações de escadrilhas e listagens de tradições da Aeronáutica Militar/Armée de l’Air.",
+  "emblemImage": "squadrons\\images\\Esc 19.jpg",
+  "airfields": [
+    {
+      "start": "19160101",
+      "end": "19160301",
+      "airfield": "Bonne Maison"
+    },
+    {
+      "start": "19160301",
+      "end": "19160501",
+      "airfield": "Julvecourt"
+    },
+    {
+      "start": "19160501",
+      "end": "19161001",
+      "airfield": "Montgobert"
+    },
+    {
+      "start": "19161001",
+      "end": "19161201",
+      "airfield": "Vauxcere"
+    },
+    {
+      "start": "19161201",
+      "end": "19170201",
+      "airfield": "Rugny"
+    },
+    {
+      "start": "19170201",
+      "end": "19170701",
+      "airfield": "Pierrefonds"
+    },
+    {
+      "start": "19170701",
+      "end": "19170901",
+      "airfield": "Froides"
+    },
+    {
+      "start": "19170901",
+      "end": "19171001",
+      "airfield": "Auve"
+    },
+    {
+      "start": "19171001",
+      "end": "19180301",
+      "airfield": "Souilly"
+    },
+    {
+      "start": "19180301",
+      "end": "19180901",
+      "airfield": "Julvecourt"
+    },
+    {
+      "start": "19180901",
+      "end": "",
+      "airfield": "Tilloy"
+    }
+  ],
+  "source": {
+    "pwcg_squadron_file": "A:\\SteamLibrary\\steamapps\\common\\IL-2 Sturmovik Battle of Stalingrad\\PWCGFC\\FCData\\Input\\Squadron\\Esc 19.json"
+  }
+}
