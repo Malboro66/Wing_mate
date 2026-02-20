@@ -48,10 +48,14 @@ from app.ui.medals_tab import MedalsTab
 from app.ui.insert_squads_tab import InsertSquadsTab
 from app.ui.input_medals_tab import InputMedalsTab
 
+from app.application.container import AppContainer
 from app.core.data_parser import IL2DataParser
 from app.core.data_processor import IL2DataProcessor
+from utils.observability import Events, emit_event
+from utils.structured_logger import StructuredLogger
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
+structured_logger = StructuredLogger("IL2CampaignAnalyzer")
 
 
 class DataSyncThread(QThread):
@@ -72,11 +76,13 @@ class DataSyncThread(QThread):
         self,
         pwcgfc_path: str,
         campaign_name: str,
+        processor_factory: Optional[Callable[[str], IL2DataProcessor]] = None,
         parent: Optional[QThread] = None,
     ) -> None:
         super().__init__(parent)
         self.pwcgfc_path: str = pwcgfc_path
         self.campaign_name: str = campaign_name
+        self.processor_factory = processor_factory or (lambda p: IL2DataProcessor(p))
 
     def run(self) -> None:
         try:
@@ -86,8 +92,14 @@ class DataSyncThread(QThread):
                 self.campaign_name,
                 self.pwcgfc_path,
             )
+            emit_event(
+                structured_logger,
+                Events.SYNC_STARTED,
+                campaign_name=self.campaign_name,
+                pwcgfc_path=self.pwcgfc_path,
+            )
 
-            processor = IL2DataProcessor(self.pwcgfc_path)
+            processor = self.processor_factory(self.pwcgfc_path)
             self.progress.emit(40)
 
             data = processor.process_campaign(self.campaign_name)
@@ -105,17 +117,40 @@ class DataSyncThread(QThread):
                 len(data.get("missions", []) or []),
                 len(data.get("aces", []) or []),
             )
+            emit_event(
+                structured_logger,
+                Events.SYNC_SUCCEEDED,
+                campaign_name=self.campaign_name,
+                missions_count=len(data.get("missions", []) or []),
+                aces_count=len(data.get("aces", []) or []),
+            )
 
             self.data_loaded.emit(data)
             self.progress.emit(100)
 
         except (OSError, json.JSONDecodeError, ValueError) as e:
             logger.exception("Erro na sincronização (dados/parse/arquivo)")
+            emit_event(
+                structured_logger,
+                Events.SYNC_FAILED,
+                level="error",
+                campaign_name=self.campaign_name,
+                error_type=type(e).__name__,
+                error_message=str(e),
+            )
             self.error_occurred.emit(f"Erro ao processar dados: {e}")
             self.progress.emit(0)
 
         except Exception as e:
             logger.exception("Erro inesperado na sincronização")
+            emit_event(
+                structured_logger,
+                Events.SYNC_FAILED,
+                level="error",
+                campaign_name=self.campaign_name,
+                error_type=type(e).__name__,
+                error_message=str(e),
+            )
             self.error_occurred.emit(f"Erro inesperado: {e}")
             try:
                 self.progress.emit(0)
@@ -138,6 +173,7 @@ class MainWindow(QMainWindow):
         super().__init__(parent)
 
         self.settings: QSettings = QSettings("IL2CampaignAnalyzer", "Settings")
+        self.container: AppContainer = AppContainer()
 
         self.pwcgfc_path: str = ""
         self._full_path_text: str = ""
@@ -167,6 +203,12 @@ class MainWindow(QMainWindow):
 
         self._build_ui()
         self._load_saved_settings()
+
+        try:
+            modules = self.container.get_content_module_registry().list_modules()
+            logger.info("Registro de conteúdo carregado: %s módulos", len(modules))
+        except Exception:
+            logger.exception("Falha ao carregar registro de módulos de conteúdo")
 
         logger.info("MainWindow inicializada")
 
@@ -308,7 +350,9 @@ class MainWindow(QMainWindow):
         self.medals_tab = MedalsTab()
         self.tabs.addTab(self.medals_tab, "Medalhas")
 
-        self.insert_squads_tab = InsertSquadsTab()
+        self.insert_squads_tab = InsertSquadsTab(
+            app_service=self.container.get_squadron_enrichment_application_service()
+        )
         self.tabs.addTab(self.insert_squads_tab, "Insert Squads")
 
         self.input_medals_tab = InputMedalsTab()
@@ -372,6 +416,7 @@ class MainWindow(QMainWindow):
             return
 
         self.pwcgfc_path = folder_path
+        self.container.set_pwcgfc_path(self.pwcgfc_path)
         self._full_path_text = f"Caminho: {folder_path}"
         self.settings.setValue("pwcgfc_path", self.pwcgfc_path)
         self._update_elided_path_label()
@@ -394,7 +439,7 @@ class MainWindow(QMainWindow):
         if not self.pwcgfc_path:
             return
 
-        parser = IL2DataParser(self.pwcgfc_path)
+        parser = self.container.get_parser()
         campaigns: List[str] = parser.get_campaigns()
 
         self.campaign_combo.blockSignals(True)
@@ -429,7 +474,12 @@ class MainWindow(QMainWindow):
         self._set_ui_busy(True, "Sincronizando campanha...")
         self.progress_bar.setValue(0)
 
-        self.sync_thread = DataSyncThread(self.pwcgfc_path, campaign, self)
+        self.sync_thread = DataSyncThread(
+            self.pwcgfc_path,
+            campaign,
+            processor_factory=self.container.create_processor,
+            parent=self,
+        )
 
         self.sync_thread.data_loaded.connect(self._on_data_loaded, Qt.QueuedConnection)
         self.sync_thread.error_occurred.connect(self._on_sync_error, Qt.QueuedConnection)
@@ -546,7 +596,7 @@ class MainWindow(QMainWindow):
         if not pilot_name or not self.pwcgfc_path or not campaign:
             return ("GERMANY", "Germany", set())
 
-        parser = IL2DataParser(self.pwcgfc_path)
+        parser = self.container.get_parser()
         personnel_dir: Path = parser.campaigns_path / campaign / "Personnel"
         if not personnel_dir.exists():
             logger.warning("Diretório Personnel não encontrado: %s", personnel_dir)
@@ -659,6 +709,7 @@ class MainWindow(QMainWindow):
         saved_path: str = str(self.settings.value("pwcgfc_path", "") or "")
         if saved_path and Path(saved_path).exists():
             self.pwcgfc_path = saved_path
+            self.container.set_pwcgfc_path(self.pwcgfc_path)
             self._full_path_text = f"Caminho: {saved_path}"
             self._update_elided_path_label()
             self._load_campaigns()
