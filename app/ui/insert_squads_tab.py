@@ -14,6 +14,8 @@ from app.application.squadron_enrichment_application_service import (
     SquadronEnrichmentApplicationService,
 )
 from app.core.squadron_enrichment_service import SquadronEnrichmentService
+from app.ui.design_system import DSStyles, DSSpacing, apply_primary_button, apply_section_group
+from app.ui.error_feedback import show_actionable_error
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
@@ -64,6 +66,7 @@ class InsertSquadsTab(QWidget):
         outer: QVBoxLayout = QVBoxLayout(self)
 
         sel_group: QGroupBox = QGroupBox(self.tr("Seleção de Esquadrão"))
+        apply_section_group(sel_group)
         sel_form: QFormLayout = QFormLayout(sel_group)
 
         self.squad_combo: QComboBox = QComboBox()
@@ -76,6 +79,7 @@ class InsertSquadsTab(QWidget):
         outer.addWidget(sel_group)
 
         af_group: QGroupBox = QGroupBox(self.tr("Aeródromos por data"))
+        apply_section_group(af_group)
         af_v: QVBoxLayout = QVBoxLayout(af_group)
 
         self.af_table: QTableWidget = QTableWidget(0, 3)
@@ -88,15 +92,14 @@ class InsertSquadsTab(QWidget):
         outer.addWidget(af_group)
 
         edit_group: QGroupBox = QGroupBox(self.tr("Dados Enriquecidos"))
+        apply_section_group(edit_group)
         edit_form: QFormLayout = QFormLayout(edit_group)
 
         emblem_row: QHBoxLayout = QHBoxLayout()
         self.emblem_preview: QLabel = QLabel(self.tr("Sem emblema"))
         self.emblem_preview.setAlignment(Qt.AlignCenter)
-        self.emblem_preview.setFixedSize(160, 160)
-        self.emblem_preview.setStyleSheet(
-            "color:#888; border:1px solid #444; background:#1e1e1e;"
-        )
+        self.emblem_preview.setFixedSize(DSSpacing.ICON_PREVIEW_SIZE, DSSpacing.ICON_PREVIEW_SIZE)
+        self.emblem_preview.setStyleSheet(DSStyles.PANEL_PLACEHOLDER)
         emblem_btn: QPushButton = QPushButton(self.tr("Selecionar Emblema (.png/.jpg)"))
         emblem_btn.clicked.connect(self._choose_emblem)
         emblem_row.addWidget(self.emblem_preview)
@@ -118,6 +121,7 @@ class InsertSquadsTab(QWidget):
         bottom: QHBoxLayout = QHBoxLayout()
         bottom.addStretch(1)
         self.btn_save: QPushButton = QPushButton(self.tr("Salvar"))
+        apply_primary_button(self.btn_save)
         self.btn_save.clicked.connect(self._save_enriched_data)
         self.btn_save.setEnabled(False)
         bottom.addWidget(self.btn_save)
@@ -219,13 +223,13 @@ class InsertSquadsTab(QWidget):
         try:
             country, airfields = self._app_service.load_preview(self._selected_json_path)
         except (UnicodeDecodeError, OSError, ValueError) as e:
-            QMessageBox.warning(
-                self,
-                self.tr("Erro de Leitura"),
-                self.tr("Não foi possível ler o arquivo JSON:\n")
-                + str(self._selected_json_path)
-                + "\n"
-                + str(e),
+            show_actionable_error(
+                parent=self,
+                title=self.tr("Erro de Leitura"),
+                summary=self.tr("Não foi possível ler o arquivo JSON."),
+                action_hint=self.tr("Verifique se o arquivo existe, se está íntegro e tente novamente."),
+                technical_details=str(e),
+                file_path=str(self._selected_json_path),
             )
             return
 
@@ -273,6 +277,23 @@ class InsertSquadsTab(QWidget):
             )
             return
 
+        try:
+            sq_id, _ = self._app_service.build_payload(
+                source_path=self._selected_json_path,
+                history=self.history_edit.toPlainText(),
+                emblem_rel="",
+            )
+        except (UnicodeDecodeError, OSError, ValueError) as e:
+            show_actionable_error(
+                parent=self,
+                title=self.tr("Erro de Leitura"),
+                summary=self.tr("Não foi possível ler o arquivo JSON para montar o payload."),
+                action_hint=self.tr("Verifique integridade do arquivo e tente novamente."),
+                technical_details=str(e),
+                file_path=str(self._selected_json_path),
+            )
+            return
+
         emblem_rel: str = ""
         if self._selected_emblem_src and self._selected_emblem_src.exists():
             ext: str = self._selected_emblem_src.suffix.lower()
@@ -284,8 +305,13 @@ class InsertSquadsTab(QWidget):
                 shutil.copyfile(str(self._selected_emblem_src), str(emblem_dst))
                 emblem_rel = str(Path("squadrons") / "images" / emblem_dst.name)
             except (OSError, shutil.Error) as e:
-                QMessageBox.critical(
-                    self, self.tr("Emblema"), self.tr("Falha ao copiar emblema:\n") + str(e)
+                show_actionable_error(
+                    parent=self,
+                    title=self.tr("Emblema"),
+                    summary=self.tr("Falha ao copiar o emblema selecionado."),
+                    action_hint=self.tr("Confirme permissões de escrita e tente outra imagem."),
+                    technical_details=str(e),
+                    file_path=str(self._selected_emblem_src),
                 )
                 return
 
@@ -299,8 +325,13 @@ class InsertSquadsTab(QWidget):
         try:
             self._app_service.persist_payload(out_path, enriched)
         except (OSError, TypeError, ValueError) as e:
-            QMessageBox.critical(
-                self, self.tr("Salvar"), self.tr("Falha ao salvar JSON:\n") + str(e)
+            show_actionable_error(
+                parent=self,
+                title=self.tr("Salvar"),
+                summary=self.tr("Não foi possível salvar o arquivo JSON."),
+                action_hint=self.tr("Verifique permissões da pasta de destino e tente novamente."),
+                technical_details=str(e),
+                file_path=str(out_path),
             )
             return
 
@@ -324,6 +355,4 @@ class InsertSquadsTab(QWidget):
     def _clear_emblem_preview(self) -> None:
         self.emblem_preview.setPixmap(QPixmap())
         self.emblem_preview.setText(self.tr("Sem emblema"))
-        self.emblem_preview.setStyleSheet(
-            "color:#888; border:1px solid #444; background:#1e1e1e;"
-        )
+        self.emblem_preview.setStyleSheet(DSStyles.PANEL_PLACEHOLDER)

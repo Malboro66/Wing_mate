@@ -46,6 +46,7 @@ from PyQt5.QtWidgets import (
 
 import logging
 
+from app.ui.error_feedback import show_actionable_error
 from utils.observability import Events, emit_event
 from utils.structured_logger import StructuredLogger
 
@@ -648,8 +649,15 @@ class ProfileTab(QWidget):
                 schema_version=self.SCHEMA_VERSION,
             )
             QMessageBox.information(self, self.tr("Perfil"), self.tr("Dados do perfil salvos."))
-        except OSError:
-            QMessageBox.critical(self, self.tr("Erro"), self.tr("Não foi possível salvar o perfil."))
+        except OSError as e:
+            show_actionable_error(
+                parent=self,
+                title=self.tr("Erro"),
+                summary=self.tr("Não foi possível salvar o perfil."),
+                action_hint=self.tr("Verifique permissões e espaço em disco antes de tentar novamente."),
+                technical_details=str(e),
+                file_path=prefix,
+            )
 
     def load_from_settings(self):
         self.loaded_ok = False
