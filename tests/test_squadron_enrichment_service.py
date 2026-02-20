@@ -3,6 +3,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+import pytest
+
 from app.core.squadron_enrichment_service import SquadronEnrichmentService
 
 
@@ -53,8 +55,33 @@ def test_read_json_invalid_raises_value_error(tmp_path: Path):
     broken = tmp_path / "broken.json"
     broken.write_text("{invalid}", encoding="utf-8")
 
-    try:
+    with pytest.raises(ValueError):
         service.read_json(broken)
-        assert False, "Era esperado ValueError para JSON inválido"
-    except ValueError:
-        assert True
+
+
+def test_read_json_schema_invalid_raises_value_error(tmp_path: Path):
+    service = SquadronEnrichmentService()
+    invalid_schema = tmp_path / "invalid_schema.json"
+    invalid_schema.write_text('{"name":123, "airfields":"oops"}', encoding="utf-8")
+
+    with pytest.raises(ValueError):
+        service.read_json(invalid_schema)
+
+
+def test_save_enriched_payload_rejects_invalid_schema(tmp_path: Path):
+    service = SquadronEnrichmentService()
+    out = tmp_path / "out.json"
+
+    with pytest.raises(ValueError):
+        service.save_enriched_payload(
+            out,
+            {
+                "squadronId": "11",
+                # squadronName ausente
+                "country": "GERMANY",
+                "history": "h",
+                "emblemImage": "",
+                "airfields": [],
+                "source": {"pwcg_squadron_file": "x"},
+            },
+        )

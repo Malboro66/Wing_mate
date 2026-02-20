@@ -10,6 +10,9 @@ import shutil
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from app.application.squadron_enrichment_application_service import (
+    SquadronEnrichmentApplicationService,
+)
 from app.core.squadron_enrichment_service import SquadronEnrichmentService
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
@@ -31,9 +34,19 @@ from PyQt5.QtWidgets import (
 
 
 class InsertSquadsTab(QWidget):
-    def __init__(self, parent: Optional[QWidget] = None) -> None:
+    def __init__(
+        self,
+        app_service: Optional[SquadronEnrichmentApplicationService] = None,
+        parent: Optional[QWidget] = None,
+    ) -> None:
         super().__init__(parent)
-        self._service: SquadronEnrichmentService = SquadronEnrichmentService()
+        if app_service is None:
+            domain_service: SquadronEnrichmentService = SquadronEnrichmentService()
+            self._app_service: SquadronEnrichmentApplicationService = (
+                SquadronEnrichmentApplicationService(domain_service)
+            )
+        else:
+            self._app_service = app_service
         self._pwcgfc_path: Optional[Path] = None
         self._squadron_dir: Optional[Path] = None
         self._selected_json_path: Optional[Path] = None
@@ -204,7 +217,7 @@ class InsertSquadsTab(QWidget):
             return
 
         try:
-            data: Dict[str, Any] = self._service.read_json(self._selected_json_path)
+            country, airfields = self._app_service.load_preview(self._selected_json_path)
         except (UnicodeDecodeError, OSError, ValueError) as e:
             QMessageBox.warning(
                 self,
@@ -216,7 +229,6 @@ class InsertSquadsTab(QWidget):
             )
             return
 
-        _name, country, airfields = self._service.extract_fields(data)
         self.country_label.setText(country or "N/A")
         self._fill_airfields_table(airfields)
 
@@ -261,21 +273,6 @@ class InsertSquadsTab(QWidget):
             )
             return
 
-        try:
-            base_in: Dict[str, Any] = self._service.read_json(self._selected_json_path)
-        except (UnicodeDecodeError, OSError, ValueError) as e:
-            QMessageBox.warning(
-                self,
-                self.tr("Erro de Leitura"),
-                self.tr("Não foi possível ler o arquivo JSON:\n")
-                + str(self._selected_json_path)
-                + "\n"
-                + str(e),
-            )
-            return
-
-        sq_id, _sq_name = self._service.resolve_id_and_name(base_in, self._selected_json_path)
-
         emblem_rel: str = ""
         if self._selected_emblem_src and self._selected_emblem_src.exists():
             ext: str = self._selected_emblem_src.suffix.lower()
@@ -292,8 +289,7 @@ class InsertSquadsTab(QWidget):
                 )
                 return
 
-        enriched: Dict[str, Any] = self._service.build_enriched_payload(
-            base_data=base_in,
+        sq_id, enriched = self._app_service.build_payload(
             source_path=self._selected_json_path,
             history=self.history_edit.toPlainText(),
             emblem_rel=emblem_rel,
@@ -301,7 +297,7 @@ class InsertSquadsTab(QWidget):
 
         out_path: Path = self._assets_meta_dir / f"{sq_id}.json"
         try:
-            self._service.save_enriched_payload(out_path, enriched)
+            self._app_service.persist_payload(out_path, enriched)
         except (OSError, TypeError, ValueError) as e:
             QMessageBox.critical(
                 self, self.tr("Salvar"), self.tr("Falha ao salvar JSON:\n") + str(e)

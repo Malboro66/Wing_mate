@@ -7,10 +7,67 @@
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 from utils.file_operations import atomic_json_write, safe_read_json
+
+
+@dataclass(frozen=True)
+class AirfieldEntry:
+    start: str
+    end: str
+    airfield: str
+
+    @classmethod
+    def from_raw(cls, start: Any, end: Any, airfield: Any) -> "AirfieldEntry":
+        start_text = str(start or "").strip()
+        end_text = str(end or "").strip()
+        airfield_text = str(airfield or "").strip()
+        if not airfield_text:
+            raise ValueError("Campo 'airfield' é obrigatório e não pode ser vazio")
+        return cls(start=start_text, end=end_text, airfield=airfield_text)
+
+    def to_dict(self) -> Dict[str, str]:
+        return {"start": self.start, "end": self.end, "airfield": self.airfield}
+
+
+@dataclass(frozen=True)
+class EnrichedSquadronSchema:
+    squadron_id: str
+    squadron_name: str
+    country: str
+    history: str
+    emblem_image: str
+    airfields: List[AirfieldEntry]
+    source_path: str
+
+    def validate(self) -> None:
+        if not self.squadron_id.strip():
+            raise ValueError("Campo obrigatório inválido: squadronId")
+        if not self.squadron_name.strip():
+            raise ValueError("Campo obrigatório inválido: squadronName")
+        if not isinstance(self.country, str):
+            raise ValueError("Campo inválido: country")
+        if not isinstance(self.history, str):
+            raise ValueError("Campo inválido: history")
+        if not isinstance(self.emblem_image, str):
+            raise ValueError("Campo inválido: emblemImage")
+        if not self.source_path.strip():
+            raise ValueError("Campo obrigatório inválido: source.pwcg_squadron_file")
+
+    def to_dict(self) -> Dict[str, Any]:
+        self.validate()
+        return {
+            "squadronId": self.squadron_id,
+            "squadronName": self.squadron_name,
+            "country": self.country,
+            "history": self.history,
+            "emblemImage": self.emblem_image,
+            "airfields": [a.to_dict() for a in self.airfields],
+            "source": {"pwcg_squadron_file": self.source_path},
+        }
 
 
 class SquadronEnrichmentService:
@@ -29,12 +86,14 @@ class SquadronEnrichmentService:
         """Lê JSON com API segura padronizada e fallback de encoding."""
         data = safe_read_json(path, default=None)
         if isinstance(data, dict):
+            self._validate_input_schema(data)
             return data
 
         try:
             with path.open("r", encoding="latin-1") as f:
                 parsed = json.load(f)
             if isinstance(parsed, dict):
+                self._validate_input_schema(parsed)
                 return parsed
         except (UnicodeDecodeError, json.JSONDecodeError, OSError):
             pass
@@ -55,16 +114,13 @@ class SquadronEnrichmentService:
         name = self._first_string(data, self.NAME_KEYS)
         country = self._first_string(data, self.COUNTRY_KEYS)
 
-        airfields: List[Dict[str, str]] = []
+        airfields: List[AirfieldEntry] = []
 
         def add_af(start: Any, end: Any, airfield: Any) -> None:
-            start_text = str(start or "").strip()
-            end_text = str(end or "").strip()
-            airfield_text = str(airfield or "").strip()
-            if airfield_text:
-                airfields.append(
-                    {"start": start_text, "end": end_text, "airfield": airfield_text}
-                )
+            try:
+                airfields.append(AirfieldEntry.from_raw(start, end, airfield))
+            except ValueError:
+                return
 
         af_dict = data.get("airfields")
         if isinstance(af_dict, dict):
@@ -96,7 +152,7 @@ class SquadronEnrichmentService:
                         item.get("airfield") or item.get("base"),
                     )
 
-        return name, country, airfields
+        return name, country, [item.to_dict() for item in airfields]
 
     def build_enriched_payload(
         self,
@@ -105,22 +161,29 @@ class SquadronEnrichmentService:
         history: str,
         emblem_rel: str,
     ) -> Dict[str, Any]:
-        """Monta payload de metadados enriquecidos de esquadrão."""
+        """Monta payload de metadados enriquecidos de esquadrão validando schema."""
         sq_id, sq_name = self.resolve_id_and_name(base_data, source_path)
-        _name, country, airfields = self.extract_fields(base_data)
+        _name, country, airfields_dicts = self.extract_fields(base_data)
 
-        return {
-            "squadronId": sq_id,
-            "squadronName": sq_name,
-            "country": country or "",
-            "history": history.strip(),
-            "emblemImage": emblem_rel,
-            "airfields": airfields,
-            "source": {"pwcg_squadron_file": str(source_path)},
-        }
+        airfields = [
+            AirfieldEntry.from_raw(a.get("start"), a.get("end"), a.get("airfield"))
+            for a in airfields_dicts
+        ]
+
+        payload = EnrichedSquadronSchema(
+            squadron_id=sq_id,
+            squadron_name=sq_name,
+            country=country or "",
+            history=history.strip(),
+            emblem_image=emblem_rel,
+            airfields=airfields,
+            source_path=str(source_path),
+        )
+        return payload.to_dict()
 
     def save_enriched_payload(self, output_path: Path, payload: Dict[str, Any]) -> None:
         """Persiste payload em JSON UTF-8 com escrita atômica padronizada."""
+        self._validate_output_schema(payload)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with atomic_json_write(output_path) as f:
             json.dump(payload, f, ensure_ascii=False, indent=2)
@@ -132,3 +195,31 @@ class SquadronEnrichmentService:
             if isinstance(value, str) and value.strip():
                 return value.strip()
         return ""
+
+    @staticmethod
+    def _validate_input_schema(data: Dict[str, Any]) -> None:
+        if not isinstance(data, dict):
+            raise ValueError("Schema inválido: JSON raiz deve ser um objeto")
+
+        for key in ("squadronName", "name", "displayName", "id", "squadron_id"):
+            value = data.get(key)
+            if value is not None and not isinstance(value, str):
+                raise ValueError(f"Schema inválido: campo '{key}' deve ser string")
+
+        airfields = data.get("airfields")
+        if airfields is not None and not isinstance(airfields, (dict, list)):
+            raise ValueError("Schema inválido: campo 'airfields' deve ser dict ou list")
+
+    @staticmethod
+    def _validate_output_schema(payload: Dict[str, Any]) -> None:
+        required = ("squadronId", "squadronName", "country", "history", "emblemImage", "airfields", "source")
+        for key in required:
+            if key not in payload:
+                raise ValueError(f"Schema de saída inválido: campo ausente '{key}'")
+
+        if not isinstance(payload.get("airfields"), list):
+            raise ValueError("Schema de saída inválido: 'airfields' deve ser lista")
+
+        source = payload.get("source")
+        if not isinstance(source, dict) or not isinstance(source.get("pwcg_squadron_file"), str):
+            raise ValueError("Schema de saída inválido: source.pwcg_squadron_file inválido")

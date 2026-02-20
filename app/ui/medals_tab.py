@@ -81,7 +81,7 @@ class MedalDescEditor(QDialog):
             out: Path = self.base_dir / f"{self.medal_id}.json"
             out.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
             self.accept()
-        except (OSError, json.JSONEncodeError) as e:
+        except (OSError, TypeError, ValueError) as e:
             logger.error("Falha ao salvar descrição da medalha %s: %s", self.medal_id, e)
             QMessageBox.critical(self, "Erro", f"Falha ao salvar descrição: {e}")
 

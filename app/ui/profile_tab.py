@@ -46,7 +46,11 @@ from PyQt5.QtWidgets import (
 
 import logging
 
+from utils.observability import Events, emit_event
+from utils.structured_logger import StructuredLogger
+
 logger = logging.getLogger("IL2CampaignAnalyzer")
+structured_logger = StructuredLogger("IL2CampaignAnalyzer")
 
 
 class FlowLayout(QLayout):
@@ -636,6 +640,13 @@ class ProfileTab(QWidget):
             self.settings.setValue(f"{prefix}/dob", self.dob_edit.date().toString("yyyy-MM-dd"))
             self.settings.setValue(f"{prefix}/birthplace", self.birthplace_edit.text()[: self.MAX_BIRTHPLACE])
             self.settings.setValue(f"{prefix}/bio", self.bio_edit.toPlainText()[: self.MAX_BIO])
+            emit_event(
+                structured_logger,
+                Events.PROFILE_SAVED,
+                campaign_key=self._campaign_key,
+                pilot_key=self._pilot_key,
+                schema_version=self.SCHEMA_VERSION,
+            )
             QMessageBox.information(self, self.tr("Perfil"), self.tr("Dados do perfil salvos."))
         except OSError:
             QMessageBox.critical(self, self.tr("Erro"), self.tr("Não foi possível salvar o perfil."))
