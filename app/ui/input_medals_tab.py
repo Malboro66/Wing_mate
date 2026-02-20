@@ -652,7 +652,7 @@ class InputMedalsTab(QWidget):
                 f.write(payload + "\n")
             
             logger.info(f"Arquivo medals.json persistido ({len(self.medals)} medalhas)")
-        except (OSError, json.JSONEncodeError) as e:
+        except (OSError, TypeError, ValueError) as e:
             self.error_label.setText(f"Falha ao salvar arquivo: {e}")
             logger.exception("Falha na gravação atômica do medals.json")
             QMessageBox.critical(
