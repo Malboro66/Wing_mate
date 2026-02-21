@@ -14,7 +14,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, Optional, Set, Tuple, List, Any, Callable
+from typing import Dict, Optional, List, Any, Callable
 from datetime import datetime
 import json
 import logging
@@ -33,7 +33,6 @@ from PyQt5.QtWidgets import (
     QProgressBar,
     QStatusBar,
     QTabWidget,
-    QMessageBox,
     QToolBar,
     QAction,
     QStyle,
@@ -47,11 +46,20 @@ from app.ui.profile_tab import ProfileTab
 from app.ui.medals_tab import MedalsTab
 from app.ui.insert_squads_tab import InsertSquadsTab
 from app.ui.input_medals_tab import InputMedalsTab
+from app.ui.skeleton_widget import SkeletonWidget
+from app.ui.toast_widget import ToastWidget
 
+from app.application.container import AppContainer
+from app.application.mission_validation_service import Mission, MissionValidationService
+from app.application.personnel_resolution_service import PersonnelResolutionService
 from app.core.data_parser import IL2DataParser
 from app.core.data_processor import IL2DataProcessor
+from utils.notification_bus import notification_bus, notify_error, notify_warning
+from utils.observability import Events, emit_event
+from utils.structured_logger import StructuredLogger
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
+structured_logger = StructuredLogger("IL2CampaignAnalyzer")
 
 
 class DataSyncThread(QThread):
@@ -72,11 +80,13 @@ class DataSyncThread(QThread):
         self,
         pwcgfc_path: str,
         campaign_name: str,
+        processor_factory: Optional[Callable[[str], IL2DataProcessor]] = None,
         parent: Optional[QThread] = None,
     ) -> None:
         super().__init__(parent)
         self.pwcgfc_path: str = pwcgfc_path
         self.campaign_name: str = campaign_name
+        self.processor_factory = processor_factory or (lambda p: IL2DataProcessor(p))
 
     def run(self) -> None:
         try:
@@ -86,8 +96,14 @@ class DataSyncThread(QThread):
                 self.campaign_name,
                 self.pwcgfc_path,
             )
+            emit_event(
+                structured_logger,
+                Events.SYNC_STARTED,
+                campaign_name=self.campaign_name,
+                pwcgfc_path=self.pwcgfc_path,
+            )
 
-            processor = IL2DataProcessor(self.pwcgfc_path)
+            processor = self.processor_factory(self.pwcgfc_path)
             self.progress.emit(40)
 
             data = processor.process_campaign(self.campaign_name)
@@ -105,17 +121,40 @@ class DataSyncThread(QThread):
                 len(data.get("missions", []) or []),
                 len(data.get("aces", []) or []),
             )
+            emit_event(
+                structured_logger,
+                Events.SYNC_SUCCEEDED,
+                campaign_name=self.campaign_name,
+                missions_count=len(data.get("missions", []) or []),
+                aces_count=len(data.get("aces", []) or []),
+            )
 
             self.data_loaded.emit(data)
             self.progress.emit(100)
 
         except (OSError, json.JSONDecodeError, ValueError) as e:
             logger.exception("Erro na sincronização (dados/parse/arquivo)")
+            emit_event(
+                structured_logger,
+                Events.SYNC_FAILED,
+                level="error",
+                campaign_name=self.campaign_name,
+                error_type=type(e).__name__,
+                error_message=str(e),
+            )
             self.error_occurred.emit(f"Erro ao processar dados: {e}")
             self.progress.emit(0)
 
         except Exception as e:
             logger.exception("Erro inesperado na sincronização")
+            emit_event(
+                structured_logger,
+                Events.SYNC_FAILED,
+                level="error",
+                campaign_name=self.campaign_name,
+                error_type=type(e).__name__,
+                error_message=str(e),
+            )
             self.error_occurred.emit(f"Erro inesperado: {e}")
             try:
                 self.progress.emit(0)
@@ -138,10 +177,14 @@ class MainWindow(QMainWindow):
         super().__init__(parent)
 
         self.settings: QSettings = QSettings("IL2CampaignAnalyzer", "Settings")
+        self.container: AppContainer = AppContainer()
+        self.personnel_resolution_service = PersonnelResolutionService(self.container.get_parser)
+        self.mission_validation_service = MissionValidationService()
 
         self.pwcgfc_path: str = ""
         self._full_path_text: str = ""
         self.current_data: Dict[str, Any] = {}
+        self._validated_missions: List[Mission] = []
         self.selected_mission_index: int = -1
         self.sync_thread: Optional[DataSyncThread] = None
         self._busy: bool = False
@@ -164,9 +207,17 @@ class MainWindow(QMainWindow):
         self.medals_tab: MedalsTab
         self.insert_squads_tab: InsertSquadsTab
         self.input_medals_tab: InputMedalsTab
+        self._sync_skeletons: Dict[QWidget, SkeletonWidget] = {}
 
         self._build_ui()
+        notification_bus.notified.connect(self._on_notification, Qt.QueuedConnection)
         self._load_saved_settings()
+
+        try:
+            modules = self.container.get_content_module_registry().list_modules()
+            logger.info("Registro de conteúdo carregado: %s módulos", len(modules))
+        except Exception:
+            logger.exception("Falha ao carregar registro de módulos de conteúdo")
 
         logger.info("MainWindow inicializada")
 
@@ -200,8 +251,9 @@ class MainWindow(QMainWindow):
         self.action_open_folder.setEnabled(True)  # permitir trocar pasta mesmo ocupado, se desejar
         self.campaign_combo.setEnabled(not self._busy)
 
-        # Tabs: manter habilitadas pode ser OK; aqui desabilita para evitar "meia atualização"
-        self.tabs.setEnabled(not self._busy)
+        # Mantém as abas habilitadas; o feedback visual de loading vem dos skeletons.
+        self.tabs.setEnabled(True)
+        self._set_sync_skeletons_visible(self._busy, message or "Sincronizando campanha...")
 
         self.progress_bar.setVisible(self._busy)
         if message:
@@ -308,7 +360,9 @@ class MainWindow(QMainWindow):
         self.medals_tab = MedalsTab()
         self.tabs.addTab(self.medals_tab, "Medalhas")
 
-        self.insert_squads_tab = InsertSquadsTab()
+        self.insert_squads_tab = InsertSquadsTab(
+            app_service=self.container.get_squadron_enrichment_application_service()
+        )
         self.tabs.addTab(self.insert_squads_tab, "Insert Squads")
 
         self.input_medals_tab = InputMedalsTab()
@@ -337,11 +391,45 @@ class MainWindow(QMainWindow):
         self.progress_bar.setTextVisible(True)
         sb.addPermanentWidget(self.progress_bar)
 
+        self._toast = ToastWidget(self)
+        self._build_sync_skeletons()
         self._set_ui_busy(False)
+
+
+    def _build_sync_skeletons(self) -> None:
+        sync_tabs: List[QWidget] = [
+            self.profile_tab,
+            self.missions_tab,
+            self.squadron_tab,
+            self.aces_tab,
+            self.medals_tab,
+        ]
+        for tab in sync_tabs:
+            overlay = SkeletonWidget(parent=tab)
+            overlay.setGeometry(tab.rect())
+            overlay.hide()
+            self._sync_skeletons[tab] = overlay
+
+    def _refresh_sync_skeleton_geometry(self) -> None:
+        for tab, overlay in self._sync_skeletons.items():
+            overlay.setGeometry(tab.rect())
+
+    def _set_sync_skeletons_visible(self, visible: bool, message: str) -> None:
+        self._refresh_sync_skeleton_geometry()
+        for overlay in self._sync_skeletons.values():
+            overlay.set_message(message)
+            overlay.setVisible(visible)
+            if visible:
+                overlay.raise_()
 
     def resizeEvent(self, event) -> None:
         super().resizeEvent(event)
         self._update_elided_path_label()
+        self._refresh_sync_skeleton_geometry()
+
+    def _on_notification(self, level: str, message: str, timeout_ms: int) -> None:
+        self._toast.show_toast(level, message, timeout_ms)
+        self.statusBar().showMessage(message, max(1000, timeout_ms))
 
     # ---------------- Fechamento ----------------
 
@@ -372,6 +460,7 @@ class MainWindow(QMainWindow):
             return
 
         self.pwcgfc_path = folder_path
+        self.container.set_pwcgfc_path(self.pwcgfc_path)
         self._full_path_text = f"Caminho: {folder_path}"
         self.settings.setValue("pwcgfc_path", self.pwcgfc_path)
         self._update_elided_path_label()
@@ -394,7 +483,7 @@ class MainWindow(QMainWindow):
         if not self.pwcgfc_path:
             return
 
-        parser = IL2DataParser(self.pwcgfc_path)
+        parser = self.container.get_parser()
         campaigns: List[str] = parser.get_campaigns()
 
         self.campaign_combo.blockSignals(True)
@@ -419,7 +508,7 @@ class MainWindow(QMainWindow):
     def _sync_data(self) -> None:
         campaign: str = self.campaign_combo.currentText().strip()
         if not self.pwcgfc_path or not campaign:
-            QMessageBox.warning(self, "Aviso", "Selecione a pasta PWCGFC e uma campanha.")
+            notify_warning("Selecione a pasta PWCGFC e uma campanha.")
             return
 
         if self.sync_thread and self.sync_thread.isRunning():
@@ -429,7 +518,12 @@ class MainWindow(QMainWindow):
         self._set_ui_busy(True, "Sincronizando campanha...")
         self.progress_bar.setValue(0)
 
-        self.sync_thread = DataSyncThread(self.pwcgfc_path, campaign, self)
+        self.sync_thread = DataSyncThread(
+            self.pwcgfc_path,
+            campaign,
+            processor_factory=self.container.create_processor,
+            parent=self,
+        )
 
         self.sync_thread.data_loaded.connect(self._on_data_loaded, Qt.QueuedConnection)
         self.sync_thread.error_occurred.connect(self._on_sync_error, Qt.QueuedConnection)
@@ -443,14 +537,23 @@ class MainWindow(QMainWindow):
         self.current_data = data or {}
         logger.info("Dados da campanha carregados, atualizando abas...")
 
-        # Aba Missões
-        self.missions_tab.set_missions(self.current_data.get("missions", []) or [])
+        # Aba Missões (validadas uma única vez na entrada do serviço)
+        self._validated_missions = self.mission_validation_service.validate(
+            self.current_data.get("missions", []) or []
+        )
+        self.missions_tab.set_missions(self._validated_missions)
 
         # Aba Ases
         self.aces_tab.set_aces(self.current_data.get("aces", []) or [])
 
+        campaign: str = self.campaign_combo.currentText().strip()
+
         # País e medalhas do Personnel
-        country_code, display_name, earned_ids = self._resolve_country_and_medals_from_personnel()
+        pilot_name = ((self.current_data.get("pilot", {}) or {}).get("name", "") or "").strip()
+        personnel_info = self.personnel_resolution_service.resolve(campaign, pilot_name)
+        country_code = personnel_info.country_code
+        display_name = personnel_info.display_name
+        earned_ids = set(personnel_info.earned_medal_ids)
 
         # Aba Medalhas
         self.medals_tab.set_country(country_code, display_name)
@@ -461,7 +564,6 @@ class MainWindow(QMainWindow):
         self.squadron_tab.set_squadron(self.current_data.get("squadron", []) or [])
 
         # Aba Perfil
-        campaign: str = self.campaign_combo.currentText().strip()
         pilot: str = (self.current_data.get("pilot", {}) or {}).get("name", "N/A")
 
         if hasattr(self.profile_tab, "set_context"):
@@ -486,7 +588,7 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("Dados carregados com sucesso.", 4000)
 
     def _on_sync_error(self, msg: str) -> None:
-        QMessageBox.critical(self, "Erro de Sincronização", msg)
+        notify_error(f"Erro de sincronização: {msg}")
         logger.error("Erro de sincronização: %s", msg)
         self.statusBar().showMessage("Falha ao sincronizar dados.", 4000)
 
@@ -539,81 +641,6 @@ class MainWindow(QMainWindow):
                 continue
         return "N/A"
 
-    def _resolve_country_and_medals_from_personnel(self) -> Tuple[str, str, Set[str]]:
-        pilot_name: str = ((self.current_data.get("pilot", {}) or {}).get("name", "") or "").strip()
-        campaign: str = self.campaign_combo.currentText().strip()
-
-        if not pilot_name or not self.pwcgfc_path or not campaign:
-            return ("GERMANY", "Germany", set())
-
-        parser = IL2DataParser(self.pwcgfc_path)
-        personnel_dir: Path = parser.campaigns_path / campaign / "Personnel"
-        if not personnel_dir.exists():
-            logger.warning("Diretório Personnel não encontrado: %s", personnel_dir)
-            return ("GERMANY", "Germany", set())
-
-        earned_ids: Set[str] = set()
-        resolved_code: str = "GERMANY"
-        display_name: str = "Germany"
-
-        try:
-            for pfile in sorted(personnel_dir.glob("*.json")):
-                data = parser.get_json_data(pfile)
-                if not isinstance(data, dict):
-                    continue
-
-                coll: Dict[str, Any] = data.get("squadronMemberCollection", {}) or {}
-                for member in coll.values():
-                    try:
-                        name: str = str(member.get("name", "") or "").strip()
-                        if not name or name.lower() != pilot_name.lower():
-                            continue
-
-                        country = str(member.get("country", "") or "").strip().upper()
-                        resolved_code, display_name = self._map_country_to_folder_and_label(country)
-
-                        medals: List[Dict[str, Any]] = member.get("medals", []) or []
-                        for m in medals:
-                            img: str = str(m.get("medalImage", "") or "").strip()
-                            if img:
-                                medal_id = img[:-4] if img.lower().endswith(".png") else img
-                                earned_ids.add(medal_id)
-                                continue
-
-                            nm: str = str(m.get("medalName", "") or "").strip()
-                            if nm:
-                                earned_ids.add(nm.lower().replace(" ", "_"))
-
-                        logger.info("Resolvido: país=%s, %s medalhas", resolved_code, len(earned_ids))
-                        return (resolved_code, display_name, earned_ids)
-
-                    except (KeyError, TypeError, AttributeError):
-                        continue
-
-        except OSError:
-            logger.exception("Falha ao varrer diretório Personnel: %s", personnel_dir)
-        except Exception:
-            logger.exception("Falha inesperada ao resolver país/medalhas")
-
-        return (resolved_code, display_name, earned_ids)
-
-    @staticmethod
-    def _map_country_to_folder_and_label(country: str) -> Tuple[str, str]:
-        c: str = (country or "").strip().upper()
-
-        if c in ("GERMANY", "GER", "DE", "DEU", "ALEMANHA", "ALLEMAGNE", "DEUTSCHLAND"):
-            return ("GERMANY", "Germany")
-        if c in ("FRANCE", "FR", "FRA"):
-            return ("FRANCE", "France")
-        if c in ("BRITAIN", "UK", "GB", "GBR", "UNITED KINGDOM", "BRIT"):
-            return ("BRITAIN", "Britain")
-        if c in ("BELGIAN", "BELGIUM", "BE", "BEL"):
-            return ("BELGIAN", "Belgian")
-        if c in ("USA", "US", "UNITED STATES", "UNITED STATES OF AMERICA"):
-            return ("USA", "USA")
-
-        return ("GERMANY", "Germany")
-
     @staticmethod
     def _roundel_display_label(country_code: str, display_name: str) -> str:
         c: str = (country_code or "").strip().upper()
@@ -626,19 +653,17 @@ class MainWindow(QMainWindow):
     # ---------------- Datas de missões ----------------
 
     def _first_mission_date(self) -> Optional[datetime]:
-        missions: List[Dict[str, Any]] = self.current_data.get("missions", []) or []
         dates: List[datetime] = []
-        for m in missions:
-            d = self._parse_any_date(m.get("date", ""))
+        for m in self._validated_missions:
+            d = self._parse_any_date(m.date)
             if d:
                 dates.append(d)
         return min(dates) if dates else None
 
     def _last_mission_date(self) -> Optional[datetime]:
-        missions: List[Dict[str, Any]] = self.current_data.get("missions", []) or []
         dates: List[datetime] = []
-        for m in missions:
-            d = self._parse_any_date(m.get("date", ""))
+        for m in self._validated_missions:
+            d = self._parse_any_date(m.date)
             if d:
                 dates.append(d)
         return max(dates) if dates else None
@@ -659,6 +684,7 @@ class MainWindow(QMainWindow):
         saved_path: str = str(self.settings.value("pwcgfc_path", "") or "")
         if saved_path and Path(saved_path).exists():
             self.pwcgfc_path = saved_path
+            self.container.set_pwcgfc_path(self.pwcgfc_path)
             self._full_path_text = f"Caminho: {saved_path}"
             self._update_elided_path_label()
             self._load_campaigns()

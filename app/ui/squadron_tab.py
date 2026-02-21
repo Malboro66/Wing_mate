@@ -7,10 +7,14 @@ import html
 import logging  # <-- Importação adicionada
 
 from PyQt5.QtCore import Qt, QTimer, QPoint
-from PyQt5.QtGui import QPixmap, QTransform, QColor, QFont, QMouseEvent
+from PyQt5.QtGui import QPixmap, QTransform, QColor, QMouseEvent, QIcon, QPainter
+from app.application.viewmodels import SquadronViewModel
+from app.ui.design_system import DSStyles, DSStates, DSSpacing, apply_section_group
+from app.ui.shortcut_mixin import CtrlFFocusMixin
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QScrollArea,
-    QTableWidget, QTableWidgetItem, QHeaderView, QToolTip
+    QTableWidget, QTableWidgetItem, QHeaderView, QToolTip, QLineEdit, QCheckBox,
+    QStyledItemDelegate, QStyleOptionViewItem, QStyle, QApplication
 )
 
 logger = logging.getLogger(__name__)  # <-- Instância do logger adicionada
@@ -48,7 +52,86 @@ class RankIconLabel(QLabel):
         QToolTip.showText(global_pos, self._rank_text, self)
 
 
-class SquadronTab(QWidget):
+class SquadronStatusDelegate(QStyledItemDelegate):
+    """Renderiza status com ícone SVG e estilo consistente em todas as colunas."""
+
+    STATUS_ICON: Dict[str, str] = {
+        "active": "status_active.svg",
+        "ativo": "status_active.svg",
+        "wounded": "status_wounded.svg",
+        "ferido": "status_wounded.svg",
+        "injured": "status_wounded.svg",
+        "mia": "status_mia.svg",
+        "desaparecido": "status_mia.svg",
+        "kia": "status_kia.svg",
+        "morto": "status_kia.svg",
+        "killed": "status_kia.svg",
+        "pow": "status_pow.svg",
+        "prisioneiro": "status_pow.svg",
+        "captured": "status_pow.svg",
+        "hospital": "status_hospital.svg",
+        "hospitalized": "status_hospital.svg",
+        "leave": "status_leave.svg",
+        "licenca": "status_leave.svg",
+        "licença": "status_leave.svg",
+        "rest": "status_leave.svg",
+    }
+
+    EMPHASIS: Set[str] = {"kia", "morto", "killed", "mia", "desaparecido", "wounded", "ferido", "pow", "prisioneiro", "captured"}
+
+    def __init__(self, status_column: int = 4, parent: Optional[QWidget] = None) -> None:
+        super().__init__(parent)
+        self._status_column = status_column
+        self._icons_dir = Path(__file__).resolve().parents[1] / "assets" / "icons"
+        self._icon_cache: Dict[str, QIcon] = {}
+
+    def _status_norm(self, index) -> str:
+        raw = index.sibling(index.row(), self._status_column).data(Qt.DisplayRole)
+        return str(raw or "").strip().lower()
+
+    def _icon_for_status(self, norm: str) -> Optional[QIcon]:
+        svg_name = self.STATUS_ICON.get(norm)
+        if not svg_name:
+            return None
+        if svg_name not in self._icon_cache:
+            p = self._icons_dir / svg_name
+            if p.exists():
+                self._icon_cache[svg_name] = QIcon(str(p))
+            else:
+                return None
+        return self._icon_cache.get(svg_name)
+
+    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index) -> None:
+        opt = QStyleOptionViewItem(option)
+        self.initStyleOption(opt, index)
+
+        norm = self._status_norm(index)
+        color = SquadronTab.STATUS_COLORS.get(norm)
+
+        if color is not None:
+            painter.save()
+            bg = QColor(color)
+            bg.setAlpha(26)
+            painter.fillRect(opt.rect, bg)
+            painter.restore()
+
+            opt.palette.setColor(opt.palette.Text, color)
+            if norm in self.EMPHASIS:
+                opt.font.setBold(True)
+
+        if index.column() == self._status_column:
+            icon = self._icon_for_status(norm)
+            if icon is not None:
+                icon_size = max(12, min(opt.rect.height() - 6, 16))
+                x = opt.rect.left() + 6
+                y = opt.rect.top() + (opt.rect.height() - icon_size) // 2
+                icon.paint(painter, x, y, icon_size, icon_size)
+                opt.rect = opt.rect.adjusted(icon_size + 10, 0, 0, 0)
+
+        QApplication.style().drawControl(QStyle.CE_ItemViewItem, opt, painter)
+
+
+class SquadronTab(QWidget, CtrlFFocusMixin):
     """
     Aba de Esquadrão com:
     - Cabeçalho (emblema + painel "Histórico e Dados") lido de assets/squadrons/meta conforme o esquadrão do player
@@ -115,17 +198,19 @@ class SquadronTab(QWidget):
 
         self._country_folder: str = "germany"
         self._current_squad_name: str = ""
+        self._vm: SquadronViewModel = SquadronViewModel()
 
         root: QVBoxLayout = QVBoxLayout(self)
 
         # Cabeçalho (emblema + texto organizado)
         self.header_group: QGroupBox = QGroupBox(self.tr("Esquadrão"))
+        apply_section_group(self.header_group)
         header_h: QHBoxLayout = QHBoxLayout(self.header_group)
 
         self.emblem_label: QLabel = QLabel(self.tr("Sem emblema"))
         self.emblem_label.setAlignment(Qt.AlignCenter)
         self.emblem_label.setFixedSize(self.EMBLEM_W, self.EMBLEM_H)
-        self.emblem_label.setStyleSheet("color:#888; border:1px solid #444; background:#1e1e1e;")
+        self.emblem_label.setStyleSheet(DSStyles.PANEL_PLACEHOLDER)
         header_h.addWidget(self.emblem_label)
 
         text_panel: QWidget = QWidget()
@@ -159,6 +244,24 @@ class SquadronTab(QWidget):
         header_h.addWidget(text_panel, 1)
         root.addWidget(self.header_group)
 
+        controls_row: QHBoxLayout = QHBoxLayout()
+        controls_row.addWidget(QLabel(self.tr("Filtro rápido:")))
+        self.filter_edit: QLineEdit = QLineEdit()
+        self.filter_edit.setPlaceholderText(self.tr("Filtrar por nome, patente ou status"))
+        self.filter_edit.setToolTip(self.tr("Atalho: Ctrl+F para focar o filtro"))
+        self.filter_edit.textChanged.connect(self._apply_filter)
+        controls_row.addWidget(self.filter_edit, 1)
+
+        self.high_contrast_toggle: QCheckBox = QCheckBox(self.tr("Alto contraste"))
+        self.high_contrast_toggle.toggled.connect(self._toggle_high_contrast)
+        controls_row.addWidget(self.high_contrast_toggle)
+
+        root.addLayout(controls_row)
+
+        self.state_label: QLabel = QLabel(self.tr("Pronto para carregar dados do esquadrão."))
+        self.state_label.setStyleSheet(DSStyles.STATE_INFO)
+        root.addWidget(self.state_label)
+
         # Tabela de pessoal
         self.table: QTableWidget = QTableWidget()
         self.table.setColumnCount(5)
@@ -166,7 +269,14 @@ class SquadronTab(QWidget):
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.setColumnWidth(1, self.RANK_MAX_W + 10)
         self.table.verticalHeader().setDefaultSectionSize(self.RANK_MAX_H + 8)
+        self.table.setSortingEnabled(True)
+        self.table.setAlternatingRowColors(True)
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.table.setToolTip(self.tr("Use setas para navegar entre os pilotos."))
+        self._status_delegate = SquadronStatusDelegate(status_column=4, parent=self.table)
+        self.table.setItemDelegate(self._status_delegate)
         root.addWidget(self.table)
+        self.bind_ctrl_f_to_filter(self, self.filter_edit)
 
     # -------- Auxiliares de caminho --------
     @staticmethod
@@ -419,13 +529,15 @@ class SquadronTab(QWidget):
         self.details_label.setText("")
         self.emblem_label.setPixmap(QPixmap())
         self.emblem_label.setText(self.tr("Sem emblema"))
-        self.emblem_label.setStyleSheet("color:#888; border:1px solid #444; background:#1e1e1e;")
+        self.emblem_label.setStyleSheet(DSStyles.PANEL_PLACEHOLDER)
 
         if not self._current_squad_name:
+            self._set_view_state(DSStates.EMPTY, self.tr("Nenhum esquadrão selecionado."))
             return
 
         cands: List[Path] = self._candidate_meta_paths(self._current_squad_name)
         if not cands:
+            self._set_view_state(DSStates.EMPTY, self.tr("Metadados do esquadrão não encontrados."))
             return
 
         meta_path: Path = cands[0]
@@ -434,6 +546,7 @@ class SquadronTab(QWidget):
                 meta: Dict[str, Any] = json.load(f)
         except (OSError, json.JSONDecodeError):
             logger.warning(f"Falha ao ler ou parsear o arquivo de metadados do esquadrão: {meta_path}")
+            self._set_view_state(DSStates.ERROR, self.tr("Falha ao ler metadados do esquadrão."))
             return
 
         title: str = (
@@ -453,6 +566,7 @@ class SquadronTab(QWidget):
                 self.emblem_label.setPixmap(scaled)
 
         self.details_label.setText(self._render_details_html(meta))
+        self._set_view_state(DSStates.SUCCESS, self.tr("Dados do esquadrão carregados."))
 
     # -------- Ícone de patente --------
     @staticmethod
@@ -495,9 +609,58 @@ class SquadronTab(QWidget):
                     return len(table) + i
             return len(table) + len(heuristics) + 100
 
+    def _set_view_state(self, state: str, message: str) -> None:
+        self.state_label.setText(message)
+        if state == DSStates.SUCCESS:
+            self.state_label.setStyleSheet(DSStyles.STATE_SUCCESS)
+        elif state == DSStates.ERROR:
+            self.state_label.setStyleSheet(DSStyles.STATE_ERROR)
+        elif state == DSStates.EMPTY:
+            self.state_label.setStyleSheet(DSStyles.STATE_WARNING)
+        else:
+            self.state_label.setStyleSheet(DSStyles.STATE_INFO)
+
+    def _apply_filter(self, text: str) -> None:
+        rows: List[Dict[str, str]] = []
+        for row in range(self.table.rowCount()):
+            rank_widget = self.table.cellWidget(row, 1)
+            rows.append(
+                {
+                    "name": (self.table.item(row, 0).text() if self.table.item(row, 0) else ""),
+                    "rank": str(getattr(rank_widget, "rank_name", "") if rank_widget else ""),
+                    "victories": (self.table.item(row, 2).text() if self.table.item(row, 2) else ""),
+                    "missions": (self.table.item(row, 3).text() if self.table.item(row, 3) else ""),
+                    "status": (self.table.item(row, 4).text() if self.table.item(row, 4) else ""),
+                }
+            )
+
+        visibility = self._vm.filter_visibility(rows, text)
+        for row, is_visible in enumerate(visibility):
+            self.table.setRowHidden(row, not is_visible)
+
+        visible_rows = sum(1 for v in visibility if v)
+        filter_state = self._vm.state_for_visible_count(visible_rows)
+        self._set_view_state(filter_state.state, self.tr(filter_state.message))
+
+    def _toggle_high_contrast(self, enabled: bool) -> None:
+        if enabled:
+            self.table.setStyleSheet(
+                "QTableWidget { background:#111; color:#fff; gridline-color:#777; }"
+                "QHeaderView::section { background:#222; color:#fff; font-weight:bold; }"
+            )
+            self.header_group.setStyleSheet("QGroupBox { color:#fff; }")
+        else:
+            self.table.setStyleSheet("")
+            self.header_group.setStyleSheet("")
+
     # -------- Preenchimento da tabela --------
     def set_squadron(self, members: List[Dict[str, Any]]) -> None:
         members = members or []
+        member_state = self._vm.state_for_members(members)
+        if member_state.state == DSStates.EMPTY:
+            self.table.setRowCount(0)
+            self._set_view_state(member_state.state, self.tr(member_state.message))
+            return
         sorted_members: List[Dict[str, Any]] = sorted(
             members,
             key=lambda m: (self._rank_weight(m.get("rank", "")), (m.get("name", "") or "").lower())
@@ -506,7 +669,9 @@ class SquadronTab(QWidget):
         self.table.setRowCount(len(sorted_members))
 
         for r, m in enumerate(sorted_members):
-            self.table.setItem(r, 0, QTableWidgetItem(m.get('name', '')))
+            name_item = QTableWidgetItem(m.get('name', ''))
+            name_item.setToolTip(name_item.text())
+            self.table.setItem(r, 0, name_item)
 
             rank_name: str = m.get('rank', '') or ''
             lbl: RankIconLabel = RankIconLabel(rank_name, delay_ms=2000, parent=self.table)
@@ -530,11 +695,16 @@ class SquadronTab(QWidget):
                 lbl.setStyleSheet("color:#888;")
 
             self.table.setCellWidget(r, 1, lbl)
-            self.table.setItem(r, 2, QTableWidgetItem(str(m.get('victories', 0))))
-            self.table.setItem(r, 3, QTableWidgetItem(str(m.get('missions_flown', 0))))
+            victories_item = QTableWidgetItem(str(m.get('victories', 0)))
+            victories_item.setToolTip(victories_item.text())
+            self.table.setItem(r, 2, victories_item)
+            missions_item = QTableWidgetItem(str(m.get('missions_flown', 0)))
+            missions_item.setToolTip(missions_item.text())
+            self.table.setItem(r, 3, missions_item)
 
             status_text: str = m.get('status', '') or ''
             status_item: QTableWidgetItem = QTableWidgetItem(status_text)
+            status_item.setToolTip(status_text)
             norm: str = (status_text or '').strip().lower()
             color: Optional[QColor] = self.STATUS_COLORS.get(norm)
             if color:
