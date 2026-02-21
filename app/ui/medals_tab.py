@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Set, Any, Union, Tuple
 
 from PyQt5.QtCore import Qt, QSize, QTimer, QEvent
-from PyQt5.QtGui import QPixmap, QIcon, QColor
+from PyQt5.QtGui import QPixmap, QIcon, QColor, QMouseEvent
 from PyQt5.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -38,6 +38,8 @@ from PyQt5.QtWidgets import (
     QListWidgetItem,
     QListView,
 )
+
+from app.ui.widgets.medal_hover_popup import MedalHoverPopup
 
 logger = logging.getLogger(__name__)
 
@@ -162,6 +164,7 @@ class MedalsTab(QWidget):
 
         # Cache de pixmaps (melhora fluidez na grade)
         self._pixmap_cache: Dict[str, Optional[QPixmap]] = {}
+        self._hover_popup: Optional[MedalHoverPopup] = None
 
         self._build_ui()
 
@@ -289,6 +292,11 @@ class MedalsTab(QWidget):
         self._icon_list.itemActivated.connect(self._on_icon_activated)
         self._icon_list.itemDoubleClicked.connect(self._on_icon_activated)
         self._icon_list.itemClicked.connect(self._on_icon_clicked)
+        self._icon_list.setMouseTracking(True)
+        self._icon_list.mouseMoveEvent = self._on_icon_hover
+        self._icon_list.leaveEvent = self._on_icon_leave
+
+        self._hover_popup = MedalHoverPopup(self)
 
         root.addWidget(self._icon_list)
 
@@ -634,3 +642,30 @@ class MedalsTab(QWidget):
         # Clique simples: apenas seleciona (mantém comportamento mais previsível na grade)
         # Mantido como hook caso queira exibir preview/infos no futuro sem abrir diálogo.
         _ = item  # no-op
+
+    def _on_icon_hover(self, event: QMouseEvent) -> None:
+        if not self._icon_list:
+            return
+
+        item = self._icon_list.itemAt(event.pos())
+        if item and self._hover_popup:
+            rec = item.data(Qt.UserRole) or {}
+            pm = self._resolve_pixmap(rec.get("image_path", ""), rec.get("image_is_rel", False))
+            if pm:
+                self._hover_popup.schedule(
+                    pm,
+                    rec.get("name", ""),
+                    self._icon_list.mapToGlobal(event.pos()),
+                )
+            else:
+                self._hover_popup.cancel()
+        elif self._hover_popup:
+            self._hover_popup.cancel()
+
+        QListWidget.mouseMoveEvent(self._icon_list, event)
+
+    def _on_icon_leave(self, event: QEvent) -> None:
+        if self._hover_popup:
+            self._hover_popup.cancel()
+        if self._icon_list:
+            QListWidget.leaveEvent(self._icon_list, event)

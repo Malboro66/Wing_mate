@@ -4,6 +4,7 @@ from typing import Optional
 
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QLineEdit, QShortcut, QWidget
+from PyQt5.QtCore import Qt
 
 
 class CtrlFFocusMixin:
@@ -14,7 +15,7 @@ class CtrlFFocusMixin:
             return
 
         shortcut = QShortcut(QKeySequence("Ctrl+F"), owner)
-        shortcut.setContext(shortcut.WidgetWithChildrenShortcut)
+        shortcut.setContext(Qt.WidgetWithChildrenShortcut)
         shortcut.activated.connect(filter_edit.setFocus)
         shortcut.activated.connect(filter_edit.selectAll)
 

@@ -14,6 +14,7 @@ from app.application.viewmodels import MissionsViewModel
 from app.ui.delegates.timeline_delegate import TimelineDelegate
 from app.ui.shortcut_mixin import CtrlFFocusMixin
 from app.ui.design_system import DSStates, DSStyles
+from app.ui.widgets.stats_bar import StatsBar
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QSplitter, QTableWidget, QTableWidgetItem,
     QTextEdit, QGroupBox, QHeaderView, QLineEdit, QLabel, QCheckBox
@@ -24,6 +25,7 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
     """Aba de Missões com tabela e painel de detalhes."""
     
     missionSelected = pyqtSignal(int, object)
+    stats_updated = pyqtSignal(int, int, str, str)
     
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         """Inicializa a aba de missões."""
@@ -49,6 +51,15 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
         top_row.addWidget(self.high_contrast_toggle)
 
         layout.addLayout(top_row)
+
+        self._stats_bar = StatsBar([
+            (self.tr("Total"), "0"),
+            (self.tr("Visíveis"), "0"),
+            (self.tr("Primeira"), "—"),
+            (self.tr("Última"), "—"),
+        ])
+        layout.addWidget(self._stats_bar)
+        self.stats_updated.connect(self._on_stats_updated, Qt.QueuedConnection)
 
         self.state_label: QLabel = QLabel(self.tr("Pronto para carregar missões."))
         self.state_label.setStyleSheet(DSStyles.STATE_INFO)
@@ -107,6 +118,7 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
             self.table.setRowCount(0)
             self.details.clear()
             self._set_view_state(loaded_state.state, self.tr(loaded_state.message))
+            self.stats_updated.emit(0, 0, "—", "—")
             return
 
         self._set_view_state(loaded_state.state, self.tr(loaded_state.message))
@@ -116,6 +128,8 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
         known_dates = [d for d in mission_dates if d is not None]
         min_date = min(known_dates) if known_dates else None
         max_date = max(known_dates) if known_dates else None
+        first_date = min_date.strftime("%Y-%m-%d") if min_date else "—"
+        last_date = max_date.strftime("%Y-%m-%d") if max_date else "—"
 
         for r, m in enumerate(self._missions):
             # Coluna 0: Data
@@ -159,6 +173,7 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
             self.table.setItem(r, 4, timeline_item)
 
         self.details.clear()
+        self.stats_updated.emit(len(self._missions), len(self._missions), first_date, last_date)
     
     def _parse_date(self, date_text: str) -> Optional[datetime]:
         value = (date_text or "").strip()
@@ -302,6 +317,17 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
         visible_rows = sum(1 for v in visibility if v)
         filter_state = self._vm.state_for_visible_count(visible_rows)
         self._set_view_state(filter_state.state, self.tr(filter_state.message))
+
+        known_dates = [d for d in (self._parse_date(m.date) for m in self._missions) if d is not None]
+        first_date = min(known_dates).strftime("%Y-%m-%d") if known_dates else "—"
+        last_date = max(known_dates).strftime("%Y-%m-%d") if known_dates else "—"
+        self.stats_updated.emit(len(self._missions), visible_rows, first_date, last_date)
+
+    def _on_stats_updated(self, total: int, visible: int, first: str, last: str) -> None:
+        self._stats_bar.update_stat(self.tr("Total"), str(total))
+        self._stats_bar.update_stat(self.tr("Visíveis"), str(visible))
+        self._stats_bar.update_stat(self.tr("Primeira"), first)
+        self._stats_bar.update_stat(self.tr("Última"), last)
 
     def _toggle_high_contrast(self, enabled: bool) -> None:
         if enabled:

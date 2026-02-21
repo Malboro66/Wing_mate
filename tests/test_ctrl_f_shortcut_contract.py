@@ -20,4 +20,4 @@ def test_tabs_use_ctrl_f_mixin_instead_of_keypress_override():
 def test_shortcut_mixin_uses_qshortcut_widget_with_children_context():
     src = Path("app/ui/shortcut_mixin.py").read_text(encoding="utf-8")
     assert "QShortcut" in src
-    assert "WidgetWithChildrenShortcut" in src
+    assert "Qt.WidgetWithChildrenShortcut" in src

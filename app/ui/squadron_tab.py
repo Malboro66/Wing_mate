@@ -6,11 +6,12 @@ import json
 import html
 import logging  # <-- Importação adicionada
 
-from PyQt5.QtCore import Qt, QTimer, QPoint
+from PyQt5.QtCore import Qt, QTimer, QPoint, pyqtSignal
 from PyQt5.QtGui import QPixmap, QTransform, QColor, QMouseEvent, QIcon, QPainter
 from app.application.viewmodels import SquadronViewModel
 from app.ui.design_system import DSStyles, DSStates, DSSpacing, apply_section_group
 from app.ui.shortcut_mixin import CtrlFFocusMixin
+from app.ui.widgets.stats_bar import StatsBar
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QScrollArea,
     QTableWidget, QTableWidgetItem, QHeaderView, QToolTip, QLineEdit, QCheckBox,
@@ -132,6 +133,7 @@ class SquadronStatusDelegate(QStyledItemDelegate):
 
 
 class SquadronTab(QWidget, CtrlFFocusMixin):
+    stats_updated = pyqtSignal(int, int, int, int)
     """
     Aba de Esquadrão com:
     - Cabeçalho (emblema + painel "Histórico e Dados") lido de assets/squadrons/meta conforme o esquadrão do player
@@ -257,6 +259,15 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         controls_row.addWidget(self.high_contrast_toggle)
 
         root.addLayout(controls_row)
+
+        self._stats_bar = StatsBar([
+            (self.tr("Total"), "0"),
+            (self.tr("Visíveis"), "0"),
+            (self.tr("Abates"), "0"),
+            (self.tr("Missões"), "0"),
+        ])
+        root.addWidget(self._stats_bar)
+        self.stats_updated.connect(self._on_stats_updated, Qt.QueuedConnection)
 
         self.state_label: QLabel = QLabel(self.tr("Pronto para carregar dados do esquadrão."))
         self.state_label.setStyleSheet(DSStyles.STATE_INFO)
@@ -642,6 +653,25 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         filter_state = self._vm.state_for_visible_count(visible_rows)
         self._set_view_state(filter_state.state, self.tr(filter_state.message))
 
+        total_rows = self.table.rowCount()
+        total_victories = 0
+        total_missions = 0
+        for row in range(total_rows):
+            if self.table.isRowHidden(row):
+                continue
+            victories_item = self.table.item(row, 2)
+            missions_item = self.table.item(row, 3)
+            total_victories += int(victories_item.text()) if victories_item and victories_item.text().isdigit() else 0
+            total_missions += int(missions_item.text()) if missions_item and missions_item.text().isdigit() else 0
+
+        self.stats_updated.emit(total_rows, visible_rows, total_victories, total_missions)
+
+    def _on_stats_updated(self, total: int, visible: int, victories: int, missions: int) -> None:
+        self._stats_bar.update_stat(self.tr("Total"), str(total))
+        self._stats_bar.update_stat(self.tr("Visíveis"), str(visible))
+        self._stats_bar.update_stat(self.tr("Abates"), str(victories))
+        self._stats_bar.update_stat(self.tr("Missões"), str(missions))
+
     def _toggle_high_contrast(self, enabled: bool) -> None:
         if enabled:
             self.table.setStyleSheet(
@@ -660,6 +690,7 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         if member_state.state == DSStates.EMPTY:
             self.table.setRowCount(0)
             self._set_view_state(member_state.state, self.tr(member_state.message))
+            self.stats_updated.emit(0, 0, 0, 0)
             return
         sorted_members: List[Dict[str, Any]] = sorted(
             members,
@@ -714,3 +745,7 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
                     f.setBold(True)
                 status_item.setFont(f)
             self.table.setItem(r, 4, status_item)
+        self._set_view_state(DSStates.SUCCESS, self.tr(member_state.message))
+        total_victories = sum(int(m.get("victories", 0) or 0) for m in sorted_members)
+        total_missions = sum(int(m.get("missions_flown", 0) or 0) for m in sorted_members)
+        self.stats_updated.emit(len(sorted_members), len(sorted_members), total_victories, total_missions)
