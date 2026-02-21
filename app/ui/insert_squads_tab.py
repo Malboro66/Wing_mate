@@ -16,6 +16,7 @@ from app.application.squadron_enrichment_application_service import (
 from app.core.squadron_enrichment_service import SquadronEnrichmentService
 from app.ui.design_system import DSStyles, DSSpacing, apply_primary_button, apply_section_group
 from app.ui.error_feedback import show_actionable_error
+from utils.notification_bus import NotificationBus, NotificationLevel
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
@@ -335,8 +336,10 @@ class InsertSquadsTab(QWidget):
             )
             return
 
-        QMessageBox.information(
-            self, self.tr("Salvar"), self.tr("Arquivo criado:\n") + str(out_path)
+        NotificationBus.instance().send(
+            NotificationLevel.INFO,
+            self.tr("Arquivo criado:\n") + str(out_path),
+            timeout_ms=3500,
         )
 
         self._refresh_squad_list()

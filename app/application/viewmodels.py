@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
+from app.application.mission_validation_service import Mission
+
 
 
 @dataclass
@@ -12,12 +14,12 @@ class ViewState:
 
 
 class MissionsViewModel:
-    def state_for_loaded_missions(self, missions: List[Dict[str, Any]]) -> ViewState:
+    def state_for_loaded_missions(self, missions: List[Mission]) -> ViewState:
         if not missions:
             return ViewState("empty", "Nenhuma missão disponível para os filtros atuais.")
         return ViewState("success", f"{len(missions)} missões carregadas.")
 
-    def filter_visibility(self, missions: List[Dict[str, Any]], row_values: List[List[str]], query: str) -> List[bool]:
+    def filter_visibility(self, missions: List[Mission], row_values: List[List[str]], query: str) -> List[bool]:
         q = (query or "").strip().lower()
         if not q:
             return [True] * len(row_values)
@@ -26,7 +28,7 @@ class MissionsViewModel:
         for idx, cols in enumerate(row_values):
             desc = ""
             if 0 <= idx < len(missions):
-                desc = str(missions[idx].get("description", "")).lower()
+                desc = missions[idx].description.lower()
             haystack = " | ".join([c.lower() for c in cols] + [desc])
             visible.append(q in haystack)
         return visible

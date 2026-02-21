@@ -36,18 +36,37 @@ def test_parser_get_campaign_aces_supports_multiple_formats(tmp_path: Path):
 
     # formato dict com chave aces
     aces_path.write_text('{"aces":[{"name":"Ace 2"}]}', encoding="utf-8")
-    parser._get_json_data_cached.cache_clear()
+    parser.clear_cache()
     assert parser.get_campaign_aces("camp1") == [{"name": "Ace 2"}]
 
     # formato dict com chave acesInCampaign
     aces_path.write_text('{"acesInCampaign":{"1":{"name":"Ace 3"}}}', encoding="utf-8")
-    parser._get_json_data_cached.cache_clear()
+    parser.clear_cache()
     assert parser.get_campaign_aces("camp1") == [{"name": "Ace 3"}]
 
 
 def test_parser_get_campaign_info_returns_empty_when_missing(tmp_path: Path):
     parser = IL2DataParser(tmp_path / "pwcg")
     assert parser.get_campaign_info("missing") == {}
+
+
+
+
+def test_parser_clear_cache_refreshes_changed_file(tmp_path: Path):
+    base = tmp_path / "pwcg"
+    campaign_dir = _build_campaign_tree(base)
+    campaign_file = campaign_dir / "Campaign.json"
+
+    parser = IL2DataParser(base)
+
+    campaign_file.write_text('{"name":"v1"}', encoding="utf-8")
+    assert parser.get_campaign_info("camp1") == {"name": "v1"}
+
+    campaign_file.write_text('{"name":"v2"}', encoding="utf-8")
+    assert parser.get_campaign_info("camp1") == {"name": "v1"}
+
+    parser.clear_cache()
+    assert parser.get_campaign_info("camp1") == {"name": "v2"}
 
 
 def test_processor_format_date_and_status_mapping():

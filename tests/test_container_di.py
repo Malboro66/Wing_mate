@@ -47,3 +47,22 @@ def test_container_exposes_content_registry_singleton():
     reg_b = container.get_content_module_registry()
 
     assert reg_a is reg_b
+
+
+def test_container_clears_parser_cache_before_reset(tmp_path: Path, monkeypatch):
+    path_a = str(tmp_path / "a")
+    path_b = str(tmp_path / "b")
+
+    container = AppContainer(path_a)
+    parser = container.get_parser()
+
+    called = {"value": False}
+
+    def fake_clear_cache():
+        called["value"] = True
+
+    monkeypatch.setattr(parser, "clear_cache", fake_clear_cache)
+
+    container.set_pwcgfc_path(path_b)
+
+    assert called["value"] is True

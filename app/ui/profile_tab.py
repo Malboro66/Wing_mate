@@ -47,6 +47,7 @@ from PyQt5.QtWidgets import (
 import logging
 
 from app.ui.error_feedback import show_actionable_error
+from utils.notification_bus import NotificationBus, NotificationLevel
 from utils.observability import Events, emit_event
 from utils.structured_logger import StructuredLogger
 
@@ -648,7 +649,11 @@ class ProfileTab(QWidget):
                 pilot_key=self._pilot_key,
                 schema_version=self.SCHEMA_VERSION,
             )
-            QMessageBox.information(self, self.tr("Perfil"), self.tr("Dados do perfil salvos."))
+            NotificationBus.instance().send(
+                NotificationLevel.INFO,
+                self.tr("Dados do perfil salvos."),
+                timeout_ms=2500,
+            )
         except OSError as e:
             show_actionable_error(
                 parent=self,

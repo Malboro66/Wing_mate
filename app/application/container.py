@@ -30,6 +30,8 @@ class AppContainer:
         normalized = path or ""
         if normalized == self._pwcgfc_path:
             return
+        if self._parser is not None:
+            self._parser.clear_cache()
         self._pwcgfc_path = normalized
         self._parser = None
         self._processor = None

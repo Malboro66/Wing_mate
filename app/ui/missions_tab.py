@@ -4,12 +4,15 @@
 # Aba de Missões com dia da semana em INGLÊS
 # ===================================================================
 
-from typing import List, Dict, Any, Optional
+from typing import List, Any, Optional
 from datetime import datetime
 import re
 
 from PyQt5.QtCore import pyqtSignal, Qt
+from app.application.mission_validation_service import Mission
 from app.application.viewmodels import MissionsViewModel
+from app.ui.delegates.timeline_delegate import TimelineDelegate
+from app.ui.shortcut_mixin import CtrlFFocusMixin
 from app.ui.design_system import DSStates, DSStyles
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QSplitter, QTableWidget, QTableWidgetItem,
@@ -17,7 +20,7 @@ from PyQt5.QtWidgets import (
 )
 
 
-class MissionsTab(QWidget):
+class MissionsTab(QWidget, CtrlFFocusMixin):
     """Aba de Missões com tabela e painel de detalhes."""
     
     missionSelected = pyqtSignal(int, object)
@@ -25,7 +28,7 @@ class MissionsTab(QWidget):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         """Inicializa a aba de missões."""
         super().__init__(parent)
-        self._missions: List[Dict[str, Any]] = []
+        self._missions: List[Mission] = []
         self._vm: MissionsViewModel = MissionsViewModel()
         self._build_ui()
     
@@ -56,12 +59,13 @@ class MissionsTab(QWidget):
 
         # Tabela de missões
         self.table: QTableWidget = QTableWidget()
-        self.table.setColumnCount(4)
+        self.table.setColumnCount(5)
         self.table.setHorizontalHeaderLabels([
-            self.tr("Data"), 
-            self.tr("Hora"), 
-            self.tr("Aeronave"), 
-            self.tr("Tipo")
+            self.tr("Data"),
+            self.tr("Hora"),
+            self.tr("Aeronave"),
+            self.tr("Tipo"),
+            self.tr("Linha do Tempo"),
         ])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
@@ -71,6 +75,8 @@ class MissionsTab(QWidget):
         self.table.setAlternatingRowColors(True)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.setToolTip(self.tr("Use setas para navegar, Enter para selecionar."))
+        self._timeline_delegate = TimelineDelegate(self.table)
+        self.table.setItemDelegateForColumn(4, self._timeline_delegate)
         
         # Painel de detalhes
         details_group: QGroupBox = QGroupBox(self.tr("Detalhes da Missão Selecionada"))
@@ -85,13 +91,14 @@ class MissionsTab(QWidget):
         layout.addWidget(splitter)
 
         self.setFocusProxy(self.table)
+        self.bind_ctrl_f_to_filter(self, self.filter_edit)
     
-    def set_missions(self, missions: List[Dict[str, Any]]) -> None:
+    def set_missions(self, missions: List[Mission]) -> None:
         """
         Define a lista de missões a ser exibida na tabela.
         
         Args:
-            missions: Lista de dicionários, onde cada dicionário representa uma missão.
+            missions: Lista de objetos Mission já validados.
         """
         self._missions = missions if isinstance(missions, list) else []
 
@@ -104,13 +111,15 @@ class MissionsTab(QWidget):
 
         self._set_view_state(loaded_state.state, self.tr(loaded_state.message))
         self.table.setRowCount(len(self._missions))
-        
+
+        mission_dates = [self._parse_date(m.date) for m in self._missions]
+        known_dates = [d for d in mission_dates if d is not None]
+        min_date = min(known_dates) if known_dates else None
+        max_date = max(known_dates) if known_dates else None
+
         for r, m in enumerate(self._missions):
-            if not isinstance(m, dict):
-                continue
-            
             # Coluna 0: Data
-            date_value = str(m.get('date', ''))
+            date_value = m.date
             date_item = QTableWidgetItem(date_value)
             date_item.setTextAlignment(Qt.AlignCenter)
             date_item.setToolTip(date_value)
@@ -124,39 +133,60 @@ class MissionsTab(QWidget):
             self.table.setItem(r, 1, time_item)
             
             # Coluna 2: Aeronave
-            aircraft = str(m.get('aircraft', ''))
+            aircraft = m.aircraft
             aircraft_item = QTableWidgetItem(aircraft)
             aircraft_item.setTextAlignment(Qt.AlignCenter)
             aircraft_item.setToolTip(aircraft)
             self.table.setItem(r, 2, aircraft_item)
             
             # Coluna 3: Tipo de missão
-            duty = str(m.get('duty', ''))
+            duty = m.duty
             duty_item = QTableWidgetItem(duty)
             duty_item.setTextAlignment(Qt.AlignCenter)
             duty_item.setToolTip(duty)
             self.table.setItem(r, 3, duty_item)
-        
+
+            ratio = 0.0
+            current_date = mission_dates[r] if r < len(mission_dates) else None
+            if current_date and min_date and max_date and max_date != min_date:
+                ratio = (current_date - min_date).total_seconds() / (max_date - min_date).total_seconds()
+            elif current_date and min_date and max_date and max_date == min_date:
+                ratio = 1.0
+
+            timeline_item = QTableWidgetItem("")
+            timeline_item.setData(Qt.UserRole, ratio)
+            timeline_item.setToolTip(self.tr("Progresso temporal da campanha"))
+            self.table.setItem(r, 4, timeline_item)
+
         self.details.clear()
     
-    def _extract_time(self, mission: Dict[str, Any]) -> str:
+    def _parse_date(self, date_text: str) -> Optional[datetime]:
+        value = (date_text or "").strip()
+        for fmt in ('%d/%m/%Y', '%d.%m.%Y', '%d-%m-%Y', '%Y-%m-%d', '%Y%m%d'):
+            try:
+                return datetime.strptime(value, fmt)
+            except ValueError:
+                continue
+        return None
+
+    def _extract_time(self, mission: Mission) -> str:
         """
         Extrai a hora da missão de múltiplas fontes possíveis.
         
         Args:
-            mission: Dicionário com dados da missão
+            mission: Objeto Mission validado
             
         Returns:
             Hora formatada como HH:MM ou string vazia
         """
         # Tenta campo 'time' primeiro
-        time_value = mission.get('time', '')
+        time_value = mission.time
         formatted = self._format_time(time_value)
         if formatted:
             return formatted
         
         # Se não encontrou, tenta extrair de 'description'
-        description = str(mission.get('description', ''))
+        description = mission.description
         if description:
             # Procura por padrão "Time: HH:MM:SS" ou "Time HH:MM"
             time_match = re.search(r'Time[:\s]+(\d{1,2}):(\d{2})(?::(\d{2}))?', description, re.IGNORECASE)
@@ -256,14 +286,6 @@ class MissionsTab(QWidget):
         else:
             self.state_label.setStyleSheet(DSStyles.STATE_INFO)
 
-
-    def keyPressEvent(self, event) -> None:
-        if event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_F:
-            self.filter_edit.setFocus()
-            self.filter_edit.selectAll()
-            return
-        super().keyPressEvent(event)
-
     def _apply_filter(self, text: str) -> None:
         row_values: List[List[str]] = []
         for row in range(self.table.rowCount()):
@@ -309,11 +331,11 @@ class MissionsTab(QWidget):
         idx: int = self.selected_index()
         
         if 0 <= idx < len(self._missions):
-            data: Dict[str, Any] = self._missions[idx]
-            description = str(data.get('description', ''))
+            data: Mission = self._missions[idx]
+            description = data.description
             
             # ADICIONA DIA DA SEMANA EM INGLÊS
-            date_str = str(data.get('date', ''))
+            date_str = data.date
             weekday = self._get_weekday(date_str)
             
             if weekday:
@@ -335,4 +357,4 @@ class MissionsTab(QWidget):
             self.missionSelected.emit(idx, data)
         else:
             self.details.clear()
-            self.missionSelected.emit(-1, {})
+            self.missionSelected.emit(-1, None)

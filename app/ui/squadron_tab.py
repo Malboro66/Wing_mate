@@ -7,12 +7,14 @@ import html
 import logging  # <-- Importação adicionada
 
 from PyQt5.QtCore import Qt, QTimer, QPoint
-from PyQt5.QtGui import QPixmap, QTransform, QColor, QFont, QMouseEvent
+from PyQt5.QtGui import QPixmap, QTransform, QColor, QMouseEvent, QIcon, QPainter
 from app.application.viewmodels import SquadronViewModel
 from app.ui.design_system import DSStyles, DSStates, DSSpacing, apply_section_group
+from app.ui.shortcut_mixin import CtrlFFocusMixin
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QScrollArea,
-    QTableWidget, QTableWidgetItem, QHeaderView, QToolTip, QLineEdit, QCheckBox
+    QTableWidget, QTableWidgetItem, QHeaderView, QToolTip, QLineEdit, QCheckBox,
+    QStyledItemDelegate, QStyleOptionViewItem, QStyle, QApplication
 )
 
 logger = logging.getLogger(__name__)  # <-- Instância do logger adicionada
@@ -50,7 +52,86 @@ class RankIconLabel(QLabel):
         QToolTip.showText(global_pos, self._rank_text, self)
 
 
-class SquadronTab(QWidget):
+class SquadronStatusDelegate(QStyledItemDelegate):
+    """Renderiza status com ícone SVG e estilo consistente em todas as colunas."""
+
+    STATUS_ICON: Dict[str, str] = {
+        "active": "status_active.svg",
+        "ativo": "status_active.svg",
+        "wounded": "status_wounded.svg",
+        "ferido": "status_wounded.svg",
+        "injured": "status_wounded.svg",
+        "mia": "status_mia.svg",
+        "desaparecido": "status_mia.svg",
+        "kia": "status_kia.svg",
+        "morto": "status_kia.svg",
+        "killed": "status_kia.svg",
+        "pow": "status_pow.svg",
+        "prisioneiro": "status_pow.svg",
+        "captured": "status_pow.svg",
+        "hospital": "status_hospital.svg",
+        "hospitalized": "status_hospital.svg",
+        "leave": "status_leave.svg",
+        "licenca": "status_leave.svg",
+        "licença": "status_leave.svg",
+        "rest": "status_leave.svg",
+    }
+
+    EMPHASIS: Set[str] = {"kia", "morto", "killed", "mia", "desaparecido", "wounded", "ferido", "pow", "prisioneiro", "captured"}
+
+    def __init__(self, status_column: int = 4, parent: Optional[QWidget] = None) -> None:
+        super().__init__(parent)
+        self._status_column = status_column
+        self._icons_dir = Path(__file__).resolve().parents[1] / "assets" / "icons"
+        self._icon_cache: Dict[str, QIcon] = {}
+
+    def _status_norm(self, index) -> str:
+        raw = index.sibling(index.row(), self._status_column).data(Qt.DisplayRole)
+        return str(raw or "").strip().lower()
+
+    def _icon_for_status(self, norm: str) -> Optional[QIcon]:
+        svg_name = self.STATUS_ICON.get(norm)
+        if not svg_name:
+            return None
+        if svg_name not in self._icon_cache:
+            p = self._icons_dir / svg_name
+            if p.exists():
+                self._icon_cache[svg_name] = QIcon(str(p))
+            else:
+                return None
+        return self._icon_cache.get(svg_name)
+
+    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index) -> None:
+        opt = QStyleOptionViewItem(option)
+        self.initStyleOption(opt, index)
+
+        norm = self._status_norm(index)
+        color = SquadronTab.STATUS_COLORS.get(norm)
+
+        if color is not None:
+            painter.save()
+            bg = QColor(color)
+            bg.setAlpha(26)
+            painter.fillRect(opt.rect, bg)
+            painter.restore()
+
+            opt.palette.setColor(opt.palette.Text, color)
+            if norm in self.EMPHASIS:
+                opt.font.setBold(True)
+
+        if index.column() == self._status_column:
+            icon = self._icon_for_status(norm)
+            if icon is not None:
+                icon_size = max(12, min(opt.rect.height() - 6, 16))
+                x = opt.rect.left() + 6
+                y = opt.rect.top() + (opt.rect.height() - icon_size) // 2
+                icon.paint(painter, x, y, icon_size, icon_size)
+                opt.rect = opt.rect.adjusted(icon_size + 10, 0, 0, 0)
+
+        QApplication.style().drawControl(QStyle.CE_ItemViewItem, opt, painter)
+
+
+class SquadronTab(QWidget, CtrlFFocusMixin):
     """
     Aba de Esquadrão com:
     - Cabeçalho (emblema + painel "Histórico e Dados") lido de assets/squadrons/meta conforme o esquadrão do player
@@ -192,7 +273,10 @@ class SquadronTab(QWidget):
         self.table.setAlternatingRowColors(True)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.setToolTip(self.tr("Use setas para navegar entre os pilotos."))
+        self._status_delegate = SquadronStatusDelegate(status_column=4, parent=self.table)
+        self.table.setItemDelegate(self._status_delegate)
         root.addWidget(self.table)
+        self.bind_ctrl_f_to_filter(self, self.filter_edit)
 
     # -------- Auxiliares de caminho --------
     @staticmethod
@@ -535,13 +619,6 @@ class SquadronTab(QWidget):
             self.state_label.setStyleSheet(DSStyles.STATE_WARNING)
         else:
             self.state_label.setStyleSheet(DSStyles.STATE_INFO)
-
-    def keyPressEvent(self, event) -> None:
-        if event.modifiers() == Qt.ControlModifier and event.key() == Qt.Key_F:
-            self.filter_edit.setFocus()
-            self.filter_edit.selectAll()
-            return
-        super().keyPressEvent(event)
 
     def _apply_filter(self, text: str) -> None:
         rows: List[Dict[str, str]] = []
