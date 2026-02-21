@@ -12,58 +12,34 @@ from contextlib import contextmanager
 
 @contextmanager
 def atomic_json_write(filepath: Path):
-    """Context manager para escrita atômica de arquivos JSON.
-    
-    Grava em arquivo temporário e realiza rename atômico apenas em caso de sucesso.
-    Em caso de falha, o arquivo original permanece intocado.
-    
-    Args:
-        filepath: Caminho do arquivo JSON de destino
-        
-    Yields:
-        File handle para escrita
-        
-    Raises:
-        OSError: Se houver falha na escrita ou renomeação do arquivo
-    
-    Example:
-        >>> from pathlib import Path
-        >>> import json
-        >>> data = {"key": "value"}
-        >>> with atomic_json_write(Path("data.json")) as f:
-        ...     json.dump(data, f, indent=2)
+    """Context manager para escrita atômica e durável de arquivos JSON.
+
+    O conteúdo é escrito em arquivo temporário no mesmo diretório, com flush +
+    ``os.fsync`` antes do ``os.replace`` para reduzir risco de truncamento após
+    quedas de energia.
     """
-    # Cria arquivo temporário no mesmo diretório do arquivo final
     tmp_fd, tmp_path = tempfile.mkstemp(
         dir=filepath.parent,
         prefix='.tmp_',
         suffix='.json'
     )
     tmp_file = Path(tmp_path)
-    
+
     try:
-        # Escreve no arquivo temporário
-        with open(tmp_fd, 'w', encoding='utf-8') as f:
+        with os.fdopen(tmp_fd, 'w', encoding='utf-8') as f:
             yield f
-        
-        # Rename atômico (operação atômica no sistema de arquivos)
-        tmp_file.replace(filepath)
-        
+            f.flush()
+            os.fsync(f.fileno())
+
+        os.replace(str(tmp_file), str(filepath))
+
     except Exception:
-        # Em caso de erro, remove arquivo temporário
         if tmp_file.exists():
             try:
                 tmp_file.unlink()
             except OSError:
-                pass  # Ignora erro ao deletar arquivo temporário
+                pass
         raise
-        
-    finally:
-        # Garante que o file descriptor seja fechado
-        try:
-            os.close(tmp_fd)
-        except OSError:
-            pass  # File descriptor já foi fechado
 
 
 @contextmanager

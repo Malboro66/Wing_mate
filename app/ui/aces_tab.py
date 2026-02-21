@@ -8,8 +8,9 @@ from typing import List, Dict, Any, Optional
 from pathlib import Path
 import logging
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
+from app.ui.widgets.stats_bar import StatsBar
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, 
     QHeaderView, QLabel, QAbstractItemView
@@ -19,6 +20,7 @@ logger = logging.getLogger("IL2CampaignAnalyzer")
 
 
 class AcesTab(QWidget):
+    stats_updated = pyqtSignal(int, int, str, int)
     """Aba de Ases da campanha com roundels por nacionalidade."""
     
     # Tamanhos otimizados
@@ -41,7 +43,16 @@ class AcesTab(QWidget):
         super().__init__(parent)
         
         layout: QVBoxLayout = QVBoxLayout(self)
-        
+
+        self._stats_bar = StatsBar([
+            ("Total", "0"),
+            ("Elegíveis", "0"),
+            ("Top Ás", "—"),
+            ("Top Vitórias", "0"),
+        ])
+        layout.addWidget(self._stats_bar)
+        self.stats_updated.connect(self._on_stats_updated, Qt.QueuedConnection)
+
         # Tabela com 4 colunas
         self.table: QTableWidget = QTableWidget()
         self.table.setColumnCount(4)
@@ -83,7 +94,11 @@ class AcesTab(QWidget):
         logger.info(f"Exibindo {len(filtered_aces)} ases com 5+ vitórias")
         
         self.table.setRowCount(len(filtered_aces))
-        
+
+        top_name = str(filtered_aces[0].get("name", "—")) if filtered_aces else "—"
+        top_victories = self._get_victories(filtered_aces[0]) if filtered_aces else 0
+        self.stats_updated.emit(len(aces), len(filtered_aces), top_name, top_victories)
+
         for r, ace in enumerate(filtered_aces):
             # Coluna 0: Nome do piloto
             name = str(ace.get("name", "N/A"))
@@ -116,6 +131,12 @@ class AcesTab(QWidget):
             victories_item.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
             self.table.setItem(r, 3, victories_item)
     
+    def _on_stats_updated(self, total: int, eligible: int, top_name: str, top_victories: int) -> None:
+        self._stats_bar.update_stat("Total", str(total))
+        self._stats_bar.update_stat("Elegíveis", str(eligible))
+        self._stats_bar.update_stat("Top Ás", top_name or "—")
+        self._stats_bar.update_stat("Top Vitórias", str(top_victories))
+
     def _create_roundel_widget(self, country_code: str) -> Optional[QLabel]:
         """
         Cria um QLabel com a roundel do país.

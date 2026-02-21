@@ -8,11 +8,8 @@
 import json
 import shutil
 import logging
-import tempfile
-import os
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
-from contextlib import contextmanager
 
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
@@ -21,48 +18,10 @@ from PyQt5.QtWidgets import (
     QTableWidgetItem, QFileDialog, QLabel, QGroupBox, QFormLayout,
     QLineEdit, QTextEdit, QMessageBox, QCheckBox, QComboBox
 )
+from utils.file_operations import atomic_json_write
+from utils.notification_bus import notify_info
 
 logger = logging.getLogger(__name__)
-
-
-@contextmanager
-def atomic_json_write(filepath: Path):
-    """Context manager para escrita atômica de arquivos JSON.
-    
-    Grava em arquivo temporário e realiza rename atômico apenas em caso de sucesso.
-    Em caso de falha, o arquivo original permanece intocado.
-    
-    Args:
-        filepath: Caminho do arquivo JSON de destino
-        
-    Yields:
-        File handle para escrita
-        
-    Raises:
-        OSError: Se houver falha na escrita ou renomeação do arquivo
-    """
-    tmp_fd, tmp_path = tempfile.mkstemp(
-        dir=filepath.parent,
-        prefix='.tmp_',
-        suffix='.json'
-    )
-    tmp_file = Path(tmp_path)
-    
-    try:
-        with open(tmp_fd, 'w', encoding='utf-8') as f:
-            yield f
-        tmp_file.replace(filepath)  # Operação atômica no sistema de arquivos
-        logger.info(f"Arquivo {filepath.name} gravado com sucesso (atômico)")
-    except Exception as e:
-        logger.error(f"Falha na escrita atômica de {filepath}: {e}")
-        if tmp_file.exists():
-            tmp_file.unlink()
-        raise
-    finally:
-        try:
-            os.close(tmp_fd)
-        except OSError:
-            pass
 
 
 class PathResolver:
@@ -652,7 +611,7 @@ class InputMedalsTab(QWidget):
                 f.write(payload + "\n")
             
             logger.info(f"Arquivo medals.json persistido ({len(self.medals)} medalhas)")
-        except (OSError, json.JSONEncodeError) as e:
+        except (OSError, TypeError, ValueError) as e:
             self.error_label.setText(f"Falha ao salvar arquivo: {e}")
             logger.exception("Falha na gravação atômica do medals.json")
             QMessageBox.critical(
@@ -664,4 +623,4 @@ class InputMedalsTab(QWidget):
         
         self._hide_form()
         self._refresh_list()
-        QMessageBox.information(self, "Salvar", "Medalha salva com sucesso!")
+        notify_info("Medalha salva com sucesso!")
