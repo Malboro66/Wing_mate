@@ -7,7 +7,7 @@ import html
 import logging  # <-- Importação adicionada
 
 from PyQt5.QtCore import Qt, QTimer, QPoint, pyqtSignal
-from PyQt5.QtGui import QPixmap, QTransform, QColor, QMouseEvent, QIcon, QPainter
+from PyQt5.QtGui import QPixmap, QTransform, QColor, QMouseEvent, QIcon, QPainter, QFont
 from app.application.viewmodels import SquadronViewModel
 from app.ui.design_system import DSStyles, DSStates, DSSpacing, apply_section_group
 from app.ui.shortcut_mixin import CtrlFFocusMixin
