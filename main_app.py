@@ -6,13 +6,15 @@ import sys
 import logging
 import logging.handlers
 import tempfile
+import random
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
 from PyQt5.QtCore import Qt, QLockFile
+from PyQt5.QtWidgets import QApplication, QMessageBox, QSplashScreen
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QApplication, QMessageBox
 
 from app.ui.main_window import MainWindow
 
@@ -58,6 +60,67 @@ def _setup_logging(level: int = logging.INFO) -> logging.Logger:
 logger: logging.Logger = _setup_logging(logging.INFO)
 
 
+def _pick_splash_image() -> Optional[Path]:
+    splash_dir = Path(__file__).resolve().parent / "app" / "assets" / "splash_optimized"
+    if not splash_dir.exists():
+        return None
+
+    images = [
+        p for p in splash_dir.iterdir()
+        if p.is_file() and p.suffix.lower() in {".png", ".jpg", ".jpeg", ".bmp", ".webp"}
+    ]
+    if not images:
+        return None
+    return random.choice(images)
+
+
+def _play_startup_sound() -> None:
+    sound_file = Path(__file__).resolve().parent / "app" / "assets" / "sounds" / "airplane_engine_start.wav"
+    if not sound_file.exists():
+        logger.warning("Som de abertura não encontrado: %s", sound_file)
+        return
+
+    try:
+        qt_multimedia = __import__("PyQt5.QtMultimedia", fromlist=["QSound"])
+        qsound = getattr(qt_multimedia, "QSound", None)
+        if qsound is not None:
+            qsound.play(str(sound_file))
+            return
+    except Exception as e:
+        logger.debug("QtMultimedia não disponível para áudio de splash: %s", e)
+
+    logger.warning("Não foi possível reproduzir áudio de splash (QtMultimedia indisponível).")
+
+
+def _show_startup_splash(app: QApplication, duration_s: float = 4.0) -> Optional[QSplashScreen]:
+    splash_image = _pick_splash_image()
+    if splash_image is None:
+        logger.warning("Nenhuma imagem de splash encontrada em app/assets/splash_optimized")
+        _play_startup_sound()
+        return None
+
+    pixmap = QPixmap(str(splash_image))
+    if pixmap.isNull():
+        logger.warning("Falha ao carregar splash: %s", splash_image)
+        _play_startup_sound()
+        return None
+
+    splash = QSplashScreen(pixmap)
+    splash.setWindowFlag(Qt.WindowStaysOnTopHint, True)
+    splash.show()
+    app.processEvents()
+
+    logger.info("Splash de abertura: %s", splash_image.name)
+    _play_startup_sound()
+
+    end_time = time.monotonic() + max(0.0, duration_s)
+    while time.monotonic() < end_time:
+        app.processEvents()
+        time.sleep(0.01)
+
+    return splash
+
+
 if __name__ == '__main__':
     try:
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
@@ -85,6 +148,8 @@ if __name__ == '__main__':
     except Exception as e:
         logger.debug(f"Falha ao definir ícone global: {e}")
 
+    splash: Optional[QSplashScreen] = _show_startup_splash(app, duration_s=4.0)
+
     # Evitar múltiplas instâncias
     lock: Optional[QLockFile] = None
     try:
@@ -103,6 +168,8 @@ if __name__ == '__main__':
 
     try:
         win: MainWindow = MainWindow()
+        if splash is not None:
+            splash.finish(win)
         win.show()
         exit_code: int = app.exec_()
     except ImportError as e:
