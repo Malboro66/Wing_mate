@@ -9,7 +9,6 @@ import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Any, Union, Optional, Tuple, Set
-from functools import lru_cache
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
 
@@ -50,19 +49,18 @@ class IL2DataParser:
                 self.pwcgfc_path: Path = Path.cwd()
         
         self.campaigns_path: Path = self.pwcgfc_path / 'User' / 'Campaigns'
+        self._json_cache: Dict[str, Optional[Any]] = {}
         logger.info(f"Parser inicializado com caminho: {self.pwcgfc_path}")
-    
-    @lru_cache(maxsize=128)
+
+    def clear_cache(self) -> None:
+        """Limpa o cache de JSON desta instância."""
+        self._json_cache.clear()
+
     def _get_json_data_cached(self, file_path_str: str) -> Optional[Any]:
-        """Versão cacheada de carregamento de JSON.
-        
-        Args:
-            file_path_str: String do caminho do arquivo (para compatibilidade com lru_cache)
-            
-        Returns:
-            Dados JSON parseados ou None se houver erro
-        """
-        return self._load_json_file(Path(file_path_str))
+        """Versão cacheada de carregamento de JSON por instância."""
+        if file_path_str not in self._json_cache:
+            self._json_cache[file_path_str] = self._load_json_file(Path(file_path_str))
+        return self._json_cache[file_path_str]
     
     def get_json_data(self, file_path: Path) -> Optional[Any]:
         """Carrega JSON de arquivo com cache LRU e fallback de encoding.

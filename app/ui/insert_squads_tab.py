@@ -6,35 +6,50 @@
 
 from __future__ import annotations
 
-import json
 import shutil
 from pathlib import Path
-from typing import Any
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Tuple
+from typing import Any, Dict, List, Optional
 
+from app.application.squadron_enrichment_application_service import (
+    SquadronEnrichmentApplicationService,
+)
+from app.core.squadron_enrichment_service import SquadronEnrichmentService
+from app.ui.design_system import DSStyles, DSSpacing, apply_primary_button, apply_section_group
+from app.ui.error_feedback import show_actionable_error
+from utils.notification_bus import NotificationBus, NotificationLevel
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QComboBox
-from PyQt5.QtWidgets import QFormLayout
-from PyQt5.QtWidgets import QGroupBox
-from PyQt5.QtWidgets import QHBoxLayout
-from PyQt5.QtWidgets import QLabel
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtWidgets import QTableWidget
-from PyQt5.QtWidgets import QTableWidgetItem
-from PyQt5.QtWidgets import QTextEdit
-from PyQt5.QtWidgets import QVBoxLayout
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import (
+    QComboBox,
+    QFileDialog,
+    QFormLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QTableWidget,
+    QTableWidgetItem,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+)
 
 
 class InsertSquadsTab(QWidget):
-    def __init__(self, parent: Optional[QWidget] = None) -> None:
+    def __init__(
+        self,
+        app_service: Optional[SquadronEnrichmentApplicationService] = None,
+        parent: Optional[QWidget] = None,
+    ) -> None:
         super().__init__(parent)
+        if app_service is None:
+            domain_service: SquadronEnrichmentService = SquadronEnrichmentService()
+            self._app_service: SquadronEnrichmentApplicationService = (
+                SquadronEnrichmentApplicationService(domain_service)
+            )
+        else:
+            self._app_service = app_service
         self._pwcgfc_path: Optional[Path] = None
         self._squadron_dir: Optional[Path] = None
         self._selected_json_path: Optional[Path] = None
@@ -51,8 +66,8 @@ class InsertSquadsTab(QWidget):
     def _build_ui(self) -> None:
         outer: QVBoxLayout = QVBoxLayout(self)
 
-        # Seleção de esquadrão
         sel_group: QGroupBox = QGroupBox(self.tr("Seleção de Esquadrão"))
+        apply_section_group(sel_group)
         sel_form: QFormLayout = QFormLayout(sel_group)
 
         self.squad_combo: QComboBox = QComboBox()
@@ -64,8 +79,8 @@ class InsertSquadsTab(QWidget):
 
         outer.addWidget(sel_group)
 
-        # Tabela de aeródromos
         af_group: QGroupBox = QGroupBox(self.tr("Aeródromos por data"))
+        apply_section_group(af_group)
         af_v: QVBoxLayout = QVBoxLayout(af_group)
 
         self.af_table: QTableWidget = QTableWidget(0, 3)
@@ -77,17 +92,15 @@ class InsertSquadsTab(QWidget):
 
         outer.addWidget(af_group)
 
-        # Emblema + histórico
         edit_group: QGroupBox = QGroupBox(self.tr("Dados Enriquecidos"))
+        apply_section_group(edit_group)
         edit_form: QFormLayout = QFormLayout(edit_group)
 
         emblem_row: QHBoxLayout = QHBoxLayout()
         self.emblem_preview: QLabel = QLabel(self.tr("Sem emblema"))
         self.emblem_preview.setAlignment(Qt.AlignCenter)
-        self.emblem_preview.setFixedSize(160, 160)
-        self.emblem_preview.setStyleSheet(
-            "color:#888; border:1px solid #444; background:#1e1e1e;"
-        )
+        self.emblem_preview.setFixedSize(DSSpacing.ICON_PREVIEW_SIZE, DSSpacing.ICON_PREVIEW_SIZE)
+        self.emblem_preview.setStyleSheet(DSStyles.PANEL_PLACEHOLDER)
         emblem_btn: QPushButton = QPushButton(self.tr("Selecionar Emblema (.png/.jpg)"))
         emblem_btn.clicked.connect(self._choose_emblem)
         emblem_row.addWidget(self.emblem_preview)
@@ -106,10 +119,10 @@ class InsertSquadsTab(QWidget):
 
         outer.addWidget(edit_group)
 
-        # Rodapé
         bottom: QHBoxLayout = QHBoxLayout()
         bottom.addStretch(1)
         self.btn_save: QPushButton = QPushButton(self.tr("Salvar"))
+        apply_primary_button(self.btn_save)
         self.btn_save.clicked.connect(self._save_enriched_data)
         self.btn_save.setEnabled(False)
         bottom.addWidget(self.btn_save)
@@ -117,10 +130,6 @@ class InsertSquadsTab(QWidget):
 
     # ---------------- Integração ----------------
     def set_pwcgfc_path(self, pwcgfc_path: str) -> None:
-        """
-        Inicializa a aba com a pasta do PWCGFC.
-        Independe de sincronização de campanha.
-        """
         self._pwcgfc_path = Path(pwcgfc_path) if pwcgfc_path else None
         self._squadron_dir = None
         self._selected_json_path = None
@@ -145,7 +154,6 @@ class InsertSquadsTab(QWidget):
             return
         self._squadron_dir = sq_dir
 
-        # Garante pastas de saída
         try:
             self._assets_emblems_dir.mkdir(parents=True, exist_ok=True)
             self._assets_meta_dir.mkdir(parents=True, exist_ok=True)
@@ -153,14 +161,13 @@ class InsertSquadsTab(QWidget):
             QMessageBox.critical(
                 self,
                 self.tr("Erro de Diretório"),
-                self.tr("Não foi possível criar os diretórios de assets:\n") + str(e)
+                self.tr("Não foi possível criar os diretórios de assets:\n") + str(e),
             )
             return
 
         self._refresh_squad_list()
 
     def _refresh_squad_list(self) -> None:
-        """Recarrega a combo removendo os que já têm meta/<id>.json."""
         if not self._squadron_dir:
             return
 
@@ -172,7 +179,7 @@ class InsertSquadsTab(QWidget):
             QMessageBox.warning(
                 self,
                 self.tr("Erro de Leitura"),
-                self.tr("Não foi possível listar os arquivos de esquadrões:\n") + str(e)
+                self.tr("Não foi possível listar os arquivos de esquadrões:\n") + str(e),
             )
             return
 
@@ -214,15 +221,25 @@ class InsertSquadsTab(QWidget):
         if not self._selected_json_path or not self._selected_json_path.exists():
             return
 
-        data: Dict[str, Any] = self._read_json(self._selected_json_path)
-        _name, country, airfields = self._extract_fields(data)
+        try:
+            country, airfields = self._app_service.load_preview(self._selected_json_path)
+        except (UnicodeDecodeError, OSError, ValueError) as e:
+            show_actionable_error(
+                parent=self,
+                title=self.tr("Erro de Leitura"),
+                summary=self.tr("Não foi possível ler o arquivo JSON."),
+                action_hint=self.tr("Verifique se o arquivo existe, se está íntegro e tente novamente."),
+                technical_details=str(e),
+                file_path=str(self._selected_json_path),
+            )
+            return
+
         self.country_label.setText(country or "N/A")
         self._fill_airfields_table(airfields)
 
         self.btn_save.setEnabled(True)
 
     def _choose_emblem(self) -> None:
-        path: str
         path, _ = QFileDialog.getOpenFileName(
             self,
             self.tr("Selecionar Emblema"),
@@ -261,10 +278,23 @@ class InsertSquadsTab(QWidget):
             )
             return
 
-        base_in: Dict[str, Any] = self._read_json(self._selected_json_path)
-        sq_id, sq_name = self._resolve_id_and_name(base_in, self._selected_json_path)
+        try:
+            sq_id, _ = self._app_service.build_payload(
+                source_path=self._selected_json_path,
+                history=self.history_edit.toPlainText(),
+                emblem_rel="",
+            )
+        except (UnicodeDecodeError, OSError, ValueError) as e:
+            show_actionable_error(
+                parent=self,
+                title=self.tr("Erro de Leitura"),
+                summary=self.tr("Não foi possível ler o arquivo JSON para montar o payload."),
+                action_hint=self.tr("Verifique integridade do arquivo e tente novamente."),
+                technical_details=str(e),
+                file_path=str(self._selected_json_path),
+            )
+            return
 
-        # Copia emblema (opcional)
         emblem_rel: str = ""
         if self._selected_emblem_src and self._selected_emblem_src.exists():
             ext: str = self._selected_emblem_src.suffix.lower()
@@ -276,148 +306,45 @@ class InsertSquadsTab(QWidget):
                 shutil.copyfile(str(self._selected_emblem_src), str(emblem_dst))
                 emblem_rel = str(Path("squadrons") / "images" / emblem_dst.name)
             except (OSError, shutil.Error) as e:
-                QMessageBox.critical(
-                    self, self.tr("Emblema"), self.tr("Falha ao copiar emblema:\n") + str(e)
+                show_actionable_error(
+                    parent=self,
+                    title=self.tr("Emblema"),
+                    summary=self.tr("Falha ao copiar o emblema selecionado."),
+                    action_hint=self.tr("Confirme permissões de escrita e tente outra imagem."),
+                    technical_details=str(e),
+                    file_path=str(self._selected_emblem_src),
                 )
                 return
 
-        # Campos do JSON original
-        _name, country, airfields = self._extract_fields(base_in)
-
-        enriched: Dict[str, Any] = {
-            "squadronId": sq_id,
-            "squadronName": sq_name,
-            "country": country or "",
-            "history": self.history_edit.toPlainText().strip(),
-            "emblemImage": emblem_rel,  # relativo a assets/
-            "airfields": airfields,
-            "source": {"pwcg_squadron_file": str(self._selected_json_path)},
-        }
+        sq_id, enriched = self._app_service.build_payload(
+            source_path=self._selected_json_path,
+            history=self.history_edit.toPlainText(),
+            emblem_rel=emblem_rel,
+        )
 
         out_path: Path = self._assets_meta_dir / f"{sq_id}.json"
         try:
-            self._assets_meta_dir.mkdir(parents=True, exist_ok=True)
-            with open(out_path, "w", encoding="utf-8") as f:
-                json.dump(enriched, f, ensure_ascii=False, indent=2)
-        except (OSError, json.JSONEncodeError) as e:
-            QMessageBox.critical(
-                self, self.tr("Salvar"), self.tr("Falha ao salvar JSON:\n") + str(e)
+            self._app_service.persist_payload(out_path, enriched)
+        except (OSError, TypeError, ValueError) as e:
+            show_actionable_error(
+                parent=self,
+                title=self.tr("Salvar"),
+                summary=self.tr("Não foi possível salvar o arquivo JSON."),
+                action_hint=self.tr("Verifique permissões da pasta de destino e tente novamente."),
+                technical_details=str(e),
+                file_path=str(out_path),
             )
             return
 
-        QMessageBox.information(
-            self, self.tr("Salvar"), self.tr("Arquivo criado:\n") + str(out_path)
+        NotificationBus.instance().send(
+            NotificationLevel.INFO,
+            self.tr("Arquivo criado:\n") + str(out_path),
+            timeout_ms=3500,
         )
 
-        # Após salvar, recarrega a lista excluindo os já populados
         self._refresh_squad_list()
 
     # ---------------- Utilidades ----------------
-    def _read_json(self, path: Path) -> Dict[str, Any]:
-        try:
-            with open(path, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except (UnicodeDecodeError, json.JSONDecodeError):
-            # Tenta com latin-1 se falhar com utf-8
-            try:
-                with open(path, "r", encoding="latin-1") as f:
-                    return json.load(f)
-            except (UnicodeDecodeError, json.JSONDecodeError, OSError) as e:
-                QMessageBox.warning(
-                    self,
-                    self.tr("Erro de Leitura"),
-                    self.tr("Não foi possível ler o arquivo JSON:\n") + str(path) + "\n" + str(e)
-                )
-                return {}
-        except OSError as e:
-            QMessageBox.warning(
-                self,
-                self.tr("Erro de Leitura"),
-                self.tr("Não foi possível acessar o arquivo:\n") + str(path) + "\n" + str(e)
-            )
-            return {}
-
-    @staticmethod
-    def _resolve_id_and_name(data: Dict[str, Any], p: Path) -> Tuple[str, str]:
-        sq_id: str = p.stem
-        for k in ("squadronName", "name", "displayName", "id", "squadron_id"):
-            v = data.get(k)
-            if isinstance(v, str) and v.strip():
-                return sq_id, v.strip()
-        return sq_id, sq_id
-
-    @staticmethod
-    def _extract_fields(data: Dict[str, Any]) -> Tuple[str, str, List[Dict[str, str]]]:
-        """
-        Retorna: (name, country, airfields[])
-        airfields: lista de objetos {start, end, airfield}
-        Suporta:
-          - airfields como dict {"YYYYMMDD": "Base"} (formato PWCG comum)
-          - airfields como list de dicts
-          - airfieldHistory como list de dicts
-          - bases como list de dicts
-        """
-        # Nome
-        name: str = ""
-        for k in ("squadronName", "name", "displayName", "id", "squadron_id"):
-            v = data.get(k)
-            if isinstance(v, str) and v.strip():
-                name = v.strip()
-                break
-
-        # País
-        country: str = ""
-        for k in ("country", "nation", "countryCode"):
-            v = data.get(k)
-            if isinstance(v, str) and v.strip():
-                country = v.strip()
-                break
-
-        airfields: List[Dict[str, str]] = []
-
-        def add_af(s: Any, e: Any, a: Any) -> None:
-            start: str = str(s or "").strip()
-            end: str = str(e or "").strip()
-            af: str = str(a or "").strip()
-            if af:
-                airfields.append({"start": start, "end": end, "airfield": af})
-
-        # 1) airfields como dict {"YYYYMMDD": "Nome"}
-        af_dict = data.get("airfields")
-        if isinstance(af_dict, dict):
-            items: List[Tuple[str, str]] = sorted(((str(k), str(v)) for k, v in af_dict.items()), key=lambda x: x[0])
-            for i, (start, af_name) in enumerate(items):
-                end = items[i + 1][0] if i + 1 < len(items) else ""
-                add_af(start, end, af_name)
-
-        # 2) airfields como lista de dicts
-        if isinstance(data.get("airfields"), list):
-            for it in data["airfields"]:
-                if isinstance(it, dict):
-                    add_af(
-                        it.get("start"),
-                        it.get("end"),
-                        it.get("airfield") or it.get("base") or it.get("name"),
-                    )
-
-        # 3) Histórico em airfieldHistory
-        if isinstance(data.get("airfieldHistory"), list):
-            for it in data["airfieldHistory"]:
-                if isinstance(it, dict):
-                    add_af(it.get("from"), it.get("to"), it.get("airfield") or it.get("name"))
-
-        # 4) Estruturas alternativas bases
-        if not airfields and isinstance(data.get("bases"), list):
-            for it in data["bases"]:
-                if isinstance(it, dict):
-                    add_af(
-                        it.get("startDate"),
-                        it.get("endDate"),
-                        it.get("airfield") or it.get("base"),
-                    )
-
-        return name, country, airfields
-
     def _fill_airfields_table(self, items: List[Dict[str, str]]) -> None:
         self.af_table.setRowCount(len(items))
         for i, it in enumerate(items):
@@ -431,6 +358,4 @@ class InsertSquadsTab(QWidget):
     def _clear_emblem_preview(self) -> None:
         self.emblem_preview.setPixmap(QPixmap())
         self.emblem_preview.setText(self.tr("Sem emblema"))
-        self.emblem_preview.setStyleSheet(
-            "color:#888; border:1px solid #444; background:#1e1e1e;"
-        )
+        self.emblem_preview.setStyleSheet(DSStyles.PANEL_PLACEHOLDER)
