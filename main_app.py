@@ -17,6 +17,8 @@ from PyQt5.QtWidgets import QApplication, QMessageBox, QSplashScreen
 from PyQt5.QtGui import QIcon, QPixmap
 
 from app.ui.main_window import MainWindow
+from utils.observability import publish_release_report, record_startup_time
+from utils.structured_logger import StructuredLogger
 
 
 def _setup_logging(level: int = logging.INFO) -> logging.Logger:
@@ -58,6 +60,7 @@ def _setup_logging(level: int = logging.INFO) -> logging.Logger:
 
 
 logger: logging.Logger = _setup_logging(logging.INFO)
+structured_logger = StructuredLogger("IL2CampaignAnalyzer")
 
 
 def _pick_splash_image() -> Optional[Path]:
@@ -122,6 +125,7 @@ def _show_startup_splash(app: QApplication, duration_s: float = 4.0) -> Optional
 
 
 if __name__ == '__main__':
+    app_start_t0 = time.perf_counter()
     try:
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
         QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
@@ -171,6 +175,7 @@ if __name__ == '__main__':
         if splash is not None:
             splash.finish(win)
         win.show()
+        record_startup_time(structured_logger, (time.perf_counter() - app_start_t0) * 1000.0)
         exit_code: int = app.exec_()
     except ImportError as e:
         logger.exception(f"Falha ao importar módulos da interface: {e}")
@@ -185,6 +190,21 @@ if __name__ == '__main__':
         QMessageBox.critical(None, "Erro", "Falha ao iniciar a interface gráfica.")
         exit_code = 1
     finally:
+        try:
+            reports_dir = Path(__file__).resolve().parent / "logs" / "observability"
+            release_tag = datetime.now().strftime("%Y%m%d_%H%M%S")
+            baseline = reports_dir / "baseline.json"
+            report_path = publish_release_report(
+                structured_logger,
+                release_tag=release_tag,
+                output_dir=reports_dir,
+                baseline_path=baseline if baseline.exists() else None,
+            )
+            baseline.parent.mkdir(parents=True, exist_ok=True)
+            baseline.write_text(report_path.read_text(encoding="utf-8"), encoding="utf-8")
+        except Exception as e:
+            logger.debug("Falha ao publicar relatório de observabilidade: %s", e)
+
         if lock and lock.isLocked():
             lock.unlock()
         sys.exit(exit_code)

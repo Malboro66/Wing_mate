@@ -18,6 +18,7 @@ from typing import Dict, Optional, List, Any, Callable
 from datetime import datetime
 import json
 import logging
+import time
 
 from PyQt5.QtCore import QSettings, QThread, pyqtSignal, QSize, Qt
 from PyQt5.QtGui import QIcon, QPixmap, QCloseEvent, QFontMetrics
@@ -55,7 +56,7 @@ from app.application.personnel_resolution_service import PersonnelResolutionServ
 from app.core.data_parser import IL2DataParser
 from app.core.data_processor import IL2DataProcessor
 from utils.notification_bus import notification_bus, notify_error, notify_warning
-from utils.observability import Events, emit_event
+from utils.observability import Events, emit_event, record_action_duration, record_cache_stats
 from utils.structured_logger import StructuredLogger
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
@@ -89,6 +90,7 @@ class DataSyncThread(QThread):
         self.processor_factory = processor_factory or (lambda p: IL2DataProcessor(p))
 
     def run(self) -> None:
+        sync_t0 = time.perf_counter()
         try:
             self.progress.emit(10)
             logger.info(
@@ -112,6 +114,12 @@ class DataSyncThread(QThread):
             if not isinstance(data, dict) or not data:
                 msg = "Não foi possível carregar os dados da campanha."
                 logger.warning("Dados de campanha inválidos: %s", type(data))
+                record_action_duration(
+                    structured_logger,
+                    "sync_campaign",
+                    (time.perf_counter() - sync_t0) * 1000.0,
+                    success=False,
+                )
                 self.error_occurred.emit(msg)
                 self.progress.emit(0)
                 return
@@ -128,6 +136,12 @@ class DataSyncThread(QThread):
                 missions_count=len(data.get("missions", []) or []),
                 aces_count=len(data.get("aces", []) or []),
             )
+            record_action_duration(
+                structured_logger,
+                "sync_campaign",
+                (time.perf_counter() - sync_t0) * 1000.0,
+                success=True,
+            )
 
             self.data_loaded.emit(data)
             self.progress.emit(100)
@@ -142,6 +156,12 @@ class DataSyncThread(QThread):
                 error_type=type(e).__name__,
                 error_message=str(e),
             )
+            record_action_duration(
+                structured_logger,
+                "sync_campaign",
+                (time.perf_counter() - sync_t0) * 1000.0,
+                success=False,
+            )
             self.error_occurred.emit(f"Erro ao processar dados: {e}")
             self.progress.emit(0)
 
@@ -154,6 +174,12 @@ class DataSyncThread(QThread):
                 campaign_name=self.campaign_name,
                 error_type=type(e).__name__,
                 error_message=str(e),
+            )
+            record_action_duration(
+                structured_logger,
+                "sync_campaign",
+                (time.perf_counter() - sync_t0) * 1000.0,
+                success=False,
             )
             self.error_occurred.emit(f"Erro inesperado: {e}")
             try:
@@ -187,6 +213,8 @@ class MainWindow(QMainWindow):
         self._validated_missions: List[Mission] = []
         self.selected_mission_index: int = -1
         self.sync_thread: Optional[DataSyncThread] = None
+        self._medals_loaded_once: bool = False
+        self._medals_dirty: bool = True
         self._busy: bool = False
 
         # Widgets/actions referenciados em mais de um ponto
@@ -197,6 +225,7 @@ class MainWindow(QMainWindow):
         self.action_open_folder: QAction
         self.action_sync: QAction
         self.action_copy_path: QAction
+        self.btn_copy_path: QPushButton
 
         self.progress_bar: QProgressBar
 
@@ -324,11 +353,12 @@ class MainWindow(QMainWindow):
         path_row.addWidget(self.path_label, 1)
 
         # Botão pequeno de copiar (espelha a ação)
-        btn_copy = QPushButton("Copiar")
-        btn_copy.setToolTip("Copiar caminho do PWCGFC")
-        btn_copy.clicked.connect(self._copy_current_path_to_clipboard)
-        btn_copy.setFixedHeight(28)
-        path_row.addWidget(btn_copy, 0)
+        self.btn_copy_path = QPushButton("Copiar")
+        self.btn_copy_path.setToolTip("Copiar caminho do PWCGFC")
+        self.btn_copy_path.setAccessibleName("copiar_caminho_button")
+        self.btn_copy_path.clicked.connect(self._copy_current_path_to_clipboard)
+        self.btn_copy_path.setFixedHeight(28)
+        path_row.addWidget(self.btn_copy_path, 0)
 
         layout.addLayout(path_row)
 
@@ -336,12 +366,14 @@ class MainWindow(QMainWindow):
         row = QHBoxLayout()
         row.addWidget(QLabel("Campanha:"))
         self.campaign_combo = QComboBox()
+        self.campaign_combo.setAccessibleName("campaign_selector")
         self.campaign_combo.currentTextChanged.connect(self._on_campaign_changed)
         row.addWidget(self.campaign_combo, 1)
         layout.addLayout(row)
 
         # Tabs
         self.tabs = QTabWidget()
+        self.tabs.setAccessibleName("main_tabs")
         self.tabs.currentChanged.connect(self._on_tab_changed)
 
         self.profile_tab = ProfileTab(settings=self.settings)
@@ -370,8 +402,8 @@ class MainWindow(QMainWindow):
 
         # Sinais: recarrega medalhas quando cadastrar/editar
         try:
-            self.input_medals_tab.medal_added.connect(lambda _: self.medals_tab.reload())
-            self.input_medals_tab.medal_updated.connect(lambda _i, _m: self.medals_tab.reload())
+            self.input_medals_tab.medal_added.connect(lambda _: self._mark_medals_dirty())
+            self.input_medals_tab.medal_updated.connect(lambda _i, _m: self._mark_medals_dirty())
         except AttributeError:
             logger.warning(
                 "Não foi possível conectar sinais da aba Input Medals. "
@@ -393,6 +425,12 @@ class MainWindow(QMainWindow):
 
         self._toast = ToastWidget(self)
         self._build_sync_skeletons()
+
+        # Ordem mínima de foco para navegação por teclado
+        self.setTabOrder(self.campaign_combo, self.btn_copy_path)
+        self.setTabOrder(self.btn_copy_path, self.tabs)
+        self.tabs.setFocusPolicy(Qt.StrongFocus)
+
         self._set_ui_busy(False)
 
 
@@ -518,6 +556,9 @@ class MainWindow(QMainWindow):
         self._set_ui_busy(True, "Sincronizando campanha...")
         self.progress_bar.setValue(0)
 
+        parser_metrics = self.container.get_parser().get_cache_metrics()
+        record_cache_stats(int(parser_metrics.get("hits", 0)), int(parser_metrics.get("misses", 0)))
+
         self.sync_thread = DataSyncThread(
             self.pwcgfc_path,
             campaign,
@@ -555,9 +596,9 @@ class MainWindow(QMainWindow):
         display_name = personnel_info.display_name
         earned_ids = set(personnel_info.earned_medal_ids)
 
-        # Aba Medalhas
-        self.medals_tab.set_country(country_code, display_name)
-        self.medals_tab.set_earned_ids(earned_ids)
+        # Aba Medalhas (carregamento lazy + atualização única de contexto)
+        self.medals_tab.set_context(country_code, display_name, earned_ids)
+        self._medals_dirty = False
 
         # Aba Esquadrão
         self.squadron_tab.set_country(country_code)
@@ -593,11 +634,23 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("Falha ao sincronizar dados.", 4000)
 
     def _on_tab_changed(self, index: int) -> None:
+        tab_t0 = time.perf_counter()
+        success = True
         try:
-            if self.tabs.widget(index) is self.medals_tab:
+            if self.tabs.widget(index) is self.medals_tab and (self._medals_dirty or not self._medals_loaded_once):
                 self.medals_tab.reload()
+                self._medals_loaded_once = True
+                self._medals_dirty = False
         except AttributeError:
+            success = False
             logger.warning("Falha ao recarregar aba de Medalhas ao mudar de aba")
+        finally:
+            duration_ms = (time.perf_counter() - tab_t0) * 1000.0
+            tab_name = self.tabs.tabText(index) if 0 <= index < self.tabs.count() else "unknown"
+            record_action_duration(structured_logger, f"tab_switch:{tab_name}", duration_ms, success=success)
+
+    def _mark_medals_dirty(self) -> None:
+        self._medals_dirty = True
 
     def _on_mission_selected(self, index: int, mission: Dict[str, Any]) -> None:
         self.selected_mission_index = index
