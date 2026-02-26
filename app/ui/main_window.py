@@ -49,6 +49,7 @@ from app.ui.insert_squads_tab import InsertSquadsTab
 from app.ui.input_medals_tab import InputMedalsTab
 from app.ui.skeleton_widget import SkeletonWidget
 from app.ui.toast_widget import ToastWidget
+from app.ui.i18n import AppI18n
 
 from app.application.container import AppContainer
 from app.application.mission_validation_service import Mission, MissionValidationService
@@ -216,10 +217,15 @@ class MainWindow(QMainWindow):
         self._medals_loaded_once: bool = False
         self._medals_dirty: bool = True
         self._busy: bool = False
+        self._language_code: str = str(self.settings.value("ui/language", AppI18n.PT_BR) or AppI18n.PT_BR)
+
 
         # Widgets/actions referenciados em mais de um ponto
         self.path_label: QLabel
+        self.lbl_campaign: QLabel
+        self.lbl_language: QLabel
         self.campaign_combo: QComboBox
+        self.language_combo: QComboBox
         self.tabs: QTabWidget
 
         self.action_open_folder: QAction
@@ -239,6 +245,7 @@ class MainWindow(QMainWindow):
         self._sync_skeletons: Dict[QWidget, SkeletonWidget] = {}
 
         self._build_ui()
+        self._apply_language()
         notification_bus.notified.connect(self._on_notification, Qt.QueuedConnection)
         self._load_saved_settings()
 
@@ -289,7 +296,7 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(message, 0)
 
     def _update_elided_path_label(self) -> None:
-        txt = self._full_path_text or "Nenhum caminho selecionado"
+        txt = self._full_path_text or self._t("no_path_selected")
         # Elide para caber, deixando o restante do layout respirar
         fm = QFontMetrics(self.path_label.font())
         maxw = max(200, self.path_label.width())
@@ -302,7 +309,7 @@ class MainWindow(QMainWindow):
     # ---------------- Construção da UI ----------------
 
     def _build_ui(self) -> None:
-        self.setWindowTitle("Wing Mate")
+        self.setWindowTitle(self._t("window_title"))
         self._set_app_icon()
         self.setGeometry(100, 100, 1200, 800)
 
@@ -311,14 +318,14 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout(central)
 
         # Toolbar
-        tb = QToolBar("Ações", self)
+        tb = QToolBar(self._t("toolbar_actions"), self)
         tb.setMovable(False)
         tb.setIconSize(QSize(20, 20))
         self.addToolBar(tb)
 
         self.action_open_folder = QAction(
             self._icon_from_asset("config.png", QStyle.SP_DirOpenIcon),
-            "Selecionar Pasta PWCGFC",
+            self._t("select_folder"),
             self,
         )
         self.action_open_folder.setShortcut("Ctrl+O")
@@ -326,7 +333,7 @@ class MainWindow(QMainWindow):
 
         self.action_sync = QAction(
             self._icon_from_asset("sync.png", QStyle.SP_BrowserReload),
-            "Sincronizar Dados",
+            self._t("sync_data"),
             self,
         )
         self.action_sync.setShortcut("F5")
@@ -334,7 +341,7 @@ class MainWindow(QMainWindow):
 
         self.action_copy_path = QAction(
             self.style().standardIcon(QStyle.SP_DialogSaveButton),
-            "Copiar caminho",
+            self._t("copy_path_action"),
             self,
         )
         self.action_copy_path.setShortcut("Ctrl+C")
@@ -348,13 +355,13 @@ class MainWindow(QMainWindow):
 
         # Linha do caminho (compacta)
         path_row = QHBoxLayout()
-        self.path_label = QLabel("Nenhum caminho selecionado")
+        self.path_label = QLabel(self._t("no_path_selected"))
         self.path_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
         path_row.addWidget(self.path_label, 1)
 
         # Botão pequeno de copiar (espelha a ação)
-        self.btn_copy_path = QPushButton("Copiar")
-        self.btn_copy_path.setToolTip("Copiar caminho do PWCGFC")
+        self.btn_copy_path = QPushButton(self._t("copy_button"))
+        self.btn_copy_path.setToolTip(self._t("copy_button_tooltip"))
         self.btn_copy_path.setAccessibleName("copiar_caminho_button")
         self.btn_copy_path.clicked.connect(self._copy_current_path_to_clipboard)
         self.btn_copy_path.setFixedHeight(28)
@@ -364,11 +371,21 @@ class MainWindow(QMainWindow):
 
         # Seletor de campanha
         row = QHBoxLayout()
-        row.addWidget(QLabel("Campanha:"))
+        self.lbl_campaign = QLabel(self._t("campaign_label"))
+        row.addWidget(self.lbl_campaign)
         self.campaign_combo = QComboBox()
         self.campaign_combo.setAccessibleName("campaign_selector")
         self.campaign_combo.currentTextChanged.connect(self._on_campaign_changed)
         row.addWidget(self.campaign_combo, 1)
+        self.lbl_language = QLabel(self._t("language_label"))
+        row.addWidget(self.lbl_language)
+        self.language_combo = QComboBox()
+        self.language_combo.addItem(AppI18n.LANG_LABELS[AppI18n.PT_BR], AppI18n.PT_BR)
+        self.language_combo.addItem(AppI18n.LANG_LABELS[AppI18n.EN_US], AppI18n.EN_US)
+        idx = self.language_combo.findData(self._language_code)
+        self.language_combo.setCurrentIndex(idx if idx >= 0 else 0)
+        self.language_combo.currentIndexChanged.connect(self._on_language_changed)
+        row.addWidget(self.language_combo)
         layout.addLayout(row)
 
         # Tabs
@@ -377,28 +394,28 @@ class MainWindow(QMainWindow):
         self.tabs.currentChanged.connect(self._on_tab_changed)
 
         self.profile_tab = ProfileTab(settings=self.settings)
-        self.tabs.addTab(self.profile_tab, "Perfil do Piloto")
+        self.tabs.addTab(self.profile_tab, self._t("profile_tab"))
 
         self.missions_tab = MissionsTab()
         self.missions_tab.missionSelected.connect(self._on_mission_selected)
-        self.tabs.addTab(self.missions_tab, "Missões")
+        self.tabs.addTab(self.missions_tab, self._t("missions_tab"))
 
         self.squadron_tab = SquadronTab()
-        self.tabs.addTab(self.squadron_tab, "Esquadrão")
+        self.tabs.addTab(self.squadron_tab, self._t("squadron_tab"))
 
         self.aces_tab = AcesTab()
-        self.tabs.addTab(self.aces_tab, "Ases")
+        self.tabs.addTab(self.aces_tab, self._t("aces_tab"))
 
         self.medals_tab = MedalsTab()
-        self.tabs.addTab(self.medals_tab, "Medalhas")
+        self.tabs.addTab(self.medals_tab, self._t("medals_tab"))
 
         self.insert_squads_tab = InsertSquadsTab(
             app_service=self.container.get_squadron_enrichment_application_service()
         )
-        self.tabs.addTab(self.insert_squads_tab, "Insert Squads")
+        self.tabs.addTab(self.insert_squads_tab, self._t("insert_squads_tab"))
 
         self.input_medals_tab = InputMedalsTab()
-        self.tabs.addTab(self.input_medals_tab, "Input Medals")
+        self.tabs.addTab(self.input_medals_tab, self._t("input_medals_tab"))
 
         # Sinais: recarrega medalhas quando cadastrar/editar
         try:
@@ -432,6 +449,40 @@ class MainWindow(QMainWindow):
         self.tabs.setFocusPolicy(Qt.StrongFocus)
 
         self._set_ui_busy(False)
+
+
+    def _t(self, key: str, **kwargs: Any) -> str:
+        return AppI18n.t(key, self._language_code, **kwargs)
+
+    def _on_language_changed(self, _index: int) -> None:
+        selected = str(self.language_combo.currentData() or AppI18n.PT_BR)
+        if selected == self._language_code:
+            return
+        self._language_code = selected
+        self.settings.setValue("ui/language", self._language_code)
+        self._apply_language()
+
+    def _apply_language(self) -> None:
+        self.setWindowTitle(self._t("window_title"))
+        self.action_open_folder.setText(self._t("select_folder"))
+        self.action_sync.setText(self._t("sync_data"))
+        self.action_copy_path.setText(self._t("copy_path_action"))
+
+        self.lbl_campaign.setText(self._t("campaign_label"))
+        self.lbl_language.setText(self._t("language_label"))
+        self.btn_copy_path.setText(self._t("copy_button"))
+        self.btn_copy_path.setToolTip(self._t("copy_button_tooltip"))
+
+        self.tabs.setTabText(self.tabs.indexOf(self.profile_tab), self._t("profile_tab"))
+        self.tabs.setTabText(self.tabs.indexOf(self.missions_tab), self._t("missions_tab"))
+        self.tabs.setTabText(self.tabs.indexOf(self.squadron_tab), self._t("squadron_tab"))
+        self.tabs.setTabText(self.tabs.indexOf(self.aces_tab), self._t("aces_tab"))
+        self.tabs.setTabText(self.tabs.indexOf(self.medals_tab), self._t("medals_tab"))
+        self.tabs.setTabText(self.tabs.indexOf(self.insert_squads_tab), self._t("insert_squads_tab"))
+        self.tabs.setTabText(self.tabs.indexOf(self.input_medals_tab), self._t("input_medals_tab"))
+
+        self._update_elided_path_label()
+
 
 
     def _build_sync_skeletons(self) -> None:
@@ -487,19 +538,19 @@ class MainWindow(QMainWindow):
 
     def _copy_current_path_to_clipboard(self) -> None:
         if not self._full_path_text:
-            self.statusBar().showMessage("Nenhum caminho para copiar.", 2500)
+            self.statusBar().showMessage(self._t("copy_path_empty"), 2500)
             return
         QApplication.clipboard().setText(self._full_path_text)
-        self.statusBar().showMessage("Caminho copiado para a área de transferência.", 2500)
+        self.statusBar().showMessage(self._t("copy_path_success"), 2500)
 
     def _select_pwcgfc_folder(self) -> None:
-        folder_path = QFileDialog.getExistingDirectory(self, "Selecionar Pasta PWCGFC")
+        folder_path = QFileDialog.getExistingDirectory(self, self._t("folder_dialog_title"))
         if not folder_path:
             return
 
         self.pwcgfc_path = folder_path
         self.container.set_pwcgfc_path(self.pwcgfc_path)
-        self._full_path_text = f"Caminho: {folder_path}"
+        self._full_path_text = f"{self._t('path_prefix')} {folder_path}"
         self.settings.setValue("pwcgfc_path", self.pwcgfc_path)
         self._update_elided_path_label()
 
@@ -533,7 +584,7 @@ class MainWindow(QMainWindow):
         if saved_campaign and saved_campaign in campaigns:
             self.campaign_combo.setCurrentText(saved_campaign)
 
-        self.statusBar().showMessage(f"{len(campaigns)} campanhas carregadas.", 3000)
+        self.statusBar().showMessage(self._t("campaigns_loaded", count=len(campaigns)), 3000)
         logger.info("Carregadas %s campanhas", len(campaigns))
 
     def _on_campaign_changed(self, campaign: str) -> None:
@@ -546,11 +597,11 @@ class MainWindow(QMainWindow):
     def _sync_data(self) -> None:
         campaign: str = self.campaign_combo.currentText().strip()
         if not self.pwcgfc_path or not campaign:
-            notify_warning("Selecione a pasta PWCGFC e uma campanha.")
+            notify_warning(self._t("select_folder_warning"))
             return
 
         if self.sync_thread and self.sync_thread.isRunning():
-            self.statusBar().showMessage("Sincronização já em andamento...", 2500)
+            self.statusBar().showMessage(self._t("sync_in_progress"), 2500)
             return
 
         self._set_ui_busy(True, "Sincronizando campanha...")
@@ -627,12 +678,12 @@ class MainWindow(QMainWindow):
         squadron_name: str = (self.current_data.get("pilot", {}) or {}).get("squadron", "N/A")
         self.squadron_tab.set_squad_overview(squadron_name)
 
-        self.statusBar().showMessage("Dados carregados com sucesso.", 4000)
+        self.statusBar().showMessage(self._t("sync_success"), 4000)
 
     def _on_sync_error(self, msg: str) -> None:
         notify_error(f"Erro de sincronização: {msg}")
         logger.error("Erro de sincronização: %s", msg)
-        self.statusBar().showMessage("Falha ao sincronizar dados.", 4000)
+        self.statusBar().showMessage(self._t("sync_failed"), 4000)
 
     def _on_tab_changed(self, index: int) -> None:
         tab_t0 = time.perf_counter()
