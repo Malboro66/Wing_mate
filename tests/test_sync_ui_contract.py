@@ -24,3 +24,8 @@ def test_non_critical_sync_feedback_uses_toast_not_messagebox():
     source = Path("app/ui/main_window.py").read_text(encoding="utf-8")
     assert 'notify_warning("Selecione a pasta PWCGFC e uma campanha.")' in source
     assert "QMessageBox.warning" not in source
+
+
+def test_main_window_handles_parser_without_cache_metrics_gracefully():
+    source = Path("app/ui/main_window.py").read_text(encoding="utf-8")
+    assert 'getattr(parser, "get_cache_metrics", lambda: {"hits": 0, "misses": 0})()' in source

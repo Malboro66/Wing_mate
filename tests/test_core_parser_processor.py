@@ -119,3 +119,34 @@ def test_processor_process_aces_data_counts_and_sorts():
     assert result[0]["name"] == "Ace A"
     assert result[0]["victories"] == 3
     assert result[1]["name"] == "Ace B"
+
+
+def test_parser_exposes_cache_metrics_for_observability(tmp_path: Path):
+    base = tmp_path / "pwcg"
+    campaign_dir = _build_campaign_tree(base)
+    campaign_file = campaign_dir / "Campaign.json"
+    campaign_file.write_text('{"name":"v1"}', encoding="utf-8")
+
+    parser = IL2DataParser(base)
+
+    parser.get_campaign_info("camp1")
+    parser.get_campaign_info("camp1")
+
+    metrics = parser.get_cache_metrics()
+    assert metrics["misses"] >= 1
+    assert metrics["hits"] >= 1
+    assert metrics["entries"] >= 1
+
+
+def test_parser_clear_cache_resets_metrics(tmp_path: Path):
+    base = tmp_path / "pwcg"
+    campaign_dir = _build_campaign_tree(base)
+    (campaign_dir / "Campaign.json").write_text('{"name":"v1"}', encoding="utf-8")
+
+    parser = IL2DataParser(base)
+    parser.get_campaign_info("camp1")
+    assert parser.get_cache_metrics()["entries"] >= 1
+
+    parser.clear_cache()
+    metrics = parser.get_cache_metrics()
+    assert metrics == {"hits": 0, "misses": 0, "entries": 0}
