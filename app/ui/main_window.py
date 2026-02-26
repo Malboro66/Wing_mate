@@ -556,7 +556,8 @@ class MainWindow(QMainWindow):
         self._set_ui_busy(True, "Sincronizando campanha...")
         self.progress_bar.setValue(0)
 
-        parser_metrics = self.container.get_parser().get_cache_metrics()
+        parser = self.container.get_parser()
+        parser_metrics = getattr(parser, "get_cache_metrics", lambda: {"hits": 0, "misses": 0})()
         record_cache_stats(int(parser_metrics.get("hits", 0)), int(parser_metrics.get("misses", 0)))
 
         self.sync_thread = DataSyncThread(
