@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import re
+import time
 from pathlib import Path
 from typing import Optional, Tuple, Set, List
 
@@ -48,7 +49,7 @@ import logging
 
 from app.ui.error_feedback import show_actionable_error
 from utils.notification_bus import NotificationBus, NotificationLevel
-from utils.observability import Events, emit_event
+from utils.observability import Events, emit_event, record_action_duration
 from utils.structured_logger import StructuredLogger
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
@@ -631,9 +632,11 @@ class ProfileTab(QWidget):
     # ---------------- Persistence ----------------
 
     def save_to_settings(self):
+        action_t0 = time.perf_counter()
         ok, msg = self._validate_profile()
         if not ok:
             QMessageBox.warning(self, self.tr("Validação"), msg)
+            record_action_duration(structured_logger, "profile_save", (time.perf_counter() - action_t0) * 1000.0, success=False)
             return
 
         try:
@@ -649,12 +652,14 @@ class ProfileTab(QWidget):
                 pilot_key=self._pilot_key,
                 schema_version=self.SCHEMA_VERSION,
             )
+            record_action_duration(structured_logger, "profile_save", (time.perf_counter() - action_t0) * 1000.0, success=True)
             NotificationBus.instance().send(
                 NotificationLevel.INFO,
                 self.tr("Dados do perfil salvos."),
                 timeout_ms=2500,
             )
         except OSError as e:
+            record_action_duration(structured_logger, "profile_save", (time.perf_counter() - action_t0) * 1000.0, success=False)
             show_actionable_error(
                 parent=self,
                 title=self.tr("Erro"),
