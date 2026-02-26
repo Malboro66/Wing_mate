@@ -35,3 +35,20 @@ def test_feedback_and_state_tokens_are_consistent_in_critical_screens():
     for token in ("DSStyles.STATE_INFO", "DSStyles.STATE_SUCCESS", "DSStyles.STATE_WARNING", "DSStyles.STATE_ERROR"):
         assert token in missions
         assert token in squadron
+
+
+def test_main_window_shortcuts_cover_critical_operational_flow():
+    src = Path("app/ui/main_window.py").read_text(encoding="utf-8")
+    assert 'self.action_open_folder.setShortcut("Ctrl+O")' in src
+    assert 'self.action_sync.setShortcut("F5")' in src
+
+
+def test_feedback_widgets_use_design_system_tokens():
+    toast = Path("app/ui/toast_widget.py").read_text(encoding="utf-8")
+    skeleton = Path("app/ui/skeleton_widget.py").read_text(encoding="utf-8")
+    ds = Path("app/ui/design_system.py").read_text(encoding="utf-8")
+
+    assert "class DSFeedback" in ds
+    assert "DSFeedback.TOAST_LEVEL_STYLES" in toast
+    assert "DSFeedback.LOADING_OVERLAY_BG" in skeleton
+    assert "DSFeedback.LOADING_BAR_ACTIVE" in skeleton

@@ -3,15 +3,13 @@ from __future__ import annotations
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QLabel, QWidget
 
+from app.ui.design_system import DSFeedback
+
 
 class ToastWidget(QLabel):
     """Toast não-bloqueante para feedback ao usuário."""
 
-    _STYLES = {
-        "info": "background:#2d3748; color:#fff;",
-        "warning": "background:#744210; color:#fff;",
-        "error": "background:#742a2a; color:#fff;",
-    }
+    _STYLES = DSFeedback.TOAST_LEVEL_STYLES
 
     def __init__(self, parent: QWidget) -> None:
         super().__init__(parent)
