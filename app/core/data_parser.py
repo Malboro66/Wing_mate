@@ -62,6 +62,21 @@ class IL2DataParser:
             self._json_cache[file_path_str] = self._load_json_file(Path(file_path_str))
         return self._json_cache[file_path_str]
     
+    def get_json_many(self, file_paths: List[Path]) -> Dict[Path, Optional[Any]]:
+        """Carrega múltiplos arquivos JSON em batch reutilizando cache da instância.
+
+        Essa API bulk-first evita padrões análogos a N+1 de chamadas externas,
+        concentrando resolução de caminhos e leitura em uma única etapa.
+        """
+        loaded: Dict[Path, Optional[Any]] = {}
+        for file_path in file_paths or []:
+            try:
+                resolved = file_path.resolve()
+            except (TypeError, ValueError, OSError):
+                resolved = file_path
+            loaded[file_path] = self.get_json_data(resolved)
+        return loaded
+
     def get_json_data(self, file_path: Path) -> Optional[Any]:
         """Carrega JSON de arquivo com cache LRU e fallback de encoding.
         
