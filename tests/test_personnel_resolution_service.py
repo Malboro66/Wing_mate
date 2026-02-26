@@ -46,3 +46,39 @@ def test_personnel_resolution_resolves_country_and_medals(tmp_path: Path):
     assert result.country_code == "FRANCE"
     assert result.display_name == "France"
     assert result.earned_medal_ids == frozenset({"croix", "legion_honor"})
+
+
+def test_personnel_resolution_prefers_batch_loading(tmp_path: Path):
+    base = tmp_path / "pwcg"
+    personnel_dir = base / "User" / "Campaigns" / "Camp1" / "Personnel"
+    personnel_dir.mkdir(parents=True)
+
+    (personnel_dir / "member.json").write_text(
+        json.dumps({
+            "squadronMemberCollection": {
+                "p1": {
+                    "name": "Ace Pilot",
+                    "country": "ger",
+                    "medals": [],
+                }
+            }
+        }),
+        encoding="utf-8",
+    )
+
+    class TrackingParser(IL2DataParser):
+        def __init__(self, root: Path):
+            super().__init__(root)
+            self.batch_calls = 0
+
+        def get_json_many(self, file_paths):
+            self.batch_calls += 1
+            return super().get_json_many(file_paths)
+
+    parser = TrackingParser(base)
+    service = PersonnelResolutionService(lambda: parser)
+
+    result = service.resolve("Camp1", "Ace Pilot")
+
+    assert result.country_code == "GERMANY"
+    assert parser.batch_calls == 1

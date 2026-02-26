@@ -3,8 +3,9 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, FrozenSet, List
+from typing import Any, Callable, Dict, FrozenSet, List, Optional, Tuple
 
+from app.core.batch_repository import JsonBatchRepository
 from app.core.data_parser import IL2DataParser
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
@@ -42,41 +43,52 @@ class PersonnelResolutionService:
         display_name = default.display_name
 
         try:
-            for pfile in sorted(personnel_dir.glob("*.json")):
-                data = parser.get_json_data(pfile)
-                if not isinstance(data, dict):
-                    continue
+            personnel_files = sorted(personnel_dir.glob("*.json"))
+            batch_repo = JsonBatchRepository(parser)
+            loaded_payloads, stats = batch_repo.load_many(personnel_files)
+            logger.info(
+                "Batch Personnel: %s solicitados, %s carregados",
+                stats.requested,
+                stats.loaded,
+            )
 
-                coll: Dict[str, Any] = data.get("squadronMemberCollection", {}) or {}
+            def _resolve_member(_path: Path, payload: Any) -> Optional[Tuple[str, str, List[Dict[str, Any]]]]:
+                if not isinstance(payload, dict):
+                    return None
+                coll: Dict[str, Any] = payload.get("squadronMemberCollection", {}) or {}
                 for member in coll.values():
                     try:
                         name = str(member.get("name", "") or "").strip().lower()
                         if name != pilot_name_norm:
                             continue
-
                         country = str(member.get("country", "") or "").strip().upper()
-                        resolved_code, display_name = self._map_country_to_folder_and_label(country)
-
                         medals: List[Dict[str, Any]] = member.get("medals", []) or []
-                        for medal in medals:
-                            img = str(medal.get("medalImage", "") or "").strip()
-                            if img:
-                                medal_id = img[:-4] if img.lower().endswith(".png") else img
-                                earned_ids.add(medal_id)
-                                continue
-
-                            medal_name = str(medal.get("medalName", "") or "").strip()
-                            if medal_name:
-                                earned_ids.add(medal_name.lower().replace(" ", "_"))
-
-                        logger.info("Resolvido: país=%s, %s medalhas", resolved_code, len(earned_ids))
-                        return PersonnelResolutionResult(
-                            country_code=resolved_code,
-                            display_name=display_name,
-                            earned_medal_ids=frozenset(earned_ids),
-                        )
+                        return country, name, medals
                     except (KeyError, TypeError, AttributeError):
                         continue
+                return None
+
+            matches = batch_repo.resolve_many(loaded_payloads, _resolve_member)
+            if matches:
+                country, _, medals = matches[0]
+                resolved_code, display_name = self._map_country_to_folder_and_label(country)
+                for medal in medals:
+                    img = str(medal.get("medalImage", "") or "").strip()
+                    if img:
+                        medal_id = img[:-4] if img.lower().endswith(".png") else img
+                        earned_ids.add(medal_id)
+                        continue
+
+                    medal_name = str(medal.get("medalName", "") or "").strip()
+                    if medal_name:
+                        earned_ids.add(medal_name.lower().replace(" ", "_"))
+
+                logger.info("Resolvido: país=%s, %s medalhas", resolved_code, len(earned_ids))
+                return PersonnelResolutionResult(
+                    country_code=resolved_code,
+                    display_name=display_name,
+                    earned_medal_ids=frozenset(earned_ids),
+                )
         except OSError:
             logger.exception("Falha ao varrer diretório Personnel: %s", personnel_dir)
         except Exception:
