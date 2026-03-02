@@ -146,11 +146,13 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
             time_item.setToolTip(formatted_time)
             self.table.setItem(r, 1, time_item)
             
-            # Coluna 2: Aeronave
+            # Coluna 2: Aeronave + badge de progressão
             aircraft = m.aircraft
-            aircraft_item = QTableWidgetItem(aircraft)
+            badge = (m.aircraft_badge or "").strip()
+            aircraft_label = f"{aircraft}  🔖 {badge}" if badge else aircraft
+            aircraft_item = QTableWidgetItem(aircraft_label)
             aircraft_item.setTextAlignment(Qt.AlignCenter)
-            aircraft_item.setToolTip(aircraft)
+            aircraft_item.setToolTip(aircraft_label)
             self.table.setItem(r, 2, aircraft_item)
             
             # Coluna 3: Tipo de missão

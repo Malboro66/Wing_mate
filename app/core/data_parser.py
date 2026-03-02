@@ -50,18 +50,50 @@ class IL2DataParser:
         
         self.campaigns_path: Path = self.pwcgfc_path / 'User' / 'Campaigns'
         self._json_cache: Dict[str, Optional[Any]] = {}
+        self._cache_hits: int = 0
+        self._cache_misses: int = 0
         logger.info(f"Parser inicializado com caminho: {self.pwcgfc_path}")
 
     def clear_cache(self) -> None:
         """Limpa o cache de JSON desta instância."""
         self._json_cache.clear()
+        self._cache_hits = 0
+        self._cache_misses = 0
 
     def _get_json_data_cached(self, file_path_str: str) -> Optional[Any]:
         """Versão cacheada de carregamento de JSON por instância."""
-        if file_path_str not in self._json_cache:
-            self._json_cache[file_path_str] = self._load_json_file(Path(file_path_str))
+        if file_path_str in self._json_cache:
+            self._cache_hits += 1
+            return self._json_cache[file_path_str]
+
+        self._cache_misses += 1
+        self._json_cache[file_path_str] = self._load_json_file(Path(file_path_str))
         return self._json_cache[file_path_str]
     
+    def get_json_many(self, file_paths: List[Path]) -> Dict[Path, Optional[Any]]:
+        """Carrega múltiplos arquivos JSON em batch reutilizando cache da instância.
+
+        Essa API bulk-first evita padrões análogos a N+1 de chamadas externas,
+        concentrando resolução de caminhos e leitura em uma única etapa.
+        """
+        loaded: Dict[Path, Optional[Any]] = {}
+        for file_path in file_paths or []:
+            try:
+                resolved = file_path.resolve()
+            except (TypeError, ValueError, OSError):
+                resolved = file_path
+            loaded[file_path] = self.get_json_data(resolved)
+        return loaded
+
+
+    def get_cache_metrics(self) -> Dict[str, int]:
+        """Retorna métricas simples de cache para observabilidade."""
+        return {
+            "hits": int(self._cache_hits),
+            "misses": int(self._cache_misses),
+            "entries": len(self._json_cache),
+        }
+
     def get_json_data(self, file_path: Path) -> Optional[Any]:
         """Carrega JSON de arquivo com cache LRU e fallback de encoding.
         

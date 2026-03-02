@@ -16,6 +16,7 @@ class Mission:
     date: str = ""
     time: str = ""
     aircraft: str = ""
+    aircraft_badge: str = ""
     duty: str = ""
     description: str = ""
 
@@ -41,6 +42,7 @@ class MissionValidationService:
                     date=str(raw.get("date", "") or ""),
                     time=str(raw.get("time", "") or ""),
                     aircraft=str(raw.get("aircraft", "") or ""),
+                    aircraft_badge=str(raw.get("aircraft_badge", "") or ""),
                     duty=str(raw.get("duty", "") or ""),
                     description=str(raw.get("description", "") or ""),
                 )
