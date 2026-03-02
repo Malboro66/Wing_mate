@@ -52,3 +52,9 @@ def test_feedback_widgets_use_design_system_tokens():
     assert "DSFeedback.TOAST_LEVEL_STYLES" in toast
     assert "DSFeedback.LOADING_OVERLAY_BG" in skeleton
     assert "DSFeedback.LOADING_BAR_ACTIVE" in skeleton
+
+
+def test_missions_tab_renders_aircraft_progression_badge():
+    src = Path("app/ui/missions_tab.py").read_text(encoding="utf-8")
+    assert 'badge = (m.aircraft_badge or "").strip()' in src
+    assert 'aircraft_label = f"{aircraft}  🔖 {badge}" if badge else aircraft' in src

@@ -32,6 +32,7 @@ class IL2DataProcessor:
             pwcgfc_path: Caminho para o diretório PWCGFC
         """
         self.parser = IL2DataParser(pwcgfc_path)
+        self._last_aircraft_progression: Dict[str, Dict[str, Any]] = {}
 
     def process_campaign(self, campaign_name: str) -> Dict[str, Any]:
         """
@@ -79,7 +80,35 @@ class IL2DataProcessor:
             "missions": missions_data,
             "squadron": squadron_data,
             "aces": aces_data,
+            "aircraft_progression": self._last_aircraft_progression,
         }
+
+    @staticmethod
+    def _extract_confirmed_victories(report: Dict[str, Any]) -> int:
+        candidates = (
+            report.get("confirmedVictory"),
+            report.get("confirmedVictories"),
+            report.get("victories"),
+            report.get("victoryCount"),
+        )
+        for value in candidates:
+            if isinstance(value, int):
+                return max(0, value)
+            if isinstance(value, (list, tuple, dict)):
+                return max(0, len(value))
+            if str(value or "").isdigit():
+                return max(0, int(value))
+        return 0
+
+    @staticmethod
+    def _resolve_aircraft_badge(missions_count: int, confirmed_victories: int) -> str:
+        if missions_count <= 5:
+            return "Novato"
+        if missions_count <= 20:
+            return "Veterano"
+        if confirmed_victories >= 5:
+            return "Ás do Modelo"
+        return "Veterano"
 
     def process_missions_data(
         self, campaign_name: str, combat_reports: List[Dict[str, Any]], player_serial: str
@@ -97,6 +126,7 @@ class IL2DataProcessor:
         """
         missions_with_key: List[Tuple[str, Dict[str, Any]]] = []
         player_squadron_id: Optional[int] = None
+        aircraft_progression_map: Dict[str, Dict[str, Any]] = {}
 
         for report in combat_reports:
             if not isinstance(report, dict):
@@ -154,10 +184,24 @@ class IL2DataProcessor:
             except (AttributeError, TypeError):
                 pass
 
+            aircraft_model = str(report.get("type", "NA") or "NA").strip() or "NA"
+            confirmed_victories = self._extract_confirmed_victories(report)
+            model_stats = aircraft_progression_map.setdefault(
+                aircraft_model,
+                {"missions": 0, "confirmed_victories": 0, "badge": "Novato"},
+            )
+            model_stats["missions"] += 1
+            model_stats["confirmed_victories"] += confirmed_victories
+            model_stats["badge"] = self._resolve_aircraft_badge(
+                int(model_stats["missions"]),
+                int(model_stats["confirmed_victories"]),
+            )
+
             mission_entry: Dict[str, Any] = {
                 "date": self.format_date(raw_date) if raw_date else report.get("date", "NA"),
                 "time": mission_time,
-                "aircraft": report.get("type", "NA"),
+                "aircraft": aircraft_model,
+                "aircraft_badge": model_stats["badge"],
                 "duty": report.get("duty", "NA"),
                 "locality": report.get("locality", "NA"),
                 "airfield": (
@@ -179,6 +223,7 @@ class IL2DataProcessor:
             pass
 
         missions: List[Dict[str, Any]] = [m for _, m in missions_with_key]
+        self._last_aircraft_progression = {k: dict(v) for k, v in aircraft_progression_map.items()}
         return missions, player_squadron_id
 
     def process_squadron_data(self, squadron_personnel: Dict[str, Any]) -> List[Dict[str, Any]]:

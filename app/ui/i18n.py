@@ -119,6 +119,87 @@ class AppI18n:
             PT_BR: "Caminho:",
             EN_US: "Path:",
         },
+
+        "sim_root_title": {
+            PT_BR: "Wing Mate — Seleção de Simulador",
+            EN_US: "Wing Mate — Simulator Selection",
+        },
+        "open_settings": {
+            PT_BR: "Abrir configurações de caminhos",
+            EN_US: "Open path settings",
+        },
+        "sim_setup_warning": {
+            PT_BR: "Configure os caminhos dos simuladores para prosseguir.",
+            EN_US: "Configure simulator paths to continue.",
+        },
+        "era_ww1": {
+            PT_BR: "Primeira Guerra Mundial (WW1)",
+            EN_US: "First World War (WW1)",
+        },
+        "era_ww2": {
+            PT_BR: "Segunda Guerra Mundial (WW2)",
+            EN_US: "Second World War (WW2)",
+        },
+        "sim_il2_fc": {
+            PT_BR: "IL2- Flying Circus",
+            EN_US: "IL2- Flying Circus",
+        },
+        "sim_il2_fc_pwcg": {
+            PT_BR: "IL2- Flying Circus (PWCG)",
+            EN_US: "IL2- Flying Circus (PWCG)",
+        },
+        "sim_rof": {
+            PT_BR: "Rise of Flight",
+            EN_US: "Rise of Flight",
+        },
+        "sim_rof_pwcg": {
+            PT_BR: "Rise of Flight (PWCG)",
+            EN_US: "Rise of Flight (PWCG)",
+        },
+        "future_feature_message": {
+            PT_BR: "Funcionalidade em desenvolvimento. Retorne em breve!",
+            EN_US: "Feature in development. Please check back soon!",
+        },
+        "back": {
+            PT_BR: "Retornar",
+            EN_US: "Back",
+        },
+        "path_il2_fc": {
+            PT_BR: "IL2- Flying Circus:",
+            EN_US: "IL2- Flying Circus:",
+        },
+        "path_rof": {
+            PT_BR: "Rise of Flight:",
+            EN_US: "Rise of Flight:",
+        },
+        "path_pwcg": {
+            PT_BR: "PWCG:",
+            EN_US: "PWCG:",
+        },
+        "browse": {
+            PT_BR: "Procurar",
+            EN_US: "Browse",
+        },
+        "path_valid": {
+            PT_BR: "Válido",
+            EN_US: "Valid",
+        },
+        "path_invalid": {
+            PT_BR: "Inválido",
+            EN_US: "Invalid",
+        },
+        "path_invalid_toast": {
+            PT_BR: "Um ou mais caminhos configurados estão inválidos.",
+            EN_US: "One or more configured paths are invalid.",
+        },
+        "save_settings": {
+            PT_BR: "Salvar Configurações",
+            EN_US: "Save Settings",
+        },
+        "settings_saved": {
+            PT_BR: "Configurações salvas com sucesso.",
+            EN_US: "Settings saved successfully.",
+        },
     }
 
     @classmethod

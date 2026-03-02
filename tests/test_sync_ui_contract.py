@@ -37,3 +37,10 @@ def test_main_window_exposes_language_selector_with_supported_options():
     assert "AppI18n.LANG_LABELS[AppI18n.PT_BR]" in source
     assert "AppI18n.LANG_LABELS[AppI18n.EN_US]" in source
     assert "ui/language" in source
+
+
+def test_main_window_exposes_flight_streak_indicator_in_statusbar():
+    source = Path("app/ui/main_window.py").read_text(encoding="utf-8")
+    assert 'self.flight_streak_label = QLabel()' in source
+    assert 'setObjectName("flight_streak_indicator")' in source
+    assert 'self.flight_streak_label.setText(f"🔥 {max(0, current_streak)}")' in source

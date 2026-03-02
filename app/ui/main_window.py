@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Dict, Optional, List, Any, Callable
-from datetime import datetime
+from datetime import datetime, date
 import json
 import logging
 import time
@@ -59,9 +59,12 @@ from app.core.data_processor import IL2DataProcessor
 from utils.notification_bus import notification_bus, notify_error, notify_warning
 from utils.observability import Events, emit_event, record_action_duration, record_cache_stats
 from utils.structured_logger import StructuredLogger
+from utils.settings_manager import settings as settings_manager
+from utils.flight_streak import compute_flight_streak
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
 structured_logger = StructuredLogger("IL2CampaignAnalyzer")
+
 
 
 class DataSyncThread(QThread):
@@ -89,6 +92,15 @@ class DataSyncThread(QThread):
         self.pwcgfc_path: str = pwcgfc_path
         self.campaign_name: str = campaign_name
         self.processor_factory = processor_factory or (lambda p: IL2DataProcessor(p))
+
+    def _update_flight_streak(self) -> int:
+        last_sync_date = str(settings_manager.get("flight_streak/last_sync_date", "") or "")
+        current_streak = int(settings_manager.get("flight_streak/current_streak", 0) or 0)
+        new_streak, new_date = compute_flight_streak(last_sync_date, current_streak, date.today())
+
+        settings_manager.set("flight_streak/current_streak", int(new_streak))
+        settings_manager.set("flight_streak/last_sync_date", new_date)
+        return int(new_streak)
 
     def run(self) -> None:
         sync_t0 = time.perf_counter()
@@ -143,6 +155,9 @@ class DataSyncThread(QThread):
                 (time.perf_counter() - sync_t0) * 1000.0,
                 success=True,
             )
+
+            new_streak = self._update_flight_streak()
+            logger.info("Cadência de voo atualizada: %s", new_streak)
 
             self.data_loaded.emit(data)
             self.progress.emit(100)
@@ -234,6 +249,7 @@ class MainWindow(QMainWindow):
         self.btn_copy_path: QPushButton
 
         self.progress_bar: QProgressBar
+        self.flight_streak_label: QLabel
 
         self.profile_tab: ProfileTab
         self.missions_tab: MissionsTab
@@ -440,6 +456,11 @@ class MainWindow(QMainWindow):
         self.progress_bar.setTextVisible(True)
         sb.addPermanentWidget(self.progress_bar)
 
+        self.flight_streak_label = QLabel()
+        self.flight_streak_label.setObjectName("flight_streak_indicator")
+        self.flight_streak_label.setStyleSheet("padding:2px 8px;")
+        sb.addPermanentWidget(self.flight_streak_label)
+
         self._toast = ToastWidget(self)
         self._build_sync_skeletons()
 
@@ -449,6 +470,7 @@ class MainWindow(QMainWindow):
         self.tabs.setFocusPolicy(Qt.StrongFocus)
 
         self._set_ui_busy(False)
+        self._refresh_flight_streak_indicator()
 
 
     def _t(self, key: str, **kwargs: Any) -> str:
@@ -484,6 +506,11 @@ class MainWindow(QMainWindow):
         self._update_elided_path_label()
 
 
+
+    def _refresh_flight_streak_indicator(self) -> None:
+        current_streak = int(settings_manager.get("flight_streak/current_streak", 0) or 0)
+        self.flight_streak_label.setText(f"🔥 {max(0, current_streak)}")
+        self.flight_streak_label.setToolTip("Cadência de voo")
 
     def _build_sync_skeletons(self) -> None:
         sync_tabs: List[QWidget] = [
@@ -678,6 +705,7 @@ class MainWindow(QMainWindow):
         squadron_name: str = (self.current_data.get("pilot", {}) or {}).get("squadron", "N/A")
         self.squadron_tab.set_squad_overview(squadron_name)
 
+        self._refresh_flight_streak_indicator()
         self.statusBar().showMessage(self._t("sync_success"), 4000)
 
     def _on_sync_error(self, msg: str) -> None:
