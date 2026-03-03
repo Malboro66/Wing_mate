@@ -26,6 +26,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QLabel,
     QPushButton,
+    QProgressBar,
     QFileDialog,
     QGroupBox,
     QFormLayout,
@@ -211,6 +212,7 @@ class ProfileTab(QWidget):
         self._ref_date: Optional[datetime] = None
         self.loaded_ok = False
         self.loading = False
+        self._has_unsaved_changes = False
 
         self._campaign_key = "default"
         self._pilot_key = "default"
@@ -220,6 +222,9 @@ class ProfileTab(QWidget):
         self.pilot_name_label = QLabel("N/A")
         self.squadron_name_label = QLabel("N/A")
         self.total_missions_label = QLabel("0")
+        self.xp_progress = QProgressBar()
+        self.xp_text_label = QLabel("0 XP")
+        self.morale_label = QLabel("😐 Estável (50)")
 
         self.roundel_image_label = QLabel()
         self.roundel_image_label.setAlignment(Qt.AlignCenter)
@@ -358,6 +363,18 @@ class ProfileTab(QWidget):
 
         form_right = QFormLayout()
         form_right.addRow(self.tr("Nome:"), self.pilot_name_label)
+        self.xp_progress.setRange(0, 5000)
+        self.xp_progress.setValue(0)
+        self.xp_progress.setFormat("%v / %m")
+        self.xp_progress.setTextVisible(True)
+        xp_box = QWidget()
+        xp_layout = QVBoxLayout(xp_box)
+        xp_layout.setContentsMargins(0, 0, 0, 0)
+        xp_layout.setSpacing(4)
+        xp_layout.addWidget(self.xp_text_label)
+        xp_layout.addWidget(self.xp_progress)
+        xp_layout.addWidget(self.morale_label)
+        form_right.addRow(self.tr("Prestígio (XP):"), xp_box)
         form_right.addRow(self.tr("Esquadrão:"), self.squadron_name_label)
         form_right.addRow(self.tr("Missões Voadas:"), self.total_missions_label)
 
@@ -365,7 +382,6 @@ class ProfileTab(QWidget):
         form_right.addRow(self.tr("Data de Nascimento:"), self.dob_edit)
         form_right.addRow(self.tr("Idade (últ. missão):"), self.age_label)
 
-        self.birthplace_edit.setMaxLength(self.MAX_BIRTHPLACE)
         form_right.addRow(self.tr("Local de Nascimento:"), self.birthplace_edit)
 
         self.bio_edit.setPlaceholderText(self.tr("Biografia do piloto..."))
@@ -407,8 +423,11 @@ class ProfileTab(QWidget):
 
     def _connect_signals(self):
         self.dob_edit.dateChanged.connect(self._update_age_label)
+        self.dob_edit.dateChanged.connect(self._mark_dirty)
         self.dob_edit.dateChanged.connect(self._update_save_button)
+        self.birthplace_edit.textChanged.connect(self._mark_dirty)
         self.birthplace_edit.textChanged.connect(self._update_save_button)
+        self.bio_edit.textChanged.connect(self._mark_dirty)
         self.bio_edit.textChanged.connect(self._update_save_button)
 
     # ---------------- Assets (frame/avatar/roundel/rank) ----------------
@@ -537,10 +556,35 @@ class ProfileTab(QWidget):
 
     # ---------------- Profile setters ----------------
 
-    def set_profile_labels(self, name: str, squadron: str, total_missions: int):
+    def set_profile_labels(
+        self,
+        name: str,
+        squadron: str,
+        total_missions: int,
+        xp: int = 0,
+        morale_mood: str = "😐 Estável",
+        morale_value: int = 50,
+    ):
         self.pilot_name_label.setText(name or "N/A")
         self.squadron_name_label.setText(squadron or "N/A")
         self.total_missions_label.setText(str(total_missions or 0))
+        self.set_xp(int(xp or 0))
+        self.set_morale(morale_mood, morale_value)
+
+    def set_xp(self, xp: int) -> None:
+        total_xp = max(0, int(xp or 0))
+        level_size = 5000
+        progress = total_xp % level_size
+        if total_xp > 0 and progress == 0:
+            progress = level_size
+        self.xp_progress.setRange(0, level_size)
+        self.xp_progress.setValue(progress)
+        self.xp_text_label.setText(f"{total_xp} XP")
+
+    def set_morale(self, mood_text: str, morale_value: int) -> None:
+        mood = str(mood_text or "😐 Estável")
+        val = max(0, min(100, int(morale_value or 0)))
+        self.morale_label.setText(f"{mood} ({val})")
 
     def update_reference_date(self, ref_date: Optional[datetime]):
         self._ref_date = ref_date
@@ -553,7 +597,7 @@ class ProfileTab(QWidget):
     # ---------------- DOB bounds/validation ----------------
 
     def _configure_dob_bounds(self):
-        max_year = self.MIN_ENLIST_YEAR - self.MIN_AGE
+        max_year = datetime.now().year + 120
         min_year = max(1800, self._recruit_ref_year - max(self.MIN_AGE, self._max_recruit_age))
 
         if min_year > max_year:
@@ -658,6 +702,8 @@ class ProfileTab(QWidget):
                 self.tr("Dados do perfil salvos."),
                 timeout_ms=2500,
             )
+            self._has_unsaved_changes = False
+            self._update_save_button()
         except OSError as e:
             record_action_duration(structured_logger, "profile_save", (time.perf_counter() - action_t0) * 1000.0, success=False)
             show_actionable_error(
@@ -709,6 +755,7 @@ class ProfileTab(QWidget):
 
         finally:
             self.loading = False
+            self._has_unsaved_changes = False
             self._update_age_label()
             self._update_save_button()
 
@@ -742,11 +789,18 @@ class ProfileTab(QWidget):
         age = self._compute_age(dob, self._ref_date)
         self.age_label.setText("N/A" if age < 0 else str(age))
 
+    def _mark_dirty(self, *_args):
+        if self.loading:
+            return
+        self._has_unsaved_changes = True
+
     def _update_save_button(self):
         if not self.btn_save:
             return
         ok, _ = self._validate_profile()
-        self.btn_save.setEnabled(ok and self.loaded_ok and not self.loading)
+        self.btn_save.setEnabled(
+            ok and self.loaded_ok and not self.loading and self._has_unsaved_changes
+        )
 
     @staticmethod
     def _compute_age(dob: datetime, ref: datetime) -> int:

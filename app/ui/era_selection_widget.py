@@ -1,0 +1,71 @@
+from __future__ import annotations
+
+from typing import Callable
+
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import QMouseEvent
+from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget, QHBoxLayout
+
+from app.ui.design_system import DSStyles
+from utils.notification_bus import notify_info
+
+
+class EraSelectionWidget(QWidget):
+    ww1_selected = pyqtSignal()
+    ww2_selected = pyqtSignal()
+
+    def __init__(self, t: Callable[[str], str], parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self._t = t
+
+        root = QVBoxLayout(self)
+        root.setSpacing(0)
+
+        root.addStretch(1)
+        row = QHBoxLayout()
+        row.addStretch(1)
+
+        layout = QVBoxLayout()
+        layout.setSpacing(14)
+
+        self.warning_label = QLabel(self._t("sim_setup_warning"))
+        self.warning_label.setStyleSheet(DSStyles.STATE_WARNING)
+        self.warning_label.setWordWrap(True)
+        layout.addWidget(self.warning_label)
+
+        self.btn_ww1 = QPushButton(self._t("era_ww1"))
+        self.btn_ww1.setMinimumHeight(56)
+        self.btn_ww1.setMinimumWidth(420)
+        self.btn_ww1.setEnabled(False)
+        self.btn_ww1.clicked.connect(self.ww1_selected.emit)
+        layout.addWidget(self.btn_ww1)
+
+        self.btn_ww2 = QPushButton(self._t("era_ww2"))
+        self.btn_ww2.setMinimumHeight(56)
+        self.btn_ww2.setMinimumWidth(420)
+        self.btn_ww2.setEnabled(False)
+        self.btn_ww2.clicked.connect(self.ww2_selected.emit)
+        layout.addWidget(self.btn_ww2)
+
+        row.addLayout(layout)
+        row.addStretch(1)
+        root.addLayout(row)
+        root.addStretch(1)
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+        for button in (self.btn_ww1, self.btn_ww2):
+            if not button.isEnabled() and button.geometry().contains(event.pos()):
+                notify_info(self._t("sim_setup_warning"))
+                event.accept()
+                return
+        super().mousePressEvent(event)
+
+    def update_gate_status(self, ww1_ready: bool, ww2_ready: bool) -> None:
+        self.btn_ww1.setEnabled(bool(ww1_ready))
+        self.btn_ww2.setEnabled(bool(ww2_ready))
+        self.warning_label.setVisible(not (ww1_ready or ww2_ready))
+
+    def retranslate(self) -> None:
+        self.warning_label.setText(self._t("sim_setup_warning"))
+        self.btn_ww1.setText(self._t("era_ww1"))
+        self.btn_ww2.setText(self._t("era_ww2"))

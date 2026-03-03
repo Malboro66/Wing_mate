@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from typing import List, Dict, Optional, Any, Union, Set
+from typing import List, Dict, Optional, Any, Union, Set, Iterator
+from itertools import islice
 from pathlib import Path
 import json
 import html
@@ -30,6 +31,7 @@ class RankIconLabel(QLabel):
     def __init__(self, rank_text: str, delay_ms: int = 2000, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self._rank_text: str = rank_text or "N/A"
+        self.rank_name: str = self._rank_text
         self._delay_ms: int = max(0, int(delay_ms))
         self._timer: QTimer = QTimer(self)
         self._timer.setSingleShot(True)
@@ -330,7 +332,10 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         if cands:
             return cands
 
-        for p in meta_dir.glob("*.json"):
+        max_files_to_scan: int = 100
+        json_candidates: Iterator[Path] = islice(meta_dir.glob("*.json"), max_files_to_scan)
+
+        for p in json_candidates:
             try:
                 with open(p, "r", encoding="utf-8") as f:
                     data: Dict[str, Any] = json.load(f)
@@ -349,6 +354,7 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         return cands
 
     def _resolve_emblem_path(self, meta: Dict[str, Any]) -> Optional[Path]:
+        cand: Path
         raw: str = str(
             meta.get("emblemImage")
             or (meta.get("media") or {}).get("emblemImagePath")
@@ -360,17 +366,17 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
                 return p
 
             if raw.lower().startswith("squadrons/"):
-                cand: Path = self._assets_root() / raw
+                cand = self._assets_root() / raw
                 if cand.exists():
                     return cand
 
             if raw.lower().startswith("images/"):
-                cand: Path = self._squadrons_root() / raw
+                cand = self._squadrons_root() / raw
                 if cand.exists():
                     return cand
 
             images_dir: Path = self._squadrons_root() / "images"
-            cand: Path = images_dir / raw
+            cand = images_dir / raw
             if cand.exists():
                 return cand
 
@@ -390,7 +396,7 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
                     fname_base.replace(" ", "_"),
                     fname_base.replace(" ", ""),
                 }:
-                    cand: Path = images_dir / f"{v}{ext}"
+                    cand = images_dir / f"{v}{ext}"
                     if cand.exists():
                         return cand
 
