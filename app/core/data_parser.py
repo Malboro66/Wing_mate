@@ -50,18 +50,51 @@ class IL2DataParser:
         
         self.campaigns_path: Path = self.pwcgfc_path / 'User' / 'Campaigns'
         self._json_cache: Dict[str, Optional[Any]] = {}
+        self._cache_hits: int = 0
+        self._cache_misses: int = 0
         logger.info(f"Parser inicializado com caminho: {self.pwcgfc_path}")
 
     def clear_cache(self) -> None:
         """Limpa o cache de JSON desta instância."""
         self._json_cache.clear()
+        self._cache_hits = 0
+        self._cache_misses = 0
 
     def _get_json_data_cached(self, file_path_str: str) -> Optional[Any]:
         """Versão cacheada de carregamento de JSON por instância."""
-        if file_path_str not in self._json_cache:
-            self._json_cache[file_path_str] = self._load_json_file(Path(file_path_str))
+        if file_path_str in self._json_cache:
+            self._cache_hits += 1
+            return self._json_cache[file_path_str]
+
+        self._cache_misses += 1
+        self._json_cache[file_path_str] = self._load_json_file(Path(file_path_str))
         return self._json_cache[file_path_str]
     
+    def get_json_many(self, file_paths: List[Path]) -> Dict[Path, Optional[Any]]:
+        """Carrega múltiplos arquivos JSON em batch reutilizando cache da instância.
+
+        Essa API bulk-first evita padrões análogos a N+1 de chamadas externas,
+        concentrando resolução de caminhos e leitura em uma única etapa.
+        """
+        loaded: Dict[Path, Optional[Any]] = {}
+        for file_path in file_paths or []:
+            resolved_path: Path = file_path
+            try:
+                resolved_path = file_path.resolve()
+                loaded[file_path] = self._get_json_data_cached(str(resolved_path))
+            except (TypeError, ValueError, OSError):
+                loaded[file_path] = self._load_json_file(resolved_path)
+        return loaded
+
+
+    def get_cache_metrics(self) -> Dict[str, int]:
+        """Retorna métricas simples de cache para observabilidade."""
+        return {
+            "hits": int(self._cache_hits),
+            "misses": int(self._cache_misses),
+            "entries": len(self._json_cache),
+        }
+
     def get_json_data(self, file_path: Path) -> Optional[Any]:
         """Carrega JSON de arquivo com cache LRU e fallback de encoding.
         
@@ -398,14 +431,14 @@ class IL2DataParser:
         """
         # Remove patentes comuns
         cleaned: str = re.sub(
-            r'^(?:Lieutenant|Ltn|Fw|Obltn|Cne|S/Lt|Sergt|Lt|Capt|Major|Maj)\\.?\\s*',
+            r'^(?:Lieutenant|Ltn|Fw|Obltn|Cne|S/Lt|Sergt|Lt|Capt|Major|Maj)\.?\s*',
             '',
             pilot_name,
             flags=re.IGNORECASE
         ).strip()
         
         # Normaliza espaços
-        cleaned = re.sub(r'\\s+', ' ', cleaned).strip()
+        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
         return cleaned
     
     @staticmethod
@@ -524,7 +557,7 @@ class IL2DataParser:
             return match_candidates
         
         # Nível 4: Regex de data (fallback)
-        date_regex: re.Pattern = re.compile(r'\\d{4}-\\d{2}-\\d{2}')
+        date_regex: re.Pattern = re.compile(r'\d{4}-\d{2}-\d{2}')
         nearest: List[Path] = [
             f for f in candidates
             if (m := date_regex.search(f.name)) and m.group(0) == date_str_dashed

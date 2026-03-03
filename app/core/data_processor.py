@@ -32,6 +32,7 @@ class IL2DataProcessor:
             pwcgfc_path: Caminho para o diretório PWCGFC
         """
         self.parser = IL2DataParser(pwcgfc_path)
+        self._last_aircraft_progression: Dict[str, Dict[str, Any]] = {}
 
     def process_campaign(self, campaign_name: str) -> Dict[str, Any]:
         """
@@ -79,7 +80,35 @@ class IL2DataProcessor:
             "missions": missions_data,
             "squadron": squadron_data,
             "aces": aces_data,
+            "aircraft_progression": self._last_aircraft_progression,
         }
+
+    @staticmethod
+    def _extract_confirmed_victories(report: Dict[str, Any]) -> int:
+        candidates = (
+            report.get("confirmedVictory"),
+            report.get("confirmedVictories"),
+            report.get("victories"),
+            report.get("victoryCount"),
+        )
+        for value in candidates:
+            if isinstance(value, int):
+                return max(0, value)
+            if isinstance(value, (list, tuple, dict)):
+                return max(0, len(value))
+            if str(value or "").isdigit():
+                return max(0, int(value))
+        return 0
+
+    @staticmethod
+    def _resolve_aircraft_badge(missions_count: int, confirmed_victories: int) -> str:
+        if confirmed_victories >= 5:
+            return "Ás do Modelo"
+        if missions_count <= 5:
+            return "Novato"
+        if missions_count <= 20:
+            return "Veterano"
+        return "Veterano"
 
     def process_missions_data(
         self, campaign_name: str, combat_reports: List[Dict[str, Any]], player_serial: str
@@ -97,6 +126,7 @@ class IL2DataProcessor:
         """
         missions_with_key: List[Tuple[str, Dict[str, Any]]] = []
         player_squadron_id: Optional[int] = None
+        aircraft_progression_map: Dict[str, Dict[str, Any]] = {}
 
         for report in combat_reports:
             if not isinstance(report, dict):
@@ -154,10 +184,24 @@ class IL2DataProcessor:
             except (AttributeError, TypeError):
                 pass
 
+            aircraft_model = str(report.get("type", "NA") or "NA").strip() or "NA"
+            confirmed_victories = self._extract_confirmed_victories(report)
+            model_stats = aircraft_progression_map.setdefault(
+                aircraft_model,
+                {"missions": 0, "confirmed_victories": 0, "badge": "Novato"},
+            )
+            model_stats["missions"] += 1
+            model_stats["confirmed_victories"] += confirmed_victories
+            model_stats["badge"] = self._resolve_aircraft_badge(
+                int(model_stats["missions"]),
+                int(model_stats["confirmed_victories"]),
+            )
+
             mission_entry: Dict[str, Any] = {
                 "date": self.format_date(raw_date) if raw_date else report.get("date", "NA"),
                 "time": mission_time,
-                "aircraft": report.get("type", "NA"),
+                "aircraft": aircraft_model,
+                "aircraft_badge": model_stats["badge"],
                 "duty": report.get("duty", "NA"),
                 "locality": report.get("locality", "NA"),
                 "airfield": (
@@ -166,6 +210,7 @@ class IL2DataProcessor:
                     else "NA"
                 ),
                 "pilots": pilots_in_mission,
+                "pilots_in_mission": pilots_in_mission,
                 "weather": weather_text,
                 "description": description_text,
                 "haReport": report.get("haReport", ""),
@@ -179,6 +224,7 @@ class IL2DataProcessor:
             pass
 
         missions: List[Dict[str, Any]] = [m for _, m in missions_with_key]
+        self._last_aircraft_progression = {k: dict(v) for k, v in aircraft_progression_map.items()}
         return missions, player_squadron_id
 
     def process_squadron_data(self, squadron_personnel: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -311,6 +357,68 @@ class IL2DataProcessor:
         except ValueError:
             return yyyymmdd
 
+    @staticmethod
+    def _extract_report_victories(report: Dict[str, Any]) -> int:
+        candidates = (
+            report.get("confirmedVictory"),
+            report.get("confirmedVictories"),
+            report.get("victories"),
+            report.get("victoryCount"),
+        )
+        for value in candidates:
+            if isinstance(value, int):
+                return max(0, value)
+            if isinstance(value, (list, tuple, dict)):
+                return max(0, len(value))
+            if str(value or "").isdigit():
+                return max(0, int(value))
+        return 0
+
+    @staticmethod
+    def _is_survival_report(report: Dict[str, Any]) -> bool:
+        status_candidates = (
+            str(report.get("pilotStatus", "") or ""),
+            str(report.get("pilotState", "") or ""),
+            str(report.get("status", "") or ""),
+            str(report.get("result", "") or ""),
+            str(report.get("missionResult", "") or ""),
+        )
+        joined = " ".join(status_candidates).lower()
+        fatal_tokens = ("kia", "killed", "dead", "morto", "deceased")
+        return not any(tok in joined for tok in fatal_tokens)
+
+    @staticmethod
+    def _normalize_outcome_text(report: Dict[str, Any]) -> str:
+        chunks = (
+            str(report.get("result", "") or ""),
+            str(report.get("missionResult", "") or ""),
+            str(report.get("outcome", "") or ""),
+            str(report.get("haReport", "") or ""),
+        )
+        return " ".join(chunks).strip().lower()
+
+    @classmethod
+    def _compute_pilot_morale(cls, combat_reports: List[Dict[str, Any]]) -> int:
+        recent = [r for r in combat_reports if isinstance(r, dict)][:5]
+        morale = 50
+        for report in recent:
+            txt = cls._normalize_outcome_text(report)
+            if any(tok in txt for tok in ("perda_ala", "wingman lost", "wingman killed", "wingman kia")):
+                morale -= 25
+            elif any(tok in txt for tok in ("vitoria", "victory", "win", "sucesso")):
+                morale += 10
+        return max(0, min(100, morale))
+
+    @staticmethod
+    def morale_mood_icon(morale: int) -> str:
+        if morale < 20:
+            return "😵 Exausto"
+        if morale < 50:
+            return "😟 Abalado"
+        if morale <= 80:
+            return "😐 Estável"
+        return "🔥 Inspirado"
+
     def process_pilot_data(
         self, campaign_info: Dict[str, Any], combat_reports: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
@@ -324,37 +432,50 @@ class IL2DataProcessor:
         Returns:
             Dicionário com dados do piloto
         """
-        pilot: Dict[str, Any] = {}
-        try:
-            pilot_name = (
-                campaign_info.get("referencePlayerName")
-                or campaign_info.get("playerName")
-                or campaign_info.get("name")
-                or "NA"
-            )
+        pilot_name = (
+            campaign_info.get("referencePlayerName")
+            or campaign_info.get("playerName")
+            or campaign_info.get("name")
+            or "NA"
+        )
 
-            squadron_name: Optional[str] = (
-                campaign_info.get("referencePlayerSquadronName")
-                or campaign_info.get("playerSquadron")
-            )
+        squadron_name: Optional[str] = (
+            campaign_info.get("referencePlayerSquadronName")
+            or campaign_info.get("playerSquadron")
+        )
 
-            if not squadron_name:
-                for r in combat_reports:
-                    if isinstance(r, dict) and r.get("squadron"):
-                        squadron_name = r.get("squadron")
-                        break
+        if not squadron_name:
+            for r in combat_reports:
+                if isinstance(r, dict) and r.get("squadron"):
+                    squadron_name = r.get("squadron")
+                    break
 
-            pilot_squadron = squadron_name or "NA"
-            pilot_total_missions = len([r for r in combat_reports if isinstance(r, dict)])
-
-        except (AttributeError, TypeError):
-            pilot.setdefault("name", "NA")
-            pilot.setdefault("squadron", "NA")
-            pilot.setdefault("total_missions", 0)
-            return pilot
+        valid_reports = [r for r in combat_reports if isinstance(r, dict)]
+        pilot_squadron = squadron_name or "NA"
+        pilot_total_missions = len(valid_reports)
+        pilot_total_victories = sum(self._extract_report_victories(r) for r in valid_reports)
+        pilot_survival_count = sum(1 for r in valid_reports if self._is_survival_report(r))
+        pilot_xp_base = (
+            (pilot_total_missions * 100)
+            + (pilot_total_victories * 500)
+            + (pilot_survival_count * 200)
+        )
+        morale = self._compute_pilot_morale(valid_reports)
+        xp_multiplier = 1.2 if morale > 80 else 1.0
+        pilot_xp = int(round(pilot_xp_base * xp_multiplier))
+        exhausted = morale < 20
 
         return {
             "name": pilot_name,
             "squadron": pilot_squadron,
             "total_missions": pilot_total_missions,
+            "total_victories": pilot_total_victories,
+            "survival_count": pilot_survival_count,
+            "xp": pilot_xp,
+            "xp_base": pilot_xp_base,
+            "xp_multiplier": xp_multiplier,
+            "morale": morale,
+            "morale_state": "Exausto" if exhausted else "Ativo",
+            "morale_mood": self.morale_mood_icon(morale),
+            "needs_rest": exhausted,
         }
