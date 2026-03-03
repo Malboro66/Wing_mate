@@ -19,13 +19,15 @@ def test_medals_tab_switches_between_grid_and_list_modes(qtbot):
     assert tab._table is not None
     assert tab._mode_combo is not None
 
+    tab.show()
+
     tab._mode_combo.setCurrentIndex(0)
-    qtbot.waitUntil(lambda: tab._icon_list.isVisible())
-    assert not tab._table.isVisible()
+    qtbot.waitUntil(lambda: not tab._icon_list.isHidden())
+    assert tab._table.isHidden()
 
     tab._mode_combo.setCurrentIndex(1)
-    qtbot.waitUntil(lambda: tab._table.isVisible())
-    assert not tab._icon_list.isVisible()
+    qtbot.waitUntil(lambda: not tab._table.isHidden())
+    assert tab._icon_list.isHidden()
 
 
 def test_squadron_tab_stats_signal_emits_expected_totals(qtbot):

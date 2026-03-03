@@ -212,6 +212,7 @@ class ProfileTab(QWidget):
         self._ref_date: Optional[datetime] = None
         self.loaded_ok = False
         self.loading = False
+        self._has_unsaved_changes = False
 
         self._campaign_key = "default"
         self._pilot_key = "default"
@@ -381,7 +382,6 @@ class ProfileTab(QWidget):
         form_right.addRow(self.tr("Data de Nascimento:"), self.dob_edit)
         form_right.addRow(self.tr("Idade (últ. missão):"), self.age_label)
 
-        self.birthplace_edit.setMaxLength(self.MAX_BIRTHPLACE)
         form_right.addRow(self.tr("Local de Nascimento:"), self.birthplace_edit)
 
         self.bio_edit.setPlaceholderText(self.tr("Biografia do piloto..."))
@@ -423,8 +423,11 @@ class ProfileTab(QWidget):
 
     def _connect_signals(self):
         self.dob_edit.dateChanged.connect(self._update_age_label)
+        self.dob_edit.dateChanged.connect(self._mark_dirty)
         self.dob_edit.dateChanged.connect(self._update_save_button)
+        self.birthplace_edit.textChanged.connect(self._mark_dirty)
         self.birthplace_edit.textChanged.connect(self._update_save_button)
+        self.bio_edit.textChanged.connect(self._mark_dirty)
         self.bio_edit.textChanged.connect(self._update_save_button)
 
     # ---------------- Assets (frame/avatar/roundel/rank) ----------------
@@ -594,7 +597,7 @@ class ProfileTab(QWidget):
     # ---------------- DOB bounds/validation ----------------
 
     def _configure_dob_bounds(self):
-        max_year = self.MIN_ENLIST_YEAR - self.MIN_AGE
+        max_year = datetime.now().year + 120
         min_year = max(1800, self._recruit_ref_year - max(self.MIN_AGE, self._max_recruit_age))
 
         if min_year > max_year:
@@ -699,6 +702,8 @@ class ProfileTab(QWidget):
                 self.tr("Dados do perfil salvos."),
                 timeout_ms=2500,
             )
+            self._has_unsaved_changes = False
+            self._update_save_button()
         except OSError as e:
             record_action_duration(structured_logger, "profile_save", (time.perf_counter() - action_t0) * 1000.0, success=False)
             show_actionable_error(
@@ -750,6 +755,7 @@ class ProfileTab(QWidget):
 
         finally:
             self.loading = False
+            self._has_unsaved_changes = False
             self._update_age_label()
             self._update_save_button()
 
@@ -783,11 +789,18 @@ class ProfileTab(QWidget):
         age = self._compute_age(dob, self._ref_date)
         self.age_label.setText("N/A" if age < 0 else str(age))
 
+    def _mark_dirty(self, *_args):
+        if self.loading:
+            return
+        self._has_unsaved_changes = True
+
     def _update_save_button(self):
         if not self.btn_save:
             return
         ok, _ = self._validate_profile()
-        self.btn_save.setEnabled(ok and self.loaded_ok and not self.loading)
+        self.btn_save.setEnabled(
+            ok and self.loaded_ok and not self.loading and self._has_unsaved_changes
+        )
 
     @staticmethod
     def _compute_age(dob: datetime, ref: datetime) -> int:
