@@ -28,6 +28,22 @@ class DSStyles:
     STATE_ERROR = "color:#ffd6d6; background:#3a1f1f; border:1px solid #7a2e2e; padding:6px;"
 
 
+class DSFeedback:
+    """Tokens de design para componentes de feedback operacional."""
+
+    TOAST_LEVEL_STYLES = {
+        "info": "background:#2d3748; color:#fff;",
+        "warning": "background:#744210; color:#fff;",
+        "error": "background:#742a2a; color:#fff;",
+        "success": "background:#1f3a1f; color:#fff;",
+    }
+
+    LOADING_OVERLAY_BG = "background-color: rgba(20, 20, 20, 140);"
+    LOADING_TITLE_TEXT = "color: #f1f1f1; font-weight: 600; font-size: 14px;"
+    LOADING_BAR_ACTIVE = "#8a8a8a"
+    LOADING_BAR_IDLE = "#5a5a5a"
+
+
 class DSSpacing:
     ICON_PREVIEW_SIZE = 160
 

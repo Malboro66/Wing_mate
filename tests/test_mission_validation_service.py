@@ -15,6 +15,7 @@ def test_validation_service_returns_typed_missions_once():
                 "date": "01/01/1918",
                 "time": "12:00",
                 "aircraft": "SPAD",
+                "aircraft_badge": "Novato",
                 "duty": "Escort",
                 "description": "Mission text",
             }
@@ -26,6 +27,7 @@ def test_validation_service_returns_typed_missions_once():
             date="01/01/1918",
             time="12:00",
             aircraft="SPAD",
+            aircraft_badge="Novato",
             duty="Escort",
             description="Mission text",
         )
