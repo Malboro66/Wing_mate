@@ -26,6 +26,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QLabel,
     QPushButton,
+    QProgressBar,
     QFileDialog,
     QGroupBox,
     QFormLayout,
@@ -220,6 +221,9 @@ class ProfileTab(QWidget):
         self.pilot_name_label = QLabel("N/A")
         self.squadron_name_label = QLabel("N/A")
         self.total_missions_label = QLabel("0")
+        self.xp_progress = QProgressBar()
+        self.xp_text_label = QLabel("0 XP")
+        self.morale_label = QLabel("😐 Estável (50)")
 
         self.roundel_image_label = QLabel()
         self.roundel_image_label.setAlignment(Qt.AlignCenter)
@@ -358,6 +362,18 @@ class ProfileTab(QWidget):
 
         form_right = QFormLayout()
         form_right.addRow(self.tr("Nome:"), self.pilot_name_label)
+        self.xp_progress.setRange(0, 5000)
+        self.xp_progress.setValue(0)
+        self.xp_progress.setFormat("%v / %m")
+        self.xp_progress.setTextVisible(True)
+        xp_box = QWidget()
+        xp_layout = QVBoxLayout(xp_box)
+        xp_layout.setContentsMargins(0, 0, 0, 0)
+        xp_layout.setSpacing(4)
+        xp_layout.addWidget(self.xp_text_label)
+        xp_layout.addWidget(self.xp_progress)
+        xp_layout.addWidget(self.morale_label)
+        form_right.addRow(self.tr("Prestígio (XP):"), xp_box)
         form_right.addRow(self.tr("Esquadrão:"), self.squadron_name_label)
         form_right.addRow(self.tr("Missões Voadas:"), self.total_missions_label)
 
@@ -537,10 +553,35 @@ class ProfileTab(QWidget):
 
     # ---------------- Profile setters ----------------
 
-    def set_profile_labels(self, name: str, squadron: str, total_missions: int):
+    def set_profile_labels(
+        self,
+        name: str,
+        squadron: str,
+        total_missions: int,
+        xp: int = 0,
+        morale_mood: str = "😐 Estável",
+        morale_value: int = 50,
+    ):
         self.pilot_name_label.setText(name or "N/A")
         self.squadron_name_label.setText(squadron or "N/A")
         self.total_missions_label.setText(str(total_missions or 0))
+        self.set_xp(int(xp or 0))
+        self.set_morale(morale_mood, morale_value)
+
+    def set_xp(self, xp: int) -> None:
+        total_xp = max(0, int(xp or 0))
+        level_size = 5000
+        progress = total_xp % level_size
+        if total_xp > 0 and progress == 0:
+            progress = level_size
+        self.xp_progress.setRange(0, level_size)
+        self.xp_progress.setValue(progress)
+        self.xp_text_label.setText(f"{total_xp} XP")
+
+    def set_morale(self, mood_text: str, morale_value: int) -> None:
+        mood = str(mood_text or "😐 Estável")
+        val = max(0, min(100, int(morale_value or 0)))
+        self.morale_label.setText(f"{mood} ({val})")
 
     def update_reference_date(self, ref_date: Optional[datetime]):
         self._ref_date = ref_date

@@ -26,7 +26,7 @@ class SettingsWidget(QWidget):
         super().__init__(parent)
         self._t = t
         self._config = config
-        self._fields: Dict[str, Tuple[QLineEdit, QLabel]] = {}
+        self._fields: Dict[str, Tuple[QLabel, QLineEdit, QPushButton, QLabel, str]] = {}
 
         root = QVBoxLayout(self)
         root.setSpacing(8)
@@ -66,7 +66,7 @@ class SettingsWidget(QWidget):
         status = QLabel("-")
         row.addWidget(status)
 
-        self._fields[key] = (edit, status)
+        self._fields[key] = (lbl, edit, browse, status, label_key)
         return row
 
     def _browse_path(self, key: str, edit: QLineEdit) -> None:
@@ -82,7 +82,7 @@ class SettingsWidget(QWidget):
         self.settings_changed.emit()
 
     def _validate_and_render(self, key: str) -> None:
-        _edit, status = self._fields[key]
+        _lbl, _edit, _browse, status, _label_key = self._fields[key]
         result = self._config.path_status(key)
         if result.is_valid:
             status.setText(self._t("path_valid"))
@@ -93,7 +93,7 @@ class SettingsWidget(QWidget):
             notify_warning(self._t("path_invalid_toast"))
 
     def load_from_settings(self) -> None:
-        for key, (edit, _status) in self._fields.items():
+        for key, (_lbl, edit, _browse, _status, _label_key) in self._fields.items():
             edit.blockSignals(True)
             edit.setText(self._config.get_path(key))
             edit.blockSignals(False)
@@ -111,3 +111,7 @@ class SettingsWidget(QWidget):
     def retranslate(self) -> None:
         self.btn_save.setText(self._t("save_settings"))
         self.btn_back.setText(self._t("back"))
+        for key, (lbl, _edit, browse, _status, label_key) in self._fields.items():
+            lbl.setText(self._t(label_key))
+            browse.setText(self._t("browse"))
+            self._validate_and_render(key)

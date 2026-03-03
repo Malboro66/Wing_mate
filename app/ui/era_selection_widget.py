@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Callable
 
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget, QHBoxLayout
 
 from app.ui.design_system import DSStyles
 from utils.notification_bus import notify_info
@@ -28,15 +28,24 @@ class EraSelectionWidget(QWidget):
         super().__init__(parent)
         self._t = t
 
-        layout = QVBoxLayout(self)
+        root = QVBoxLayout(self)
+        root.setSpacing(0)
+
+        root.addStretch(1)
+        row = QHBoxLayout()
+        row.addStretch(1)
+
+        layout = QVBoxLayout()
         layout.setSpacing(14)
 
         self.warning_label = QLabel(self._t("sim_setup_warning"))
         self.warning_label.setStyleSheet(DSStyles.STATE_WARNING)
+        self.warning_label.setWordWrap(True)
         layout.addWidget(self.warning_label)
 
         self.btn_ww1 = _GatedButton(self._t("era_ww1"))
         self.btn_ww1.setMinimumHeight(56)
+        self.btn_ww1.setMinimumWidth(420)
         self.btn_ww1.setEnabled(False)
         self.btn_ww1.clicked.connect(self.ww1_selected.emit)
         self.btn_ww1.attempted_when_disabled.connect(lambda: notify_info(self._t("sim_setup_warning")))
@@ -44,12 +53,16 @@ class EraSelectionWidget(QWidget):
 
         self.btn_ww2 = _GatedButton(self._t("era_ww2"))
         self.btn_ww2.setMinimumHeight(56)
+        self.btn_ww2.setMinimumWidth(420)
         self.btn_ww2.setEnabled(False)
         self.btn_ww2.clicked.connect(self.ww2_selected.emit)
         self.btn_ww2.attempted_when_disabled.connect(lambda: notify_info(self._t("sim_setup_warning")))
         layout.addWidget(self.btn_ww2)
 
-        layout.addStretch(1)
+        row.addLayout(layout)
+        row.addStretch(1)
+        root.addLayout(row)
+        root.addStretch(1)
 
     def update_gate_status(self, ww1_ready: bool, ww2_ready: bool) -> None:
         self.btn_ww1.setEnabled(bool(ww1_ready))

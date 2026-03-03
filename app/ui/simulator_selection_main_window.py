@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from PyQt5.QtCore import QSettings, Qt
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QStackedWidget, QStyle, QToolBar
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QStackedWidget, QStyle, QToolBar, QWidget, QSizePolicy
 
 from app.application.app_config import AppConfig
 from app.ui.era_selection_widget import EraSelectionWidget
@@ -59,7 +59,12 @@ class MainWindow(QMainWindow):
         tb.setMovable(False)
         self.addToolBar(tb)
 
+        spacer = QWidget(tb)
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        tb.addWidget(spacer)
+
         self.btn_settings = QPushButton()
+        self.btn_settings.setObjectName("settings_global_button")
         self.btn_settings.setIcon(self.style().standardIcon(QStyle.SP_FileDialogDetailedView))
         self.btn_settings.setToolTip(self._t("open_settings"))
         self.btn_settings.clicked.connect(lambda: self._go_to(self._idx_settings))

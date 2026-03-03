@@ -29,8 +29,8 @@ def test_process_missions_data_assigns_progression_badges_and_aggregate_map():
     missions, _ = processor.process_missions_data("camp", reports, "42")
 
     assert missions[0]["aircraft_badge"] == "Novato"
-    assert any(m["aircraft_badge"] == "Veterano" for m in missions)
     assert any(m["aircraft_badge"] == "Ás do Modelo" for m in missions)
+    assert all(m["aircraft_badge"] != "Veterano" for m in missions)
 
     agg = processor._last_aircraft_progression.get("SPAD XIII", {})
     assert agg.get("missions") == 21

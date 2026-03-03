@@ -1,46 +1,79 @@
 import sys
 from pathlib import Path
 
+import pytest
+
+pytest.importorskip("pytestqt")
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-
-def test_main_window_keeps_queued_connection_for_data_loaded_signal():
-    source = Path("app/ui/main_window.py").read_text(encoding="utf-8")
-    assert "data_loaded.connect(self._on_data_loaded, Qt.QueuedConnection)" in source
-
-
-def test_main_window_uses_skeleton_and_keeps_tabs_enabled_while_busy():
-    source = Path("app/ui/main_window.py").read_text(encoding="utf-8")
-    assert "self.tabs.setEnabled(True)" in source
-    assert "self._set_sync_skeletons_visible(self._busy" in source
+from app.ui.main_window import DataSyncThread
+from app.ui.profile_tab import ProfileTab
+from utils.notification_bus import NotificationLevel, notification_bus
 
 
-def test_main_window_uses_notification_bus_with_queued_connection():
-    source = Path("app/ui/main_window.py").read_text(encoding="utf-8")
-    assert "notification_bus.notified.connect(self._on_notification, Qt.QueuedConnection)" in source
+def test_data_sync_thread_emits_loaded_payload_and_progress(qtbot):
+    class _Processor:
+        def process_campaign(self, _campaign_name):
+            return {"pilot": {"name": "Pilot A"}, "missions": [{"id": 1}], "aces": []}
+
+    progress_values = []
+    thread = DataSyncThread(
+        pwcgfc_path="/tmp/pwcg",
+        campaign_name="camp1",
+        processor_factory=lambda _path: _Processor(),
+    )
+    thread.progress.connect(progress_values.append)
+
+    with qtbot.waitSignal(thread.data_loaded, timeout=3000) as loaded:
+        thread.start()
+
+    qtbot.waitUntil(lambda: not thread.isRunning(), timeout=3000)
+
+    payload = loaded.args[0]
+    assert payload["pilot"]["name"] == "Pilot A"
+    assert payload["missions"]
+    assert 100 in progress_values
 
 
-def test_non_critical_sync_feedback_uses_toast_not_messagebox():
-    source = Path("app/ui/main_window.py").read_text(encoding="utf-8")
-    assert 'notify_warning(self._t("select_folder_warning"))' in source
-    assert "QMessageBox.warning" not in source
+def test_data_sync_thread_emits_error_for_empty_payload(qtbot):
+    class _Processor:
+        def process_campaign(self, _campaign_name):
+            return {}
+
+    progress_values = []
+    thread = DataSyncThread(
+        pwcgfc_path="/tmp/pwcg",
+        campaign_name="camp1",
+        processor_factory=lambda _path: _Processor(),
+    )
+    thread.progress.connect(progress_values.append)
+
+    with qtbot.waitSignal(thread.error_occurred, timeout=3000) as error_signal:
+        thread.start()
+
+    qtbot.waitUntil(lambda: not thread.isRunning(), timeout=3000)
+
+    assert "Não foi possível carregar" in error_signal.args[0]
+    assert 0 in progress_values
 
 
-def test_main_window_handles_parser_without_cache_metrics_gracefully():
-    source = Path("app/ui/main_window.py").read_text(encoding="utf-8")
-    assert 'getattr(parser, "get_cache_metrics", lambda: {"hits": 0, "misses": 0})()' in source
+def test_notification_bus_emits_qt_signal(qtbot):
+    with qtbot.waitSignal(notification_bus.notified, timeout=1000) as notified:
+        notification_bus.notify(NotificationLevel.WARNING, "Atenção", timeout_ms=2222)
+
+    level, message, timeout_ms = notified.args
+    assert level == NotificationLevel.WARNING.value
+    assert message == "Atenção"
+    assert timeout_ms == 2222
 
 
-def test_main_window_exposes_language_selector_with_supported_options():
-    source = Path("app/ui/main_window.py").read_text(encoding="utf-8")
-    assert "self.language_combo = QComboBox()" in source
-    assert "AppI18n.LANG_LABELS[AppI18n.PT_BR]" in source
-    assert "AppI18n.LANG_LABELS[AppI18n.EN_US]" in source
-    assert "ui/language" in source
+def test_profile_tab_updates_xp_and_morale_widgets(qtbot):
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
 
+    tab.set_xp(1750)
+    tab.set_morale("🔥 Inspirado", 90)
 
-def test_main_window_exposes_flight_streak_indicator_in_statusbar():
-    source = Path("app/ui/main_window.py").read_text(encoding="utf-8")
-    assert 'self.flight_streak_label = QLabel()' in source
-    assert 'setObjectName("flight_streak_indicator")' in source
-    assert 'self.flight_streak_label.setText(f"🔥 {max(0, current_streak)}")' in source
+    assert tab.xp_text_label.text() == "1750 XP"
+    assert tab.morale_label.text() == "🔥 Inspirado (90)"

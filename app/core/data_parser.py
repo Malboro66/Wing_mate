@@ -78,11 +78,12 @@ class IL2DataParser:
         """
         loaded: Dict[Path, Optional[Any]] = {}
         for file_path in file_paths or []:
+            resolved_path: Path = file_path
             try:
-                resolved = file_path.resolve()
+                resolved_path = file_path.resolve()
+                loaded[file_path] = self._get_json_data_cached(str(resolved_path))
             except (TypeError, ValueError, OSError):
-                resolved = file_path
-            loaded[file_path] = self.get_json_data(resolved)
+                loaded[file_path] = self._load_json_file(resolved_path)
         return loaded
 
 
@@ -430,14 +431,14 @@ class IL2DataParser:
         """
         # Remove patentes comuns
         cleaned: str = re.sub(
-            r'^(?:Lieutenant|Ltn|Fw|Obltn|Cne|S/Lt|Sergt|Lt|Capt|Major|Maj)\\.?\\s*',
+            r'^(?:Lieutenant|Ltn|Fw|Obltn|Cne|S/Lt|Sergt|Lt|Capt|Major|Maj)\.?\s*',
             '',
             pilot_name,
             flags=re.IGNORECASE
         ).strip()
         
         # Normaliza espaços
-        cleaned = re.sub(r'\\s+', ' ', cleaned).strip()
+        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
         return cleaned
     
     @staticmethod
@@ -556,7 +557,7 @@ class IL2DataParser:
             return match_candidates
         
         # Nível 4: Regex de data (fallback)
-        date_regex: re.Pattern = re.compile(r'\\d{4}-\\d{2}-\\d{2}')
+        date_regex: re.Pattern = re.compile(r'\d{4}-\d{2}-\d{2}')
         nearest: List[Path] = [
             f for f in candidates
             if (m := date_regex.search(f.name)) and m.group(0) == date_str_dashed

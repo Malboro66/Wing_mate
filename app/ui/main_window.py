@@ -50,6 +50,7 @@ from app.ui.input_medals_tab import InputMedalsTab
 from app.ui.skeleton_widget import SkeletonWidget
 from app.ui.toast_widget import ToastWidget
 from app.ui.i18n import AppI18n
+from app.ui.war_propaganda_popup import WarPropagandaPopup
 
 from app.application.container import AppContainer
 from app.application.mission_validation_service import Mission, MissionValidationService
@@ -61,6 +62,7 @@ from utils.observability import Events, emit_event, record_action_duration, reco
 from utils.structured_logger import StructuredLogger
 from utils.settings_manager import settings as settings_manager
 from utils.flight_streak import compute_flight_streak
+from utils.war_propaganda_tracker import WarPropagandaTracker
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
 structured_logger = StructuredLogger("IL2CampaignAnalyzer")
@@ -233,6 +235,8 @@ class MainWindow(QMainWindow):
         self._medals_dirty: bool = True
         self._busy: bool = False
         self._language_code: str = str(self.settings.value("ui/language", AppI18n.PT_BR) or AppI18n.PT_BR)
+        self._war_tracker = WarPropagandaTracker()
+        self._war_popup: Optional[WarPropagandaPopup] = None
 
 
         # Widgets/actions referenciados em mais de um ponto
@@ -547,6 +551,12 @@ class MainWindow(QMainWindow):
         self._toast.show_toast(level, message, timeout_ms)
         self.statusBar().showMessage(message, max(1000, timeout_ms))
 
+        decision = self._war_tracker.register_event_from_notification(level, message)
+        if decision.should_show_popup:
+            pilot_name = str((self.current_data.get("pilot", {}) or {}).get("name", "Piloto") or "Piloto")
+            self._war_popup = WarPropagandaPopup(pilot_name, decision.victories_last_7d, parent=self)
+            self._war_popup.show()
+
     # ---------------- Fechamento ----------------
 
     def closeEvent(self, event: QCloseEvent) -> None:
@@ -744,15 +754,22 @@ class MainWindow(QMainWindow):
         name: str = pilot.get("name", "N/A")
         squadron: str = pilot.get("squadron", "N/A")
         total_missions: int = int(pilot.get("total_missions", 0) or 0)
+        xp_value: int = int(pilot.get("xp", 0) or 0)
+        morale_mood: str = str(pilot.get("morale_mood", "😐 Estável") or "😐 Estável")
+        morale_value: int = int(pilot.get("morale", 50) or 50)
 
         if hasattr(self.profile_tab, "set_profile_labels"):
-            self.profile_tab.set_profile_labels(name, squadron, total_missions)
+            self.profile_tab.set_profile_labels(name, squadron, total_missions, xp_value, morale_mood, morale_value)
         else:
             # Fallback: labels diretas (se existirem)
             try:
                 self.profile_tab.pilot_name_label.setText(name or "N/A")
                 self.profile_tab.squadron_name_label.setText(squadron or "N/A")
                 self.profile_tab.total_missions_label.setText(str(total_missions or 0))
+                if hasattr(self.profile_tab, "set_xp"):
+                    self.profile_tab.set_xp(xp_value)
+                if hasattr(self.profile_tab, "set_morale"):
+                    self.profile_tab.set_morale(morale_mood, morale_value)
             except AttributeError:
                 logger.warning("Não foi possível atualizar labels do perfil")
 
