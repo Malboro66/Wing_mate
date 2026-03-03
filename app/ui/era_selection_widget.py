@@ -3,21 +3,11 @@ from __future__ import annotations
 from typing import Callable
 
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget, QHBoxLayout
 
 from app.ui.design_system import DSStyles
 from utils.notification_bus import notify_info
-
-
-class _GatedButton(QPushButton):
-    attempted_when_disabled = pyqtSignal()
-
-    def mousePressEvent(self, event) -> None:  # noqa: N802
-        if not self.isEnabled():
-            self.attempted_when_disabled.emit()
-            event.accept()
-            return
-        super().mousePressEvent(event)
 
 
 class EraSelectionWidget(QWidget):
@@ -43,26 +33,32 @@ class EraSelectionWidget(QWidget):
         self.warning_label.setWordWrap(True)
         layout.addWidget(self.warning_label)
 
-        self.btn_ww1 = _GatedButton(self._t("era_ww1"))
+        self.btn_ww1 = QPushButton(self._t("era_ww1"))
         self.btn_ww1.setMinimumHeight(56)
         self.btn_ww1.setMinimumWidth(420)
         self.btn_ww1.setEnabled(False)
         self.btn_ww1.clicked.connect(self.ww1_selected.emit)
-        self.btn_ww1.attempted_when_disabled.connect(lambda: notify_info(self._t("sim_setup_warning")))
         layout.addWidget(self.btn_ww1)
 
-        self.btn_ww2 = _GatedButton(self._t("era_ww2"))
+        self.btn_ww2 = QPushButton(self._t("era_ww2"))
         self.btn_ww2.setMinimumHeight(56)
         self.btn_ww2.setMinimumWidth(420)
         self.btn_ww2.setEnabled(False)
         self.btn_ww2.clicked.connect(self.ww2_selected.emit)
-        self.btn_ww2.attempted_when_disabled.connect(lambda: notify_info(self._t("sim_setup_warning")))
         layout.addWidget(self.btn_ww2)
 
         row.addLayout(layout)
         row.addStretch(1)
         root.addLayout(row)
         root.addStretch(1)
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:  # noqa: N802
+        for button in (self.btn_ww1, self.btn_ww2):
+            if not button.isEnabled() and button.geometry().contains(event.pos()):
+                notify_info(self._t("sim_setup_warning"))
+                event.accept()
+                return
+        super().mousePressEvent(event)
 
     def update_gate_status(self, ww1_ready: bool, ww2_ready: bool) -> None:
         self.btn_ww1.setEnabled(bool(ww1_ready))

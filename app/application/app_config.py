@@ -19,7 +19,7 @@ class AppConfig:
     KEY_ROF = "paths/rof"
     KEY_PWCG = "paths/pwcg"
 
-    REQUIRED_WW1 = (KEY_IL2_FC, KEY_ROF, KEY_PWCG)
+    REQUIRED_WW1 = (KEY_IL2_FC, KEY_ROF)
     REQUIRED_WW2 = tuple()
 
     def __init__(self, settings) -> None:

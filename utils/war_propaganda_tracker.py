@@ -31,15 +31,26 @@ class WarPropagandaTracker:
         "shot down",
     )
 
-    def _load_events(self) -> List[datetime]:
-        raw = settings_manager.get(self.KEY_EVENTS, []) or []
+    @staticmethod
+    def _coerce_raw_events(raw: object) -> List[str]:
+        if raw is None:
+            return []
         if isinstance(raw, str):
-            raw = [raw] if raw else []
+            return [raw] if raw else []
+        if isinstance(raw, (list, tuple)):
+            return [str(item) for item in raw if str(item)]
+        if isinstance(raw, dict):
+            return [str(value) for value in raw.values() if str(value)]
+        return [str(raw)]
+
+    def _load_events(self) -> List[datetime]:
+        raw = settings_manager.get(self.KEY_EVENTS, [])
+        raw_items = self._coerce_raw_events(raw)
 
         out: List[datetime] = []
-        for item in raw if isinstance(raw, list) else []:
+        for item in raw_items:
             try:
-                out.append(datetime.fromisoformat(str(item)))
+                out.append(datetime.fromisoformat(item))
             except ValueError:
                 continue
         return out

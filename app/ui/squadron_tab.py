@@ -31,6 +31,7 @@ class RankIconLabel(QLabel):
     def __init__(self, rank_text: str, delay_ms: int = 2000, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self._rank_text: str = rank_text or "N/A"
+        self.rank_name: str = self._rank_text
         self._delay_ms: int = max(0, int(delay_ms))
         self._timer: QTimer = QTimer(self)
         self._timer.setSingleShot(True)

@@ -34,3 +34,19 @@ def test_app_config_validates_and_gates_ww1(tmp_path: Path):
 
     assert cfg.ww1_ready() is True
     assert cfg.ww2_ready() is False
+
+
+def test_app_config_ww1_gate_does_not_require_pwcg(tmp_path: Path):
+    settings = _FakeSettings()
+    cfg = AppConfig(settings)
+
+    il2 = tmp_path / "il2"
+    rof = tmp_path / "rof"
+    il2.mkdir()
+    rof.mkdir()
+
+    cfg.set_path(AppConfig.KEY_IL2_FC, str(il2))
+    cfg.set_path(AppConfig.KEY_ROF, str(rof))
+    cfg.set_path(AppConfig.KEY_PWCG, "")
+
+    assert cfg.ww1_ready() is True

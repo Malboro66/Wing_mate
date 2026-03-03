@@ -57,6 +57,7 @@ class SettingsWidget(QWidget):
 
         edit = QLineEdit()
         edit.textChanged.connect(lambda txt, k=key: self._on_path_changed(k, txt))
+        edit.editingFinished.connect(lambda k=key, e=edit: self._on_edit_finished(k, e.text()))
         row.addWidget(edit, 1)
 
         browse = QPushButton(self._t("browse"))
@@ -76,6 +77,13 @@ class SettingsWidget(QWidget):
             self._config.set_path(key, selected)
             self._validate_and_render(key)
 
+    def _on_edit_finished(self, key: str, text: str) -> None:
+        self._config.set_path(key, text)
+        self._validate_and_render(key)
+        if not self._config.path_status(key).is_valid:
+            notify_warning(self._t("path_invalid_toast"))
+        self.settings_changed.emit()
+
     def _on_path_changed(self, key: str, text: str) -> None:
         self._config.set_path(key, text)
         self._validate_and_render(key)
@@ -90,7 +98,6 @@ class SettingsWidget(QWidget):
         else:
             status.setText(self._t("path_invalid"))
             status.setStyleSheet(DSStyles.STATE_ERROR)
-            notify_warning(self._t("path_invalid_toast"))
 
     def load_from_settings(self) -> None:
         for key, (_lbl, edit, _browse, _status, _label_key) in self._fields.items():

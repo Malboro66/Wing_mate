@@ -92,3 +92,36 @@ def test_squadron_tab_filter_updates_visible_stats(qtbot):
     assert visible == 1
     assert victories == 4
     assert missions == 8
+
+
+def test_squadron_tab_filter_by_rank_uses_rank_label_text(qtbot):
+    tab = SquadronTab()
+    qtbot.addWidget(tab)
+
+    members = [
+        {
+            "name": "Pilot Alpha",
+            "rank": "Leutnant",
+            "victories": 2,
+            "missions_flown": 5,
+            "status": "Ativo",
+        },
+        {
+            "name": "Pilot Bravo",
+            "rank": "Major",
+            "victories": 3,
+            "missions_flown": 7,
+            "status": "Ativo",
+        },
+    ]
+
+    tab.set_squadron(members)
+
+    with qtbot.waitSignal(tab.stats_updated, timeout=1000) as signal:
+        tab.filter_edit.setText("Major")
+
+    total, visible, victories, missions = signal.args
+    assert total == 2
+    assert visible == 1
+    assert victories == 3
+    assert missions == 7

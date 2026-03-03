@@ -18,7 +18,7 @@ def test_era_widget_buttons_start_disabled_and_are_gated():
     src = Path("app/ui/era_selection_widget.py").read_text(encoding="utf-8")
     assert "self.btn_ww1.setEnabled(False)" in src
     assert "self.btn_ww2.setEnabled(False)" in src
-    assert "attempted_when_disabled" in src
+    assert "def mousePressEvent(self, event: QMouseEvent)" in src
     assert "setMinimumWidth(420)" in src
 
 

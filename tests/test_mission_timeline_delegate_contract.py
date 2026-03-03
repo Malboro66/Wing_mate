@@ -15,3 +15,9 @@ def test_timeline_delegate_uses_qstyleditemdelegate_and_user_role_ratio():
     src = Path("app/ui/delegates/timeline_delegate.py").read_text(encoding="utf-8")
     assert "class TimelineDelegate(QStyledItemDelegate)" in src
     assert "Qt.UserRole" in src
+
+
+def test_missions_tab_weekday_mapping_is_locale_independent():
+    src = Path("app/ui/missions_tab.py").read_text(encoding="utf-8")
+    assert "weekday_names" in src
+    assert "strftime('%A')" not in src

@@ -270,27 +270,36 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
     def _get_weekday(self, date_str: str) -> str:
         """
         Retorna o dia da semana em INGLÊS para uma data.
-        
+
         Args:
             date_str: Data no formato "DD/MM/YYYY" ou "D.M.YYYY"
-            
+
         Returns:
             Dia da semana em inglês (Monday, Tuesday, etc.) ou string vazia se inválido
         """
         if not date_str:
             return ''
-        
+
+        weekday_names = (
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday',
+        )
+
         # Tenta formatos comuns
         for fmt in ['%d/%m/%Y', '%d.%m.%Y', '%d-%m-%Y']:
             try:
                 date_obj = datetime.strptime(date_str, fmt)
-                # Retorna dia da semana em inglês
-                return date_obj.strftime('%A')  # ✅ Retorna em inglês: Monday, Tuesday, etc.
+                return weekday_names[date_obj.weekday()]
             except ValueError:
                 continue
-        
+
         return ''
-    
+
 
     def _set_view_state(self, state: str, message: str) -> None:
         self.state_label.setText(message)
