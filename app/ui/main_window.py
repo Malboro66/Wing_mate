@@ -556,8 +556,11 @@ class MainWindow(QMainWindow):
         self._set_ui_busy(True, "Sincronizando campanha...")
         self.progress_bar.setValue(0)
 
-        parser_metrics = self.container.get_parser().get_cache_metrics()
-        record_cache_stats(int(parser_metrics.get("hits", 0)), int(parser_metrics.get("misses", 0)))
+        parser = self.container.get_parser()
+        get_cache_metrics = getattr(parser, "get_cache_metrics", None)
+        if callable(get_cache_metrics):
+            parser_metrics = get_cache_metrics()
+            record_cache_stats(int(parser_metrics.get("hits", 0)), int(parser_metrics.get("misses", 0)))
 
         self.sync_thread = DataSyncThread(
             self.pwcgfc_path,
