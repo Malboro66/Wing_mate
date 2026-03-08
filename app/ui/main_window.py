@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 # ===================================================================
 # Wing Mate - app/ui/main_window.py
-# Janela principal com gerenciamento de abas e sincronização thread-safe
+# Janela principal com gerenciamento de abas e sincronizaÃ§Ã£o thread-safe
 #
 # Melhorias de UI:
-# - QToolBar com atalhos (Ctrl+O, F5) e ação de copiar caminho
+# - QToolBar com atalhos (Ctrl+O, F5) e aÃ§Ã£o de copiar caminho
 # - Progress bar embutido na StatusBar
-# - Estado "busy" durante sincronização (desabilita ações/combos)
-# - Label de caminho com elipse e atualização no resize
-# - Persistência da última campanha selecionada (QSettings)
+# - Estado "busy" durante sincronizaÃ§Ã£o (desabilita aÃ§Ãµes/combos)
+# - Label de caminho com elipse e atualizaÃ§Ã£o no resize
+# - PersistÃªncia da Ãºltima campanha selecionada (QSettings)
 # ===================================================================
 
 from __future__ import annotations
@@ -82,10 +82,10 @@ class _CampaignProcessorAdapter:
 
 class DataSyncThread(QThread):
     """
-    Thread para sincronização de dados de campanhas PWCG de forma assíncrona.
+    Thread para sincronizaÃ§Ã£o de dados de campanhas PWCG de forma assÃ­ncrona.
 
     Signals:
-        data_loaded: Emitido quando dados são carregados com sucesso (dict)
+        data_loaded: Emitido quando dados sÃ£o carregados com sucesso (dict)
         error_occurred: Emitido quando ocorre erro (str)
         progress: Emitido para atualizar progresso (int 0-100)
     """
@@ -120,7 +120,7 @@ class DataSyncThread(QThread):
         try:
             self.progress.emit(10)
             logger.info(
-                "Iniciando sincronização: campanha=%s, path=%s",
+                "Iniciando sincronizaÃ§Ã£o: campanha=%s, path=%s",
                 self.campaign_name,
                 self.pwcgfc_path,
             )
@@ -138,8 +138,8 @@ class DataSyncThread(QThread):
             self.progress.emit(90)
 
             if not isinstance(data, dict) or not data:
-                msg = "Não foi possível carregar os dados da campanha."
-                logger.warning("Dados de campanha inválidos: %s", type(data))
+                msg = "NÃ£o foi possÃ­vel carregar os dados da campanha."
+                logger.warning("Dados de campanha invÃ¡lidos: %s", type(data))
                 record_action_duration(
                     structured_logger,
                     "sync_campaign",
@@ -151,7 +151,7 @@ class DataSyncThread(QThread):
                 return
 
             logger.info(
-                "Sincronização concluída: %s missões, %s ases",
+                "SincronizaÃ§Ã£o concluÃ­da: %s missÃµes, %s ases",
                 len(data.get("missions", []) or []),
                 len(data.get("aces", []) or []),
             )
@@ -170,13 +170,13 @@ class DataSyncThread(QThread):
             )
 
             new_streak = self._update_flight_streak()
-            logger.info("Cadência de voo atualizada: %s", new_streak)
+            logger.info("CadÃªncia de voo atualizada: %s", new_streak)
 
             self.data_loaded.emit(data)
             self.progress.emit(100)
 
         except (OSError, json.JSONDecodeError, ValueError) as e:
-            logger.exception("Erro na sincronização (dados/parse/arquivo)")
+            logger.exception("Erro na sincronizaÃ§Ã£o (dados/parse/arquivo)")
             emit_event(
                 structured_logger,
                 Events.SYNC_FAILED,
@@ -195,7 +195,7 @@ class DataSyncThread(QThread):
             self.progress.emit(0)
 
         except Exception as e:
-            logger.exception("Erro inesperado na sincronização")
+            logger.exception("Erro inesperado na sincronizaÃ§Ã£o")
             emit_event(
                 structured_logger,
                 Events.SYNC_FAILED,
@@ -214,18 +214,18 @@ class DataSyncThread(QThread):
             try:
                 self.progress.emit(0)
             except RuntimeError:
-                logger.debug("Thread finalizada durante emissão de sinal de erro")
+                logger.debug("Thread finalizada durante emissÃ£o de sinal de erro")
 
 
 class MainWindow(QMainWindow):
     """
-    Janela principal da aplicação Wing Mate.
+    Janela principal da aplicaÃ§Ã£o Wing Mate.
 
     Responsabilidades:
-    - Seleção de pasta PWCGFC e campanhas
-    - Sincronização de dados em background via QThread
+    - SeleÃ§Ã£o de pasta PWCGFC e campanhas
+    - SincronizaÃ§Ã£o de dados em background via QThread
     - Gerenciamento de abas
-    - Persistência via QSettings
+    - PersistÃªncia via QSettings
     """
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
@@ -282,9 +282,9 @@ class MainWindow(QMainWindow):
 
         try:
             modules = self.container.get_content_module_registry().list_modules()
-            logger.info("Registro de conteúdo carregado: %s módulos", len(modules))
+            logger.info("Registro de conteÃºdo carregado: %s mÃ³dulos", len(modules))
         except Exception:
-            logger.exception("Falha ao carregar registro de módulos de conteúdo")
+            logger.exception("Falha ao carregar registro de mÃ³dulos de conteÃºdo")
 
         logger.info("MainWindow inicializada")
 
@@ -307,7 +307,7 @@ class MainWindow(QMainWindow):
         if not pm.isNull():
             self.setWindowIcon(QIcon(pm))
         else:
-            logger.warning("Ícone da aplicação não encontrado")
+            logger.warning("Ãcone da aplicaÃ§Ã£o nÃ£o encontrado")
 
     # ---------------- UI helpers ----------------
 
@@ -318,7 +318,7 @@ class MainWindow(QMainWindow):
         self.action_open_folder.setEnabled(True)  # permitir trocar pasta mesmo ocupado, se desejar
         self.campaign_combo.setEnabled(not self._busy)
 
-        # Mantém as abas habilitadas; o feedback visual de loading vem dos skeletons.
+        # MantÃ©m as abas habilitadas; o feedback visual de loading vem dos skeletons.
         self.tabs.setEnabled(True)
         self._set_sync_skeletons_visible(self._busy, message or "Sincronizando campanha...")
 
@@ -337,7 +337,7 @@ class MainWindow(QMainWindow):
 
         self.action_copy_path.setEnabled(bool(self._full_path_text))
 
-    # ---------------- Construção da UI ----------------
+    # ---------------- ConstruÃ§Ã£o da UI ----------------
 
     def _build_ui(self) -> None:
         self.setWindowTitle(self._t("window_title"))
@@ -390,7 +390,7 @@ class MainWindow(QMainWindow):
         self.path_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
         path_row.addWidget(self.path_label, 1)
 
-        # Botão pequeno de copiar (espelha a ação)
+        # BotÃ£o pequeno de copiar (espelha a aÃ§Ã£o)
         self.btn_copy_path = QPushButton(self._t("copy_button"))
         self.btn_copy_path.setToolTip(self._t("copy_button_tooltip"))
         self.btn_copy_path.setAccessibleName("copiar_caminho_button")
@@ -422,7 +422,6 @@ class MainWindow(QMainWindow):
         # Tabs
         self.tabs = QTabWidget()
         self.tabs.setAccessibleName("main_tabs")
-        self.tabs.currentChanged.connect(self._on_tab_changed)
 
         self.profile_tab = ProfileTab(settings=self.settings)
         self.tabs.addTab(self.profile_tab, self._t("profile_tab"))
@@ -454,9 +453,11 @@ class MainWindow(QMainWindow):
             self.input_medals_tab.medal_updated.connect(lambda _i, _m: self._mark_medals_dirty())
         except AttributeError:
             logger.warning(
-                "Não foi possível conectar sinais da aba Input Medals. "
-                "A aba pode não ter sido inicializada corretamente."
+                "NÃ£o foi possÃ­vel conectar sinais da aba Input Medals. "
+                "A aba pode nÃ£o ter sido inicializada corretamente."
             )
+
+        self.tabs.currentChanged.connect(self._on_tab_changed)
 
         layout.addWidget(self.tabs)
 
@@ -479,7 +480,7 @@ class MainWindow(QMainWindow):
         self._toast = ToastWidget(self)
         self._build_sync_skeletons()
 
-        # Ordem mínima de foco para navegação por teclado
+        # Ordem mÃ­nima de foco para navegaÃ§Ã£o por teclado
         self.setTabOrder(self.campaign_combo, self.btn_copy_path)
         self.setTabOrder(self.btn_copy_path, self.tabs)
         self.tabs.setFocusPolicy(Qt.StrongFocus)
@@ -524,8 +525,8 @@ class MainWindow(QMainWindow):
 
     def _refresh_flight_streak_indicator(self) -> None:
         current_streak = int(settings_manager.get("flight_streak/current_streak", 0) or 0)
-        self.flight_streak_label.setText(f"🔥 {max(0, current_streak)}")
-        self.flight_streak_label.setToolTip("Cadência de voo")
+        self.flight_streak_label.setText(f"ðŸ”¥ {max(0, current_streak)}")
+        self.flight_streak_label.setToolTip("CadÃªncia de voo")
 
     def _build_sync_skeletons(self) -> None:
         sync_tabs: List[QWidget] = [
@@ -573,16 +574,16 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event: QCloseEvent) -> None:
         try:
             if self.sync_thread and self.sync_thread.isRunning():
-                logger.info("Aguardando finalização de thread de sincronização...")
+                logger.info("Aguardando finalizaÃ§Ã£o de thread de sincronizaÃ§Ã£o...")
                 self.sync_thread.quit()
                 self.sync_thread.wait(3000)
         except (RuntimeError, AttributeError):
-            logger.debug("Erro ao tentar finalizar thread de sincronização durante fechamento")
+            logger.debug("Erro ao tentar finalizar thread de sincronizaÃ§Ã£o durante fechamento")
 
-        logger.info("Aplicação encerrada")
+        logger.info("AplicaÃ§Ã£o encerrada")
         super().closeEvent(event)
 
-    # ---------------- Ações ----------------
+    # ---------------- AÃ§Ãµes ----------------
 
     def _copy_current_path_to_clipboard(self) -> None:
         if not self._full_path_text:
@@ -615,12 +616,14 @@ class MainWindow(QMainWindow):
 
         self._load_campaigns()
 
+        tabs_path = "" if self.container.has_cp_db() else self.pwcgfc_path
+
         try:
-            self.insert_squads_tab.set_pwcgfc_path(self.pwcgfc_path)
+            self.insert_squads_tab.set_pwcgfc_path(tabs_path)
         except AttributeError:
             pass
         try:
-            self.input_medals_tab.set_pwcgfc_path(self.pwcgfc_path)
+            self.input_medals_tab.set_pwcgfc_path(tabs_path)
         except AttributeError:
             pass
 
@@ -677,9 +680,10 @@ class MainWindow(QMainWindow):
         self._set_ui_busy(True, "Sincronizando campanha...")
         self.progress_bar.setValue(0)
 
-        parser = self.container.get_parser()
-        parser_metrics = getattr(parser, "get_cache_metrics", lambda: {"hits": 0, "misses": 0})()
-        record_cache_stats(int(parser_metrics.get("hits", 0)), int(parser_metrics.get("misses", 0)))
+        if not self.container.has_cp_db():
+            parser = self.container.get_parser()
+            parser_metrics = getattr(parser, "get_cache_metrics", lambda: {"hits": 0, "misses": 0})()
+            record_cache_stats(int(parser_metrics.get("hits", 0)), int(parser_metrics.get("misses", 0)))
 
         self.sync_thread = DataSyncThread(
             self.pwcgfc_path,
@@ -700,7 +704,7 @@ class MainWindow(QMainWindow):
         self.current_data = data or {}
         logger.info("Dados da campanha carregados, atualizando abas...")
 
-        # Aba Missões (validadas uma única vez na entrada do serviço)
+        # Aba MissÃµes (validadas uma Ãºnica vez na entrada do serviÃ§o)
         self._validated_missions = self.mission_validation_service.validate(
             self.current_data.get("missions", []) or []
         )
@@ -711,7 +715,7 @@ class MainWindow(QMainWindow):
 
         campaign: str = self.campaign_combo.currentText().strip()
 
-        # País e medalhas do Personnel
+        # PaÃ­s e medalhas do Personnel
         pilot_name = ((self.current_data.get("pilot", {}) or {}).get("name", "") or "").strip()
         personnel_info = self.personnel_resolution_service.resolve(campaign, pilot_name)
         country_code = personnel_info.country_code
@@ -723,11 +727,11 @@ class MainWindow(QMainWindow):
             except Exception:
                 logger.exception("Falha ao carregar medalhas do cp.db")
 
-        # Aba Medalhas (carregamento lazy + atualização única de contexto)
+        # Aba Medalhas (carregamento lazy + atualizaÃ§Ã£o Ãºnica de contexto)
         self.medals_tab.set_context(country_code, display_name, earned_ids)
         self._medals_dirty = False
 
-        # Aba Esquadrão
+        # Aba EsquadrÃ£o
         self.squadron_tab.set_country(country_code)
         self.squadron_tab.set_squadron(self.current_data.get("squadron", []) or [])
 
@@ -757,8 +761,8 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage(self._t("sync_success"), 4000)
 
     def _on_sync_error(self, msg: str) -> None:
-        notify_error(f"Erro de sincronização: {msg}")
-        logger.error("Erro de sincronização: %s", msg)
+        notify_error(f"Erro de sincronizaÃ§Ã£o: {msg}")
+        logger.error("Erro de sincronizaÃ§Ã£o: %s", msg)
         self.statusBar().showMessage(self._t("sync_failed"), 4000)
 
     def _on_tab_changed(self, index: int) -> None:
@@ -783,9 +787,9 @@ class MainWindow(QMainWindow):
     def _on_mission_selected(self, index: int, mission: Dict[str, Any]) -> None:
         self.selected_mission_index = index
         self.profile_tab.update_reference_date(self._last_mission_date())
-        logger.debug("Missão selecionada: índice %s", index)
+        logger.debug("MissÃ£o selecionada: Ã­ndice %s", index)
 
-    # ---------------- Resolução de dados ----------------
+    # ---------------- ResoluÃ§Ã£o de dados ----------------
 
     def _update_profile_from_data(self, country_code: str) -> None:
         pilot: Dict[str, Any] = self.current_data.get("pilot", {}) or {}
@@ -793,7 +797,7 @@ class MainWindow(QMainWindow):
         squadron: str = pilot.get("squadron", "N/A")
         total_missions: int = int(pilot.get("total_missions", 0) or 0)
         xp_value: int = int(pilot.get("xp", 0) or 0)
-        morale_mood: str = str(pilot.get("morale_mood", "😐 Estável") or "😐 Estável")
+        morale_mood: str = str(pilot.get("morale_mood", "ðŸ˜ EstÃ¡vel") or "ðŸ˜ EstÃ¡vel")
         morale_value: int = int(pilot.get("morale", 50) or 50)
 
         if hasattr(self.profile_tab, "set_profile_labels"):
@@ -809,7 +813,7 @@ class MainWindow(QMainWindow):
                 if hasattr(self.profile_tab, "set_morale"):
                     self.profile_tab.set_morale(morale_mood, morale_value)
             except AttributeError:
-                logger.warning("Não foi possível atualizar labels do perfil")
+                logger.warning("NÃ£o foi possÃ­vel atualizar labels do perfil")
 
         rank: str = self._resolve_player_rank(name, self.current_data.get("squadron", []) or [])
         self.profile_tab.set_rank_with_insignia(
@@ -838,7 +842,7 @@ class MainWindow(QMainWindow):
             return "Belgium"
         return display_name or "Germany"
 
-    # ---------------- Datas de missões ----------------
+    # ---------------- Datas de missÃµes ----------------
 
     def _first_mission_date(self) -> Optional[datetime]:
         dates: List[datetime] = []
@@ -866,7 +870,7 @@ class MainWindow(QMainWindow):
                 continue
         return None
 
-    # ---------------- Persistência ----------------
+    # ---------------- PersistÃªncia ----------------
 
     def _load_saved_settings(self) -> None:
         saved_path: str = str(self.settings.value("pwcgfc_path", "") or "")
@@ -877,3 +881,6 @@ class MainWindow(QMainWindow):
         else:
             self._full_path_text = ""
             self._update_elided_path_label()
+
+
+

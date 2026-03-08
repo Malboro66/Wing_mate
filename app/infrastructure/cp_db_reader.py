@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Wing Mate — app/infrastructure/cp_db_reader.py
+Wing Mate â€” app/infrastructure/cp_db_reader.py
 
-Leitor de baixo nível para o banco SQLite `cp.db` do IL-2 Flying Circus.
+Leitor de baixo nÃ­vel para o banco SQLite `cp.db` do IL-2 Flying Circus.
 
 Responsabilidades:
-  - Abrir conexão read-only (uri=True, ?mode=ro)
+  - Abrir conexÃ£o read-only (uri=True, ?mode=ro)
   - Aplicar PRAGMA WAL e foreign_keys
-  - Fornecer métodos de consulta tipados com soft-delete embutido
-  - Não conhecer domínio — retorna apenas dicts/listas
+  - Fornecer mÃ©todos de consulta tipados com soft-delete embutido
+  - NÃ£o conhecer domÃ­nio â€” retorna apenas dicts/listas
 """
 
 from __future__ import annotations
@@ -22,9 +22,9 @@ logger = logging.getLogger("IL2CampaignAnalyzer")
 
 
 class CpDbReader:
-    """Abstração de acesso read-only ao cp.db."""
+    """AbstraÃ§Ã£o de acesso read-only ao cp.db."""
 
-    # Código TVD do Flying Circus (conforme relatório forense)
+    # CÃ³digo TVD do Flying Circus (conforme relatÃ³rio forense)
     TVD_FLYING_CIRCUS = 28
 
     def __init__(self, db_path: Path) -> None:
@@ -32,11 +32,11 @@ class CpDbReader:
         self._conn: Optional[sqlite3.Connection] = None
 
     # ------------------------------------------------------------------ #
-    # Conexão                                                              #
+    # ConexÃ£o                                                              #
     # ------------------------------------------------------------------ #
 
     def open(self) -> None:
-        """Abre conexão read-only com WAL habilitado."""
+        """Abre conexÃ£o read-only com WAL habilitado."""
         if self._conn is not None:
             return
 
@@ -44,14 +44,15 @@ class CpDbReader:
         try:
             self._conn = sqlite3.connect(uri, uri=True, check_same_thread=False)
             self._conn.row_factory = sqlite3.Row
-            # NOTA: NÃO executar PRAGMA journal_mode=WAL em conexão read-only
+            self._conn.text_factory = lambda b: b.decode("utf-8", errors="replace")
+            # NOTA: NÃƒO executar PRAGMA journal_mode=WAL em conexÃ£o read-only
             # (gera "attempt to write a readonly database").
-            # O banco usa DELETE mode (padrão do jogo) — leituras são seguras.
+            # O banco usa DELETE mode (padrÃ£o do jogo) â€” leituras sÃ£o seguras.
             self._conn.execute("PRAGMA foreign_keys=OFF;")  # sem FKs declarativas
             logger.info("cp.db aberto: %s", self._db_path)
         except sqlite3.OperationalError as exc:
             self._conn = None
-            raise ConnectionError(f"Não foi possível abrir cp.db: {exc}") from exc
+            raise ConnectionError(f"NÃ£o foi possÃ­vel abrir cp.db: {exc}") from exc
 
     def close(self) -> None:
         if self._conn:
@@ -66,16 +67,25 @@ class CpDbReader:
         self.close()
 
     # ------------------------------------------------------------------ #
-    # Utilitário                                                           #
+    # UtilitÃ¡rio                                                           #
     # ------------------------------------------------------------------ #
 
     def _rows(self, sql: str, params: tuple = ()) -> List[Dict[str, Any]]:
-        """Executa query e retorna lista de dicts. Garante conexão aberta."""
+        """Executa query e retorna lista de dicts. Garante conexÃ£o aberta."""
         if self._conn is None:
             self.open()
         cur = self._conn.execute(sql, params)  # type: ignore[union-attr]
         cols = [d[0] for d in cur.description]
-        return [dict(zip(cols, row)) for row in cur.fetchall()]
+        result: List[Dict[str, Any]] = []
+        for row in cur.fetchall():
+            normalized_row: List[Any] = []
+            for value in row:
+                if isinstance(value, bytes):
+                    normalized_row.append(value.decode("utf-8", errors="replace"))
+                else:
+                    normalized_row.append(value)
+            result.append(dict(zip(cols, normalized_row)))
+        return result
 
     def _one(self, sql: str, params: tuple = ()) -> Optional[Dict[str, Any]]:
         rows = self._rows(sql, params)
@@ -97,7 +107,7 @@ class CpDbReader:
         )
 
     def list_careers(self) -> List[Dict[str, Any]]:
-        """Lista todas as carreiras não deletadas."""
+        """Lista todas as carreiras nÃ£o deletadas."""
         return self._rows(
             "SELECT id, cuid, currentDate, tvd, squadronId, state, startDate, ironMan "
             "FROM career WHERE isDeleted=0 ORDER BY id DESC"
@@ -118,7 +128,7 @@ class CpDbReader:
     # ------------------------------------------------------------------ #
 
     def get_pilots(self, squadron_id: int) -> List[Dict[str, Any]]:
-        """Todos os pilotos ativos de um esquadrão (isDeleted=0)."""
+        """Todos os pilotos ativos de um esquadrÃ£o (isDeleted=0)."""
         return self._rows(
             "SELECT * FROM pilot WHERE squadronId=? AND isDeleted=0 ORDER BY id",
             (squadron_id,),
@@ -136,7 +146,7 @@ class CpDbReader:
     # ------------------------------------------------------------------ #
 
     def get_missions(self, career_id: int) -> List[Dict[str, Any]]:
-        """Missões de uma carreira, ordenadas por data (mais antiga primeiro)."""
+        """MissÃµes de uma carreira, ordenadas por data (mais antiga primeiro)."""
         return self._rows(
             "SELECT * FROM mission WHERE careerId=? AND isDeleted=0 ORDER BY date ASC",
             (career_id,),
@@ -159,7 +169,7 @@ class CpDbReader:
         )
 
     def get_pilot_sorties(self, pilot_id: int) -> List[Dict[str, Any]]:
-        """Todas as saídas de um piloto específico."""
+        """Todas as saÃ­das de um piloto especÃ­fico."""
         return self._rows(
             "SELECT * FROM sortie WHERE pilotId=? AND isDeleted=0 ORDER BY date ASC",
             (pilot_id,),
@@ -171,13 +181,15 @@ class CpDbReader:
 
     def get_awards(self, career_id: int) -> List[Dict[str, Any]]:
         return self._rows(
-            "SELECT * FROM award WHERE careerId=? AND isDeleted=0 ORDER BY date",
+            "SELECT id, careerId, type, date, pilotId, pilotName, pilotRank, squadName " +
+            "FROM award WHERE careerId=? AND isDeleted=0 ORDER BY date",
             (career_id,),
         )
 
     def get_pilot_awards(self, pilot_id: int) -> List[Dict[str, Any]]:
         return self._rows(
-            "SELECT * FROM award WHERE pilotId=? AND isDeleted=0 ORDER BY date",
+            "SELECT id, careerId, type, date, pilotId, pilotName, pilotRank, squadName " +
+            "FROM award WHERE pilotId=? AND isDeleted=0 ORDER BY date",
             (pilot_id,),
         )
 
@@ -222,9 +234,10 @@ class CpDbReader:
         )
 
     # ------------------------------------------------------------------ #
-    # Verificação                                                          #
+    # VerificaÃ§Ã£o                                                          #
     # ------------------------------------------------------------------ #
 
     def integrity_ok(self) -> bool:
         row = self._one("PRAGMA integrity_check")
         return bool(row) and list(row.values())[0] == "ok"
+

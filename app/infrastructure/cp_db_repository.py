@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Wing Mate â€” app/infrastructure/cp_db_repository.py
+Wing Mate Ã¢â‚¬â€ app/infrastructure/cp_db_repository.py
 
-ImplementaÃ§Ã£o concreta de CampaignRepositoryPort que lÃª dados do cp.db.
+ImplementaÃƒÂ§ÃƒÂ£o concreta de CampaignRepositoryPort que lÃƒÂª dados do cp.db.
 
 Uso:
     from app.infrastructure.cp_db_repository import CpDbCampaignRepository
@@ -40,7 +40,7 @@ class CpDbCampaignRepository:
 
     def get_campaign(self, name: str) -> Optional[Campaign]:
         """
-        name: pode ser o id numÃ©rico da carreira (como string)
+        name: pode ser o id numÃƒÂ©rico da carreira (como string)
               ou "active" para buscar a carreira ativa.
         """
         try:
@@ -50,7 +50,7 @@ class CpDbCampaignRepository:
 
             career = self._reader.get_active_career(career_id)
             if not career:
-                logger.warning("cp.db: carreira '%s' nÃ£o encontrada", name)
+                logger.warning("cp.db: carreira '%s' nÃƒÂ£o encontrada", name)
                 return None
 
             personage_id = str(career.get("personageId", ""))
@@ -72,8 +72,8 @@ class CpDbCampaignRepository:
 
     def get_missions(self, campaign_name: str, serial: str) -> List[Dict[str, Any]]:
         """
-        Retorna lista de dicts de missÃµes no formato esperado pelos ViewModels.
-        serial: ignorado (no db, o vÃ­nculo Ã© via careerId / personageId).
+        Retorna lista de dicts de missÃƒÂµes no formato esperado pelos ViewModels.
+        serial: ignorado (no db, o vÃƒÂ­nculo ÃƒÂ© via careerId / personageId).
         """
         try:
             career_id = int(campaign_name) if campaign_name.isdigit() else None
@@ -93,7 +93,7 @@ class CpDbCampaignRepository:
             pilot_id = int(pilot["id"])
             sorties = self._reader.get_pilot_sorties(pilot_id)
 
-            # Ãndice de missions por id para enriquecer cada sortie
+            # ÃƒÂndice de missions por id para enriquecer cada sortie
             missions_list = self._reader.get_missions(career_id)
             missions_by_id: Dict[int, Dict[str, Any]] = {
                 int(m["id"]): m for m in missions_list
@@ -103,15 +103,15 @@ class CpDbCampaignRepository:
             self._enrich_latest_mission_with_flight_log(missions_data)
             return missions_data
         except Exception:
-            logger.exception("cp.db: falha ao obter missÃµes da carreira '%s'", campaign_name)
+            logger.exception("cp.db: falha ao obter missÃƒÂµes da carreira '%s'", campaign_name)
             return []
 
     # ------------------------------------------------------------------ #
-    # MÃ©todos extras (nÃ£o exigidos pela porta, mas Ãºteis para MainWindow)  #
+    # MÃƒÂ©todos extras (nÃƒÂ£o exigidos pela porta, mas ÃƒÂºteis para MainWindow)  #
     # ------------------------------------------------------------------ #
 
     def list_career_ids(self) -> List[str]:
-        """Lista IDs de carreiras disponÃ­veis (para popular o combo de campanhas)."""
+        """Lista IDs de carreiras disponÃƒÂ­veis (para popular o combo de campanhas)."""
         try:
             return [str(c["id"]) for c in self._reader.list_careers()]
         except Exception:
@@ -137,7 +137,6 @@ class CpDbCampaignRepository:
             sorties = self._reader.get_pilot_sorties(int(pilot_row["id"])) if pilot_row else []
             missions_list = self._reader.get_missions(career_id)
             missions_by_id = {int(m["id"]): m for m in missions_list}
-            awards = self._reader.get_pilot_awards(int(pilot_row["id"])) if pilot_row else []
             aces_list = self._reader.get_aces(career_id)
 
             squad_name = "N/A"
@@ -207,4 +206,5 @@ class CpDbCampaignRepository:
 
     def __exit__(self, *_: Any) -> None:
         self.close()
+
 

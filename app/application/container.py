@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Wing Mate — app/application/container.py  (versão ampliada)
+Wing Mate â€” app/application/container.py  (versÃ£o ampliada)
 
 Adiciona suporte ao cp.db como fonte de dados alternativa ao PWCG JSON.
-A detecção é automática: se um arquivo cp.db existir no caminho informado
-(ou em sub-pastas conhecidas), o repositório SQLite é preferido.
+A detecÃ§Ã£o Ã© automÃ¡tica: se um arquivo cp.db existir no caminho informado
+(ou em sub-pastas conhecidas), o repositÃ³rio SQLite Ã© preferido.
 """
 from __future__ import annotations
 
@@ -41,7 +41,7 @@ def _find_cp_db(base: Path) -> Optional[Path]:
         candidate = base / rel
         if candidate.exists() and candidate.is_file():
             return candidate
-    # Busca recursiva limitada a 3 níveis
+    # Busca recursiva limitada a 3 nÃ­veis
     for depth in range(1, 4):
         pattern = "/".join(["*"] * depth) + "/cp.db"
         found = list(base.glob(pattern))
@@ -66,10 +66,10 @@ class AppContainer:
         self._content_registry: Optional[ContentModuleRegistry] = None
 
         # SQLite source (lazy)
-        self._cp_db_repo = None  # CpDbCampaignRepository — importado on demand
+        self._cp_db_repo = None  # CpDbCampaignRepository â€” importado on demand
 
     # ------------------------------------------------------------------ #
-    # Configuração de caminho                                              #
+    # ConfiguraÃ§Ã£o de caminho                                              #
     # ------------------------------------------------------------------ #
 
     def set_pwcgfc_path(self, path: str) -> None:
@@ -81,6 +81,7 @@ class AppContainer:
         self._pwcgfc_path = normalized
         self._reset_json_sources()
         self._reset_cp_db()
+        self._cp_db_path = None
 
         # Tenta localizar cp.db automaticamente no novo caminho
         if normalized:
@@ -96,8 +97,8 @@ class AppContainer:
         logger.info("Fonte cp.db configurada: %s", db_path)
 
     def has_cp_db(self) -> bool:
-        """Retorna True se um cp.db válido foi encontrado/configurado."""
-        return self._cp_db_path is not None and self._cp_db_path.exists()
+        """Retorna True se um cp.db vÃ¡lido foi encontrado/configurado."""
+        return self._cp_db_path is not None and self._cp_db_path.exists() and self._cp_db_path.is_file()
 
     # ------------------------------------------------------------------ #
     # Reset helpers                                                        #
@@ -151,21 +152,21 @@ class AppContainer:
 
     def get_cp_db_repository(self):
         """
-        Retorna CpDbCampaignRepository (importado on-demand para não forçar
-        dependência de sqlite3 quando cp.db não está presente).
+        Retorna CpDbCampaignRepository (importado on-demand para nÃ£o forÃ§ar
+        dependÃªncia de sqlite3 quando cp.db nÃ£o estÃ¡ presente).
         """
         if self._cp_db_repo is None:
             if not self.has_cp_db():
-                raise RuntimeError("cp.db não configurado ou não encontrado.")
+                raise RuntimeError("cp.db nÃ£o configurado ou nÃ£o encontrado.")
             from app.infrastructure.cp_db_repository import CpDbCampaignRepository
             self._cp_db_repo = CpDbCampaignRepository(self._cp_db_path)
         return self._cp_db_repo
 
     def list_campaigns(self) -> list[str]:
         """
-        Lista campanhas disponíveis.
-        - Se cp.db disponível: retorna IDs de carreiras.
-        - Caso contrário: usa parser JSON.
+        Lista campanhas disponÃ­veis.
+        - Se cp.db disponÃ­vel: retorna IDs de carreiras.
+        - Caso contrÃ¡rio: usa parser JSON.
         """
         if self.has_cp_db():
             try:
@@ -176,9 +177,9 @@ class AppContainer:
 
     def process_campaign(self, campaign_name: str) -> dict:
         """
-        Ponto único de processamento de campanha.
-        - cp.db disponível → usa CpDbCampaignRepository.process_career()
-        - caso contrário  → usa IL2DataProcessor.process_campaign()
+        Ponto Ãºnico de processamento de campanha.
+        - cp.db disponÃ­vel â†’ usa CpDbCampaignRepository.process_career()
+        - caso contrÃ¡rio  â†’ usa IL2DataProcessor.process_campaign()
         """
         if self.has_cp_db():
             try:
@@ -190,7 +191,7 @@ class AppContainer:
         return self.get_processor().process_campaign(campaign_name)
 
     # ------------------------------------------------------------------ #
-    # Serviços independentes de fonte                                      #
+    # ServiÃ§os independentes de fonte                                      #
     # ------------------------------------------------------------------ #
 
     def get_squadron_enrichment_application_service(self) -> SquadronEnrichmentApplicationService:
@@ -206,3 +207,4 @@ class AppContainer:
             self._content_registry = ContentModuleRegistry(assets_root)
             self._content_registry.load_external_modules()
         return self._content_registry
+
