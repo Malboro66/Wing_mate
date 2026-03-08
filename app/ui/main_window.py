@@ -57,7 +57,7 @@ from app.application.mission_validation_service import Mission, MissionValidatio
 from app.application.personnel_resolution_service import PersonnelResolutionService
 from app.core.data_parser import IL2DataParser
 from app.core.data_processor import IL2DataProcessor
-from utils.notification_bus import notification_bus, notify_error, notify_warning
+from utils.notification_bus import notification_bus, notify_error, notify_info, notify_warning
 from utils.observability import Events, emit_event, record_action_duration, record_cache_stats
 from utils.structured_logger import StructuredLogger
 from utils.settings_manager import settings as settings_manager
@@ -67,6 +67,17 @@ from utils.war_propaganda_tracker import WarPropagandaTracker
 logger = logging.getLogger("IL2CampaignAnalyzer")
 structured_logger = StructuredLogger("IL2CampaignAnalyzer")
 
+
+
+class _CampaignProcessorAdapter:
+    """Adapta AppContainer.process_campaign para a interface esperada pelo thread."""
+
+    def __init__(self, container: AppContainer, campaign_name: str) -> None:
+        self._container = container
+        self._campaign_name = campaign_name
+
+    def process_campaign(self, _name: str) -> dict:
+        return self._container.process_campaign(self._campaign_name)
 
 
 class DataSyncThread(QThread):
@@ -580,22 +591,30 @@ class MainWindow(QMainWindow):
         QApplication.clipboard().setText(self._full_path_text)
         self.statusBar().showMessage(self._t("copy_path_success"), 2500)
 
-    def _select_pwcgfc_folder(self) -> None:
-        folder_path = QFileDialog.getExistingDirectory(self, self._t("folder_dialog_title"))
-        if not folder_path:
-            return
+    def set_campaign_path(self, folder_path: str, *, show_cp_db_notice: bool = True) -> bool:
+        normalized = str(folder_path or "").strip()
+        if not normalized:
+            return False
 
-        self.pwcgfc_path = folder_path
+        path_obj = Path(normalized)
+        if not path_obj.exists() or not path_obj.is_dir():
+            logger.warning("Caminho de campanha invalido/inexistente: %s", normalized)
+            return False
+
+        self.pwcgfc_path = str(path_obj)
         self.container.set_pwcgfc_path(self.pwcgfc_path)
-        self._full_path_text = f"{self._t('path_prefix')} {folder_path}"
+
+        if show_cp_db_notice and self.container.has_cp_db():
+            notify_info("cp.db detectado - usando dados do jogo diretamente.")
+
+        self._full_path_text = f"{self._t('path_prefix')} {self.pwcgfc_path}"
         self.settings.setValue("pwcgfc_path", self.pwcgfc_path)
         self._update_elided_path_label()
 
-        logger.info("Pasta PWCGFC selecionada: %s", folder_path)
+        logger.info("Pasta de campanhas configurada: %s", self.pwcgfc_path)
 
         self._load_campaigns()
 
-        # Propaga caminho para abas que necessitam
         try:
             self.insert_squads_tab.set_pwcgfc_path(self.pwcgfc_path)
         except AttributeError:
@@ -605,12 +624,21 @@ class MainWindow(QMainWindow):
         except AttributeError:
             pass
 
+        return True
+
+    def _select_pwcgfc_folder(self) -> None:
+        folder_path = QFileDialog.getExistingDirectory(self, self._t("folder_dialog_title"))
+        if not folder_path:
+            return
+
+        self.set_campaign_path(folder_path, show_cp_db_notice=True)
+
+
     def _load_campaigns(self) -> None:
         if not self.pwcgfc_path:
             return
 
-        parser = self.container.get_parser()
-        campaigns: List[str] = parser.get_campaigns()
+        campaigns: List[str] = self.container.list_campaigns()
 
         self.campaign_combo.blockSignals(True)
         self.campaign_combo.clear()
@@ -622,6 +650,11 @@ class MainWindow(QMainWindow):
             self.campaign_combo.setCurrentText(saved_campaign)
 
         self.statusBar().showMessage(self._t("campaigns_loaded", count=len(campaigns)), 3000)
+        if self.container.has_cp_db():
+            self.statusBar().showMessage(
+                f"[cp.db] {len(campaigns)} carreira(s) encontrada(s).",
+                3500,
+            )
         logger.info("Carregadas %s campanhas", len(campaigns))
 
     def _on_campaign_changed(self, campaign: str) -> None:
@@ -651,7 +684,7 @@ class MainWindow(QMainWindow):
         self.sync_thread = DataSyncThread(
             self.pwcgfc_path,
             campaign,
-            processor_factory=self.container.create_processor,
+            processor_factory=lambda _path: _CampaignProcessorAdapter(self.container, campaign),
             parent=self,
         )
 
@@ -684,6 +717,11 @@ class MainWindow(QMainWindow):
         country_code = personnel_info.country_code
         display_name = personnel_info.display_name
         earned_ids = set(personnel_info.earned_medal_ids)
+        if self.container.has_cp_db():
+            try:
+                earned_ids = set(self.container.get_cp_db_repository().get_earned_medal_ids(campaign))
+            except Exception:
+                logger.exception("Falha ao carregar medalhas do cp.db")
 
         # Aba Medalhas (carregamento lazy + atualização única de contexto)
         self.medals_tab.set_context(country_code, display_name, earned_ids)
@@ -833,20 +871,9 @@ class MainWindow(QMainWindow):
     def _load_saved_settings(self) -> None:
         saved_path: str = str(self.settings.value("pwcgfc_path", "") or "")
         if saved_path and Path(saved_path).exists():
-            self.pwcgfc_path = saved_path
-            self.container.set_pwcgfc_path(self.pwcgfc_path)
-            self._full_path_text = f"Caminho: {saved_path}"
-            self._update_elided_path_label()
-            self._load_campaigns()
-
-            try:
-                self.insert_squads_tab.set_pwcgfc_path(self.pwcgfc_path)
-            except AttributeError:
-                pass
-            try:
-                self.input_medals_tab.set_pwcgfc_path(self.pwcgfc_path)
-            except AttributeError:
-                pass
+            if not self.set_campaign_path(saved_path, show_cp_db_notice=False):
+                self._full_path_text = ""
+                self._update_elided_path_label()
         else:
             self._full_path_text = ""
             self._update_elided_path_label()

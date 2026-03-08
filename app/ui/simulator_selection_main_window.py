@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from typing import Any
+from pathlib import Path
+from typing import Any, Optional
 
 from PyQt5.QtCore import QSettings, Qt
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QStackedWidget, QStyle, QToolBar, QWidget, QSizePolicy
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QSizePolicy, QStackedWidget, QStyle, QToolBar, QWidget
 
 from app.application.app_config import AppConfig
 from app.ui.era_selection_widget import EraSelectionWidget
@@ -13,11 +14,18 @@ from app.ui.main_window import MainWindow as WingMateMainWindow
 from app.ui.settings_widget import SettingsWidget
 from app.ui.toast_widget import ToastWidget
 from app.ui.ww1_simulator_selection_widget import WW1SimulatorSelectionWidget
-from utils.notification_bus import notification_bus
+from utils.notification_bus import notification_bus, notify_info
 
 
 class MainWindow(QMainWindow):
-    """Janela raiz com QStackedWidget para fluxo de seleção de simulador/era."""
+    """Root window using QStackedWidget for simulator and era navigation."""
+
+    _IL2_VANILLA_STEAM_LIBRARY_REL = Path(
+        "SteamLibrary/steamapps/common/IL-2 Sturmovik Battle of Stalingrad/data/Career"
+    )
+    _IL2_VANILLA_DEFAULT_STEAM_REL = Path(
+        "Program Files (x86)/Steam/steamapps/common/IL-2 Sturmovik Battle of Stalingrad/data/Career"
+    )
 
     def __init__(self) -> None:
         super().__init__()
@@ -49,7 +57,7 @@ class MainWindow(QMainWindow):
         self._wire_events()
         self._apply_language()
         self.refresh_gates()
-        self._go_to(self._idx_era)
+        self._go_to(self._idx_ww1)
 
     def _t(self, key: str, **kwargs: Any) -> str:
         return AppI18n.t(key, self._language_code, **kwargs)
@@ -75,8 +83,7 @@ class MainWindow(QMainWindow):
         self.era_widget.ww2_selected.connect(lambda: self._go_to(self._idx_future))
 
         self.ww1_widget.go_back.connect(self._go_back)
-        self.ww1_widget.open_future_feature.connect(lambda: self._go_to(self._idx_future))
-        self.ww1_widget.open_wing_mate.connect(lambda: self._go_to(self._idx_wing_mate))
+        self.ww1_widget.simulator_selected.connect(self._on_simulator_selected)
 
         self.future_widget.go_back.connect(self._go_back)
         self.settings_widget.go_back.connect(self._go_back)
@@ -92,7 +99,82 @@ class MainWindow(QMainWindow):
         if self._history:
             self.stack.setCurrentIndex(self._history.pop())
         else:
-            self.stack.setCurrentIndex(self._idx_era)
+            self.stack.setCurrentIndex(self._idx_ww1)
+
+    def _on_simulator_selected(self, simulator_id: str) -> None:
+        suggested_path = self._resolve_campaign_path_for_simulator(simulator_id)
+        if suggested_path:
+            self.wing_mate_widget.set_campaign_path(suggested_path, show_cp_db_notice=True)
+        else:
+            notify_info(self._t("sim_select_set_path_hint"))
+        self._go_to(self._idx_wing_mate)
+
+    def _resolve_campaign_path_for_simulator(self, simulator_id: str) -> Optional[str]:
+        if simulator_id == WW1SimulatorSelectionWidget.SIM_IL2_VANILLA:
+            return self._resolve_il2_vanilla_campaign_path()
+
+        if simulator_id == WW1SimulatorSelectionWidget.SIM_IL2_PWCG:
+            return self._resolve_existing_directory(self.config.get_path(AppConfig.KEY_PWCG))
+
+        if simulator_id == WW1SimulatorSelectionWidget.SIM_ROF_VANILLA:
+            return self._resolve_existing_directory(self.config.get_path(AppConfig.KEY_ROF))
+
+        if simulator_id == WW1SimulatorSelectionWidget.SIM_ROF_PWCG:
+            return self._resolve_existing_directory(self.config.get_path(AppConfig.KEY_PWCG))
+
+        return None
+
+    def _resolve_il2_vanilla_campaign_path(self) -> Optional[str]:
+        configured_fc = self._resolve_existing_directory(self.config.get_path(AppConfig.KEY_IL2_FC))
+        if configured_fc:
+            configured_fc_path = Path(configured_fc)
+            if (configured_fc_path / "cp.db").is_file():
+                return str(configured_fc_path)
+
+            career_candidate = configured_fc_path / "data" / "Career"
+            if career_candidate.is_dir():
+                return str(career_candidate)
+
+        for drive_root in self._candidate_drive_roots():
+            for rel_path in (
+                self._IL2_VANILLA_STEAM_LIBRARY_REL,
+                self._IL2_VANILLA_DEFAULT_STEAM_REL,
+            ):
+                candidate = drive_root / rel_path
+                if candidate.is_dir():
+                    return str(candidate)
+
+        return None
+
+    @staticmethod
+    def _resolve_existing_directory(raw_path: str) -> Optional[str]:
+        normalized = str(raw_path or "").strip()
+        if not normalized:
+            return None
+
+        path_obj = Path(normalized)
+        if path_obj.exists() and path_obj.is_dir():
+            return str(path_obj)
+        return None
+
+    @staticmethod
+    def _candidate_drive_roots() -> list[Path]:
+        drive_letters = [Path.home().drive]
+        drive_letters.extend([f"{chr(code)}:" for code in range(ord("A"), ord("Z") + 1)])
+
+        roots: list[Path] = []
+        seen: set[str] = set()
+        for drive in drive_letters:
+            normalized = str(drive or "").strip().upper()
+            if not normalized:
+                continue
+            if not normalized.endswith("\\"):
+                normalized = f"{normalized}\\"
+            if normalized in seen:
+                continue
+            seen.add(normalized)
+            roots.append(Path(normalized))
+        return roots
 
     def refresh_gates(self) -> None:
         self.era_widget.update_gate_status(self.config.ww1_ready(), self.config.ww2_ready())

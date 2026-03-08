@@ -132,6 +132,14 @@ class AppI18n:
             PT_BR: "Configure os caminhos dos simuladores para prosseguir.",
             EN_US: "Configure simulator paths to continue.",
         },
+        "sim_select_simulator": {
+            PT_BR: "Selecione o simulador",
+            EN_US: "Select the simulator",
+        },
+        "sim_select_set_path_hint": {
+            PT_BR: "Selecione a pasta de campanha para iniciar a leitura dos dados.",
+            EN_US: "Select the campaign folder to start reading data.",
+        },
         "era_ww1": {
             PT_BR: "Primeira Guerra Mundial (WW1)",
             EN_US: "First World War (WW1)",

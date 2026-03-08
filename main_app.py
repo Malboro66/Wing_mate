@@ -16,7 +16,7 @@ from PyQt5.QtCore import Qt, QLockFile
 from PyQt5.QtWidgets import QApplication, QMessageBox, QSplashScreen
 from PyQt5.QtGui import QIcon, QPixmap
 
-from app.ui.main_window import MainWindow
+from app.ui.simulator_selection_main_window import MainWindow
 from utils.observability import publish_release_report, record_startup_time
 from utils.structured_logger import StructuredLogger
 
