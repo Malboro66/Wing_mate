@@ -301,7 +301,7 @@ class CpDbMapper:
             "morale_mood": _morale_mood_icon(morale),
             "needs_rest": exhausted,
             "rank_id": _safe_int(pilot.get("rankId")),
-            "country": _safe_str(pilot.get("country"), "BRITAIN"),
+            "country": _normalize_country(pilot.get("country")),
         }
 
     # ---------- sortie rows → mission dicts ---------- #
