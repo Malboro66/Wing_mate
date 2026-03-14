@@ -35,6 +35,10 @@ class AppI18n:
             PT_BR: "Copiar caminho",
             EN_US: "Copy path",
         },
+        "back_button": {
+            PT_BR: "Voltar",
+            EN_US: "Back",
+        },
         "no_path_selected": {
             PT_BR: "Nenhum caminho selecionado",
             EN_US: "No path selected",

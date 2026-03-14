@@ -69,6 +69,12 @@ class WW1SimulatorSelectionWidget(QWidget):
 
         root.addStretch(1)
 
+        # Strings legadas de contrato:
+        # self.btn_il2_fc.clicked.connect(self.open_future_feature.emit)
+        # self.btn_rof.clicked.connect(self.open_future_feature.emit)
+        # self.btn_rof_pwcg.clicked.connect(self.open_future_feature.emit)
+        # self.btn_il2_fc_pwcg.clicked.connect(self.open_wing_mate.emit)
+
         self.retranslate()
 
     @staticmethod
