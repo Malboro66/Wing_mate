@@ -345,6 +345,46 @@ class TestCpDbMapper:
         assert result["total_missions"] == 3
         assert result["total_victories"] == 3   # 3 sorties × 1 killLightFighter
 
+    def test_pilot_morale_high_wins_applies_xp_multiplier(self):
+        """Piloto com 5 vitórias seguidas deve ter morale > 80 e XP × 1.2."""
+        from app.infrastructure.cp_db_mapper import CpDbMapper
+        pilot = {"name": "Ace", "killLightFighter": 5}
+        sorties = [
+            {"status": 0, "killLightFighter": 1, "flightTime": 1800}
+        ] * 5
+        result = CpDbMapper.pilot_to_pilot_data(pilot, sorties, "No.1 Sqn")
+        assert result["morale"] == 100
+        assert result["xp_multiplier"] == 1.2
+        assert result["xp"] == int(round(result["xp_base"] * 1.2))
+        assert result["morale_mood"] == "🔥 Inspirado"
+        assert result["needs_rest"] is False
+
+    def test_pilot_morale_kia_streak_exhausted(self):
+        """Piloto com 2 KIAs de ala deve ficar exausto (morale < 20)."""
+        from app.infrastructure.cp_db_mapper import CpDbMapper
+        pilot = {"name": "Tired", "killLightFighter": 0}
+        sorties = [
+            {"status": 1, "killLightFighter": 0, "flightTime": 600},
+            {"status": 1, "killLightFighter": 0, "flightTime": 600},
+            {"status": 0, "killLightFighter": 0, "flightTime": 600},
+        ]
+        result = CpDbMapper.pilot_to_pilot_data(pilot, sorties, "No.2 Sqn")
+        assert result["morale"] == 0
+        assert result["morale_state"] == "Exausto"
+        assert result["morale_mood"] == "😵 Exausto"
+        assert result["needs_rest"] is True
+        assert result["xp_multiplier"] == 1.0
+
+    def test_pilot_morale_neutral_no_multiplier(self):
+        """Piloto sem eventos de moral relevantes mantém morale 50 e multiplier 1.0."""
+        from app.infrastructure.cp_db_mapper import CpDbMapper
+        pilot = {"name": "Average", "killLightFighter": 1}
+        sorties = [{"status": 0, "killLightFighter": 0, "flightTime": 1200}] * 3
+        result = CpDbMapper.pilot_to_pilot_data(pilot, sorties, "No.3 Sqn")
+        assert result["morale"] == 50
+        assert result["xp_multiplier"] == 1.0
+        assert result["xp"] == result["xp_base"]
+
     def test_sorties_to_missions_date_format(self):
         from app.infrastructure.cp_db_mapper import CpDbMapper
         sorties = [{"missionId": 1, "status": 0, "model": "Strutter",

@@ -231,6 +231,7 @@ class MainWindow(QMainWindow):
     SOURCE_AUTO = AppContainer.SOURCE_AUTO
     SOURCE_PWCG_JSON = AppContainer.SOURCE_PWCG_JSON
     SOURCE_IL2_VANILLA = AppContainer.SOURCE_IL2_VANILLA
+    go_back_requested = pyqtSignal()
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
@@ -384,6 +385,16 @@ class MainWindow(QMainWindow):
         self.action_copy_path.triggered.connect(self._copy_current_path_to_clipboard)
         self.action_copy_path.setEnabled(False)
 
+        self.action_go_back = QAction(
+            self.style().standardIcon(QStyle.SP_ArrowBack),
+            self._t("back_button"),
+            self,
+        )
+        self.action_go_back.setShortcut("Alt+Left")
+        self.action_go_back.triggered.connect(self.go_back_requested.emit)
+
+        tb.addAction(self.action_go_back)
+        tb.addSeparator()
         tb.addAction(self.action_open_folder)
         tb.addAction(self.action_sync)
         tb.addSeparator()
@@ -672,15 +683,31 @@ class MainWindow(QMainWindow):
             return
 
         campaigns: List[str] = self.container.list_campaigns()
+        campaign_labels: Dict[str, str] = {}
+        if self.container.has_cp_db():
+            try:
+                campaign_labels = self.container.get_cp_db_repository().list_career_labels()
+            except Exception:
+                logger.exception("Falha ao obter rótulos de carreira do cp.db")
 
         self.campaign_combo.blockSignals(True)
         self.campaign_combo.clear()
-        self.campaign_combo.addItems(campaigns)
+        if campaign_labels:
+            for campaign_id in campaigns:
+                label = campaign_labels.get(campaign_id, campaign_id)
+                self.campaign_combo.addItem(label, campaign_id)
+        else:
+            self.campaign_combo.addItems(campaigns)
         self.campaign_combo.blockSignals(False)
 
         saved_campaign = str(self.settings.value("ui/last_campaign", "") or "")
-        if saved_campaign and saved_campaign in campaigns:
-            self.campaign_combo.setCurrentText(saved_campaign)
+        if saved_campaign:
+            if campaign_labels:
+                idx = self.campaign_combo.findData(saved_campaign)
+                if idx >= 0:
+                    self.campaign_combo.setCurrentIndex(idx)
+            elif saved_campaign in campaigns:
+                self.campaign_combo.setCurrentText(saved_campaign)
 
         self.statusBar().showMessage(self._t("campaigns_loaded", count=len(campaigns)), 3000)
         if self.container.has_cp_db():
@@ -691,14 +718,32 @@ class MainWindow(QMainWindow):
         logger.info("Carregadas %s campanhas", len(campaigns))
 
     def _on_campaign_changed(self, campaign: str) -> None:
-        c = (campaign or "").strip()
+        c = self._selected_campaign_id() or (campaign or "").strip()
         if c:
             self.settings.setValue("ui/last_campaign", c)
+
+    def _selected_campaign_id(self) -> str:
+        data = self.campaign_combo.currentData()
+        if isinstance(data, str) and data.strip():
+            return data.strip()
+
+        selected = self.campaign_combo.currentText().strip()
+        if not selected:
+            return ""
+
+        if not self.container.has_cp_db():
+            return selected
+
+        try:
+            return self.container.get_cp_db_repository().extract_career_id(selected) or selected
+        except Exception:
+            logger.exception("Falha ao resolver id da carreira selecionada")
+            return selected
 
     # ---------------- Sync ----------------
 
     def _sync_data(self) -> None:
-        campaign: str = self.campaign_combo.currentText().strip()
+        campaign: str = self._selected_campaign_id()
         if not self.pwcgfc_path or not campaign:
             notify_warning(self._t("select_folder_warning"))
             return
@@ -743,19 +788,23 @@ class MainWindow(QMainWindow):
         # Aba Ases
         self.aces_tab.set_aces(self.current_data.get("aces", []) or [])
 
-        campaign: str = self.campaign_combo.currentText().strip()
+        campaign: str = self._selected_campaign_id()
 
-        # PaÃ­s e medalhas do Personnel
-        pilot_name = ((self.current_data.get("pilot", {}) or {}).get("name", "") or "").strip()
-        personnel_info = self.personnel_resolution_service.resolve(campaign, pilot_name)
-        country_code = personnel_info.country_code
-        display_name = personnel_info.display_name
-        earned_ids = set(personnel_info.earned_medal_ids)
+        # País e medalhas
         if self.container.has_cp_db():
+            cpdb_country = ((self.current_data.get("pilot", {}) or {}).get("country", "") or "").strip()
+            country_code, display_name = PersonnelResolutionService._map_country_to_folder_and_label(cpdb_country)
+            earned_ids = set()
             try:
                 earned_ids = set(self.container.get_cp_db_repository().get_earned_medal_ids(campaign))
             except Exception:
                 logger.exception("Falha ao carregar medalhas do cp.db")
+        else:
+            pilot_name = ((self.current_data.get("pilot", {}) or {}).get("name", "") or "").strip()
+            personnel_info = self.personnel_resolution_service.resolve(campaign, pilot_name)
+            country_code = personnel_info.country_code
+            display_name = personnel_info.display_name
+            earned_ids = set(personnel_info.earned_medal_ids)
 
         # Aba Medalhas (carregamento lazy + atualizaÃ§Ã£o Ãºnica de contexto)
         self.medals_tab.set_context(country_code, display_name, earned_ids)
@@ -911,6 +960,3 @@ class MainWindow(QMainWindow):
         else:
             self._full_path_text = ""
             self._update_elided_path_label()
-
-
-

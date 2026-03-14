@@ -114,7 +114,7 @@ class CpDbReader:
     def list_careers(self) -> List[Dict[str, Any]]:
         """Lista todas as carreiras nÃ£o deletadas."""
         return self._rows(
-            "SELECT id, cuid, currentDate, tvd, squadronId, state, startDate, ironMan "
+            "SELECT id, personageId, cuid, currentDate, tvd, squadronId, state, startDate, ironMan "
             "FROM career WHERE isDeleted=0 ORDER BY id DESC"
         )
 
@@ -275,4 +275,3 @@ class CpDbReader:
     def integrity_ok(self) -> bool:
         row = self._one("PRAGMA integrity_check")
         return bool(row) and list(row.values())[0] == "ok"
-
