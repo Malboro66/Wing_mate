@@ -345,6 +345,46 @@ class TestCpDbMapper:
         assert result["total_missions"] == 3
         assert result["total_victories"] == 3   # 3 sorties × 1 killLightFighter
 
+    def test_pilot_morale_high_wins_applies_xp_multiplier(self):
+        """Piloto com 5 vitórias seguidas deve ter morale > 80 e XP × 1.2."""
+        from app.infrastructure.cp_db_mapper import CpDbMapper
+        pilot = {"name": "Ace", "killLightFighter": 5}
+        sorties = [
+            {"status": 0, "killLightFighter": 1, "flightTime": 1800}
+        ] * 5
+        result = CpDbMapper.pilot_to_pilot_data(pilot, sorties, "No.1 Sqn")
+        assert result["morale"] == 100
+        assert result["xp_multiplier"] == 1.2
+        assert result["xp"] == int(round(result["xp_base"] * 1.2))
+        assert result["morale_mood"] == "🔥 Inspirado"
+        assert result["needs_rest"] is False
+
+    def test_pilot_morale_kia_streak_exhausted(self):
+        """Piloto com 2 KIAs de ala deve ficar exausto (morale < 20)."""
+        from app.infrastructure.cp_db_mapper import CpDbMapper
+        pilot = {"name": "Tired", "killLightFighter": 0}
+        sorties = [
+            {"status": 1, "killLightFighter": 0, "flightTime": 600},
+            {"status": 1, "killLightFighter": 0, "flightTime": 600},
+            {"status": 0, "killLightFighter": 0, "flightTime": 600},
+        ]
+        result = CpDbMapper.pilot_to_pilot_data(pilot, sorties, "No.2 Sqn")
+        assert result["morale"] == 0
+        assert result["morale_state"] == "Exausto"
+        assert result["morale_mood"] == "😵 Exausto"
+        assert result["needs_rest"] is True
+        assert result["xp_multiplier"] == 1.0
+
+    def test_pilot_morale_neutral_no_multiplier(self):
+        """Piloto sem eventos de moral relevantes mantém morale 50 e multiplier 1.0."""
+        from app.infrastructure.cp_db_mapper import CpDbMapper
+        pilot = {"name": "Average", "killLightFighter": 1}
+        sorties = [{"status": 0, "killLightFighter": 0, "flightTime": 1200}] * 3
+        result = CpDbMapper.pilot_to_pilot_data(pilot, sorties, "No.3 Sqn")
+        assert result["morale"] == 50
+        assert result["xp_multiplier"] == 1.0
+        assert result["xp"] == result["xp_base"]
+
     def test_sorties_to_missions_date_format(self):
         from app.infrastructure.cp_db_mapper import CpDbMapper
         sorties = [{"missionId": 1, "status": 0, "model": "Strutter",
@@ -417,6 +457,25 @@ class TestCpDbCampaignRepository:
         assert "squadron" in data
         assert data["pilot"]["name"] == "Lt. James Bigglesworth"
         assert len(data["missions"]) == 1
+
+    def test_process_career_enriches_ace_country_by_name(self, test_db):
+        conn = sqlite3.connect(str(test_db))
+        conn.execute(
+            "INSERT INTO ace (careerId, name, deathDate, isDeleted) VALUES (?, ?, ?, ?)",
+            (1, "Lt. James Bigglesworth", "1916-12-31", 0),
+        )
+        conn.commit()
+        conn.close()
+
+        from app.infrastructure.cp_db_repository import CpDbCampaignRepository
+
+        repo = CpDbCampaignRepository(test_db)
+        data = repo.process_career("1")
+
+        assert data.get("aces")
+        ace = data["aces"][0]
+        assert ace["name"] == "Lt. James Bigglesworth"
+        assert ace["country"] == "BRITAIN"
 
     def test_process_career_uses_award_squad_name_fallback(self, test_db):
         conn = sqlite3.connect(str(test_db))
@@ -580,6 +639,44 @@ class TestVanillaMissionReportReader:
         description = data["missions"][-1]["description"]
         assert "[FlightLogs]" in description
         assert "Sopwith Strutter" in description
+
+    def test_repo_enriches_all_missions_with_matching_flightlogs(self, tmp_path, test_db):
+        import shutil
+        import sqlite3
+
+        from app.infrastructure.cp_db_repository import CpDbCampaignRepository
+
+        career_dir = tmp_path / "data" / "Career"
+        logs_dir = tmp_path / "data" / "FlightLogs"
+        career_dir.mkdir(parents=True)
+        logs_dir.mkdir(parents=True)
+
+        db_path = career_dir / "cp.db"
+        shutil.copy(test_db, db_path)
+
+        conn = sqlite3.connect(str(db_path))
+        conn.execute(
+            "INSERT INTO mission (careerId, date, airfield, type) VALUES (?, ?, ?, ?)",
+            (1, "1916-10-18 09:15:00", "St. Omer", "Escort"),
+        )
+        conn.execute(
+            "INSERT INTO sortie (missionId, pilotId, status, model, killLightFighter, flightTime, date) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (2, 1, 0, "Sopwith 1.5 Strutter", 0, 2400, "1916-10-18 09:15:00"),
+        )
+        conn.commit()
+        conn.close()
+
+        (logs_dir / "missionReport(1916-10-17_08-30-00).mlg").write_bytes(b"\x00First Mission Pilot\x00")
+        (logs_dir / "missionReport(1916-10-18_09-15-00).mlg").write_bytes(b"\x00Second Mission Pilot\x00")
+
+        repo = CpDbCampaignRepository(db_path)
+        data = repo.process_career("1")
+
+        assert len(data.get("missions", [])) >= 2
+        descriptions = [m.get("description", "") for m in data["missions"]]
+        assert any("First Mission Pilot" in d for d in descriptions)
+        assert any("Second Mission Pilot" in d for d in descriptions)
 
 
 class TestVanillaSquadronCatalog:
