@@ -14,6 +14,7 @@ Uso:
 from __future__ import annotations
 
 import logging
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -47,8 +48,9 @@ class CpDbCampaignRepository:
         """
         try:
             career_id: Optional[int] = None
-            if name.isdigit():
-                career_id = int(name)
+            selected_id = self.extract_career_id(name)
+            if selected_id.isdigit():
+                career_id = int(selected_id)
 
             career = self._reader.get_active_career(career_id)
             if not career:
@@ -82,7 +84,8 @@ class CpDbCampaignRepository:
         serial: ignorado (no db, o vÃƒÂ­nculo ÃƒÂ© via careerId / personageId).
         """
         try:
-            career_id = int(campaign_name) if campaign_name.isdigit() else None
+            selected_id = self.extract_career_id(campaign_name)
+            career_id = int(selected_id) if selected_id.isdigit() else None
             if career_id is None:
                 career = self._reader.get_active_career()
                 if not career:
@@ -124,13 +127,30 @@ class CpDbCampaignRepository:
             logger.exception("cp.db: falha ao listar carreiras")
             return []
 
+    def list_career_labels(self) -> Dict[str, str]:
+        """Mapeia id de carreira para um rótulo amigável exibível no combo."""
+        labels: Dict[str, str] = {}
+        try:
+            for c in self._reader.list_careers():
+                career_id = str(c.get("id", "") or "").strip()
+                if not career_id:
+                    continue
+                personage_id = str(c.get("personageId", "") or "")
+                pilot = self._reader.get_player_pilot(personage_id) if personage_id else None
+                pilot_name = str((pilot or {}).get("name", "") or "").strip()
+                labels[career_id] = f"{career_id} - {pilot_name}" if pilot_name else career_id
+        except Exception:
+            logger.exception("cp.db: falha ao construir rótulos de carreira")
+        return labels
+
     def process_career(self, career_id_str: str) -> Dict[str, Any]:
         """
         Equivalente ao IL2DataProcessor.process_campaign() mas para o banco.
         Retorna o mesmo dict esperado por MainWindow._on_data_loaded().
         """
         try:
-            career_id = int(career_id_str) if career_id_str.isdigit() else None
+            selected_id = self.extract_career_id(career_id_str)
+            career_id = int(selected_id) if selected_id.isdigit() else None
             career = self._reader.get_active_career(career_id)
             if not career:
                 return {}
@@ -140,6 +160,7 @@ class CpDbCampaignRepository:
             pilot_row = self._reader.get_player_pilot(personage_id)
             squadron_row = self._reader.get_squadron(int(career.get("squadronId", -1)))
             all_pilots = self._reader.get_pilots(int(career.get("squadronId", -1)))
+            pilots_by_id = {int(p.get("id", -1)): p for p in all_pilots}
             sorties = self._reader.get_pilot_sorties(int(pilot_row["id"])) if pilot_row else []
             missions_list = self._reader.get_missions(career_id)
             missions_by_id = {int(m["id"]): m for m in missions_list}
@@ -153,7 +174,19 @@ class CpDbCampaignRepository:
             missions_data = CpDbMapper.sorties_to_missions(sorties, missions_by_id)
             self._enrich_latest_mission_with_flight_log(missions_data)
             squadron_data = CpDbMapper.pilots_to_squadron(all_pilots)
-            aces_data = CpDbMapper.aces_to_aces_data(aces_list)
+            aces_data = CpDbMapper.aces_to_aces_data(aces_list, pilots_by_id)
+            if not aces_data:
+                for pilot_row in all_pilots:
+                    member = CpDbMapper.pilots_to_squadron([pilot_row])[0]
+                    if int(member.get("victories", 0) or 0) < 5:
+                        continue
+                    aces_data.append({
+                        "name": member.get("name", "N/A"),
+                        "rank": member.get("rank", "N/A"),
+                        "country": self._normalize_country(pilot_row.get("country")),
+                        "victories": int(member.get("victories", 0) or 0),
+                        "missions_flown": int(member.get("missions_flown", 0) or 0),
+                    })
             aircraft_prog = CpDbMapper.sorties_to_aircraft_progression(sorties)
 
             return {
@@ -224,7 +257,8 @@ class CpDbCampaignRepository:
     def get_earned_medal_ids(self, career_id_str: str) -> set:
         """Retorna set de IDs de medalhas conquistadas."""
         try:
-            career_id = int(career_id_str) if career_id_str.isdigit() else None
+            selected_id = self.extract_career_id(career_id_str)
+            career_id = int(selected_id) if selected_id.isdigit() else None
             career = self._reader.get_active_career(career_id)
             if not career:
                 return set()
@@ -244,4 +278,28 @@ class CpDbCampaignRepository:
     def __exit__(self, *_: Any) -> None:
         self.close()
 
+    @staticmethod
+    def extract_career_id(raw_value: str) -> str:
+        value = str(raw_value or "").strip()
+        if value.isdigit():
+            return value
 
+        match = re.match(r"^(\d+)", value)
+        if match:
+            return match.group(1)
+        return ""
+
+    @staticmethod
+    def _normalize_country(raw_country: Any) -> str:
+        value = str(raw_country or "").strip().upper()
+        if value in {"GER", "DE", "DEU", "GERMANY"}:
+            return "GERMANY"
+        if value in {"FRA", "FR", "FRANCE"}:
+            return "FRANCE"
+        if value in {"GB", "UK", "GBR", "BRITAIN"}:
+            return "BRITAIN"
+        if value in {"BEL", "BE", "BELGIUM", "BELGIAN"}:
+            return "BELGIAN"
+        if value in {"USA", "US", "UNITED STATES"}:
+            return "USA"
+        return value or "GERMANY"

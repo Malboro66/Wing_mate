@@ -84,6 +84,7 @@ class MainWindow(QMainWindow):
 
         self.ww1_widget.go_back.connect(self._go_back)
         self.ww1_widget.simulator_selected.connect(self._on_simulator_selected)
+        self.wing_mate_widget.go_back_requested.connect(self._go_back)
 
         self.future_widget.go_back.connect(self._go_back)
         self.settings_widget.go_back.connect(self._go_back)
