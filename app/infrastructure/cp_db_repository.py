@@ -14,6 +14,8 @@ Uso:
 from __future__ import annotations
 
 import logging
+import re
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -47,8 +49,9 @@ class CpDbCampaignRepository:
         """
         try:
             career_id: Optional[int] = None
-            if name.isdigit():
-                career_id = int(name)
+            selected_id = self.extract_career_id(name)
+            if selected_id.isdigit():
+                career_id = int(selected_id)
 
             career = self._reader.get_active_career(career_id)
             if not career:
@@ -82,7 +85,8 @@ class CpDbCampaignRepository:
         serial: ignorado (no db, o vÃƒÂ­nculo ÃƒÂ© via careerId / personageId).
         """
         try:
-            career_id = int(campaign_name) if campaign_name.isdigit() else None
+            selected_id = self.extract_career_id(campaign_name)
+            career_id = int(selected_id) if selected_id.isdigit() else None
             if career_id is None:
                 career = self._reader.get_active_career()
                 if not career:
@@ -106,7 +110,7 @@ class CpDbCampaignRepository:
             }
 
             missions_data = CpDbMapper.sorties_to_missions(sorties, missions_by_id)
-            self._enrich_latest_mission_with_flight_log(missions_data)
+            self._enrich_missions_with_flight_logs(missions_data)
             return missions_data
         except Exception:
             logger.exception("cp.db: falha ao obter missÃƒÂµes da carreira '%s'", campaign_name)
@@ -124,13 +128,30 @@ class CpDbCampaignRepository:
             logger.exception("cp.db: falha ao listar carreiras")
             return []
 
+    def list_career_labels(self) -> Dict[str, str]:
+        """Mapeia id de carreira para um rótulo amigável exibível no combo."""
+        labels: Dict[str, str] = {}
+        try:
+            for c in self._reader.list_careers():
+                career_id = str(c.get("id", "") or "").strip()
+                if not career_id:
+                    continue
+                personage_id = str(c.get("personageId", "") or "")
+                pilot = self._reader.get_player_pilot(personage_id) if personage_id else None
+                pilot_name = str((pilot or {}).get("name", "") or "").strip()
+                labels[career_id] = f"{career_id} - {pilot_name}" if pilot_name else career_id
+        except Exception:
+            logger.exception("cp.db: falha ao construir rótulos de carreira")
+        return labels
+
     def process_career(self, career_id_str: str) -> Dict[str, Any]:
         """
         Equivalente ao IL2DataProcessor.process_campaign() mas para o banco.
         Retorna o mesmo dict esperado por MainWindow._on_data_loaded().
         """
         try:
-            career_id = int(career_id_str) if career_id_str.isdigit() else None
+            selected_id = self.extract_career_id(career_id_str)
+            career_id = int(selected_id) if selected_id.isdigit() else None
             career = self._reader.get_active_career(career_id)
             if not career:
                 return {}
@@ -140,6 +161,14 @@ class CpDbCampaignRepository:
             pilot_row = self._reader.get_player_pilot(personage_id)
             squadron_row = self._reader.get_squadron(int(career.get("squadronId", -1)))
             all_pilots = self._reader.get_pilots(int(career.get("squadronId", -1)))
+            pilots_lookup: Dict[Any, Dict[str, Any]] = {}
+            for pilot in all_pilots:
+                pilot_id = int(pilot.get("id", -1))
+                if pilot_id >= 0:
+                    pilots_lookup[pilot_id] = pilot
+                normalized_name = str(pilot.get("name", "") or "").strip().casefold()
+                if normalized_name:
+                    pilots_lookup[normalized_name] = pilot
             sorties = self._reader.get_pilot_sorties(int(pilot_row["id"])) if pilot_row else []
             missions_list = self._reader.get_missions(career_id)
             missions_by_id = {int(m["id"]): m for m in missions_list}
@@ -151,9 +180,21 @@ class CpDbCampaignRepository:
                 pilot_row or {}, sorties, squad_name
             )
             missions_data = CpDbMapper.sorties_to_missions(sorties, missions_by_id)
-            self._enrich_latest_mission_with_flight_log(missions_data)
+            self._enrich_missions_with_flight_logs(missions_data)
             squadron_data = CpDbMapper.pilots_to_squadron(all_pilots)
-            aces_data = CpDbMapper.aces_to_aces_data(aces_list)
+            aces_data = CpDbMapper.aces_to_aces_data(aces_list, pilots_lookup)
+            if not aces_data:
+                for pilot_row in all_pilots:
+                    member = CpDbMapper.pilots_to_squadron([pilot_row])[0]
+                    if int(member.get("victories", 0) or 0) < 5:
+                        continue
+                    aces_data.append({
+                        "name": member.get("name", "N/A"),
+                        "rank": member.get("rank", "N/A"),
+                        "country": self._normalize_country(pilot_row.get("country")),
+                        "victories": int(member.get("victories", 0) or 0),
+                        "missions_flown": int(member.get("missions_flown", 0) or 0),
+                    })
             aircraft_prog = CpDbMapper.sorties_to_aircraft_progression(sorties)
 
             return {
@@ -200,31 +241,87 @@ class CpDbCampaignRepository:
         fallback = str(squadron_row.get("name") or squadron_row.get("airfield") or "").strip()
         return fallback or "N/A"
 
-    def _enrich_latest_mission_with_flight_log(self, missions: List[Dict[str, Any]]) -> None:
+    @staticmethod
+    def _parse_mission_datetime(mission: Dict[str, Any]) -> Optional[datetime]:
+        date_part = str(mission.get("date", "") or "").strip()
+        time_part = str(mission.get("time", "") or "").strip()
+        if not date_part:
+            return None
+
+        value = f"{date_part} {time_part}".strip()
+        formats = (
+            "%d/%m/%Y %H:%M",
+            "%d/%m/%Y",
+            "%Y-%m-%d %H:%M:%S",
+            "%Y-%m-%d %H:%M",
+            "%Y-%m-%d",
+        )
+        for fmt in formats:
+            try:
+                return datetime.strptime(value, fmt)
+            except ValueError:
+                continue
+        return None
+
+    def _enrich_missions_with_flight_logs(self, missions: List[Dict[str, Any]]) -> None:
         if not missions:
             return
 
-        summary = self._mission_report_reader.build_latest_report_summary()
-        if not summary:
+        summaries_by_dt = self._mission_report_reader.build_report_summaries_by_datetime()
+        if not summaries_by_dt:
+            # fallback legado para manter comportamento mínimo
+            summary = self._mission_report_reader.build_latest_report_summary()
+            if not summary:
+                return
+            latest = missions[-1]
+            current_description = str(latest.get("description", "") or "").strip()
+            flight_log_block = "[FlightLogs]\n" + summary
+            if flight_log_block not in current_description:
+                latest["description"] = (
+                    f"{current_description}\n\n{flight_log_block}" if current_description else flight_log_block
+                )
+            latest["haReport"] = summary
             return
 
-        latest = missions[-1]
-        current_description = str(latest.get("description", "") or "").strip()
-        flight_log_block = "[FlightLogs]\n" + summary
+        reports_by_minute: Dict[datetime, str] = {}
+        for report_dt, summary in summaries_by_dt.items():
+            reports_by_minute[report_dt.replace(second=0, microsecond=0)] = summary
 
-        if flight_log_block not in current_description:
-            latest["description"] = (
-                f"{current_description}\n\n{flight_log_block}"
-                if current_description
-                else flight_log_block
-            )
+        matched_any = False
+        for mission in missions:
+            mission_dt = self._parse_mission_datetime(mission)
+            if mission_dt is None:
+                continue
+            summary = reports_by_minute.get(mission_dt.replace(second=0, microsecond=0))
+            if not summary:
+                continue
+            matched_any = True
 
-        latest["haReport"] = summary
+            current_description = str(mission.get("description", "") or "").strip()
+            flight_log_block = "[FlightLogs]\n" + summary
+            if flight_log_block not in current_description:
+                mission["description"] = (
+                    f"{current_description}\n\n{flight_log_block}" if current_description else flight_log_block
+                )
+            mission["haReport"] = summary
+
+        if not matched_any and summaries_by_dt:
+            latest_report_dt = max(summaries_by_dt.keys())
+            summary = summaries_by_dt[latest_report_dt]
+            latest = missions[-1]
+            current_description = str(latest.get("description", "") or "").strip()
+            flight_log_block = "[FlightLogs]\n" + summary
+            if flight_log_block not in current_description:
+                latest["description"] = (
+                    f"{current_description}\n\n{flight_log_block}" if current_description else flight_log_block
+                )
+            latest["haReport"] = summary
 
     def get_earned_medal_ids(self, career_id_str: str) -> set:
         """Retorna set de IDs de medalhas conquistadas."""
         try:
-            career_id = int(career_id_str) if career_id_str.isdigit() else None
+            selected_id = self.extract_career_id(career_id_str)
+            career_id = int(selected_id) if selected_id.isdigit() else None
             career = self._reader.get_active_career(career_id)
             if not career:
                 return set()
@@ -244,4 +341,28 @@ class CpDbCampaignRepository:
     def __exit__(self, *_: Any) -> None:
         self.close()
 
+    @staticmethod
+    def extract_career_id(raw_value: str) -> str:
+        value = str(raw_value or "").strip()
+        if value.isdigit():
+            return value
 
+        match = re.match(r"^(\d+)", value)
+        if match:
+            return match.group(1)
+        return ""
+
+    @staticmethod
+    def _normalize_country(raw_country: Any) -> str:
+        value = str(raw_country or "").strip().upper()
+        if value in {"GER", "DE", "DEU", "GERMANY"}:
+            return "GERMANY"
+        if value in {"FRA", "FR", "FRANCE"}:
+            return "FRANCE"
+        if value in {"GB", "UK", "GBR", "BRITAIN"}:
+            return "BRITAIN"
+        if value in {"BEL", "BE", "BELGIUM", "BELGIAN"}:
+            return "BELGIAN"
+        if value in {"USA", "US", "UNITED STATES"}:
+            return "USA"
+        return value or "GERMANY"

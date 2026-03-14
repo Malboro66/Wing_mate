@@ -35,6 +35,10 @@ class AppI18n:
             PT_BR: "Copiar caminho",
             EN_US: "Copy path",
         },
+        "back_button": {
+            PT_BR: "Voltar",
+            EN_US: "Back",
+        },
         "no_path_selected": {
             PT_BR: "Nenhum caminho selecionado",
             EN_US: "No path selected",
@@ -183,6 +187,14 @@ class AppI18n:
         "path_pwcg": {
             PT_BR: "PWCG:",
             EN_US: "PWCG:",
+        },
+        "path_pwcg_il2": {
+            PT_BR: "IL-2 (PWCG):",
+            EN_US: "IL-2 (PWCG):",
+        },
+        "path_pwcg_rof": {
+            PT_BR: "RoF (PWCG):",
+            EN_US: "RoF (PWCG):",
         },
         "browse": {
             PT_BR: "Procurar",

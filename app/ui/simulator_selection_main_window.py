@@ -84,6 +84,7 @@ class MainWindow(QMainWindow):
 
         self.ww1_widget.go_back.connect(self._go_back)
         self.ww1_widget.simulator_selected.connect(self._on_simulator_selected)
+        self.wing_mate_widget.go_back_requested.connect(self._go_back)
 
         self.future_widget.go_back.connect(self._go_back)
         self.settings_widget.go_back.connect(self._go_back)
@@ -127,13 +128,13 @@ class MainWindow(QMainWindow):
             return self._resolve_il2_vanilla_campaign_path()
 
         if simulator_id == WW1SimulatorSelectionWidget.SIM_IL2_PWCG:
-            return self._resolve_pwcg_campaign_path(self.config.get_path(AppConfig.KEY_PWCG))
+            return self._resolve_pwcg_campaign_path(self.config.get_pwcg_path("il2"))
 
         if simulator_id == WW1SimulatorSelectionWidget.SIM_ROF_VANILLA:
             return self._resolve_pwcg_campaign_path(self.config.get_path(AppConfig.KEY_ROF))
 
         if simulator_id == WW1SimulatorSelectionWidget.SIM_ROF_PWCG:
-            return self._resolve_pwcg_campaign_path(self.config.get_path(AppConfig.KEY_PWCG))
+            return self._resolve_pwcg_campaign_path(self.config.get_pwcg_path("rof"))
 
         return None
 
