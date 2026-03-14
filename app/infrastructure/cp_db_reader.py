@@ -101,22 +101,41 @@ class CpDbReader:
     # ------------------------------------------------------------------ #
 
     def get_active_career(self, career_id: Optional[int] = None) -> Optional[Dict[str, Any]]:
-        """Retorna carreira ativa (state=1) ou a carreira pelo id."""
+        """Retorna carreira ativa (state=1) ou a carreira pelo id.
+
+        Em versões mais antigas do BoS, state pode não marcar ativo como 1.
+        Nesse caso, usa fallback para a carreira mais recente não deletada.
+        """
         if career_id is not None:
             return self._one(
                 "SELECT * FROM career WHERE id=? AND isDeleted=0 LIMIT 1",
                 (career_id,),
             )
-        return self._one(
+        active = self._one(
             "SELECT * FROM career WHERE isDeleted=0 AND state=1 ORDER BY id DESC LIMIT 1"
+        )
+        if active:
+            return active
+        return self._one(
+            "SELECT * FROM career WHERE isDeleted=0 ORDER BY id DESC LIMIT 1"
         )
 
     def list_careers(self) -> List[Dict[str, Any]]:
-        """Lista todas as carreiras nÃ£o deletadas."""
-        return self._rows(
-            "SELECT id, personageId, cuid, currentDate, tvd, squadronId, state, startDate, ironMan "
-            "FROM career WHERE isDeleted=0 ORDER BY id DESC"
-        )
+        """Lista todas as carreiras não deletadas com compatibilidade ampla de schema."""
+        try:
+            return self._rows(
+                "SELECT * FROM career WHERE isDeleted=0 ORDER BY id DESC"
+            )
+        except Exception:
+            logger.warning("cp.db: SELECT * em career falhou; usando fallback mínimo")
+
+        try:
+            return self._rows(
+                "SELECT id FROM career WHERE isDeleted=0 ORDER BY id DESC"
+            )
+        except Exception:
+            logger.exception("cp.db: falha total ao listar carreiras")
+            return []
 
     # ------------------------------------------------------------------ #
     # personage                                                            #

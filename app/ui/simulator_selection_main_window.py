@@ -128,13 +128,13 @@ class MainWindow(QMainWindow):
             return self._resolve_il2_vanilla_campaign_path()
 
         if simulator_id == WW1SimulatorSelectionWidget.SIM_IL2_PWCG:
-            return self._resolve_pwcg_campaign_path(self.config.get_path(AppConfig.KEY_PWCG))
+            return self._resolve_pwcg_campaign_path(self.config.get_pwcg_path("il2"))
 
         if simulator_id == WW1SimulatorSelectionWidget.SIM_ROF_VANILLA:
             return self._resolve_pwcg_campaign_path(self.config.get_path(AppConfig.KEY_ROF))
 
         if simulator_id == WW1SimulatorSelectionWidget.SIM_ROF_PWCG:
-            return self._resolve_pwcg_campaign_path(self.config.get_path(AppConfig.KEY_PWCG))
+            return self._resolve_pwcg_campaign_path(self.config.get_pwcg_path("rof"))
 
         return None
 

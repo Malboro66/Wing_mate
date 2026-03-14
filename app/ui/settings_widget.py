@@ -33,7 +33,16 @@ class SettingsWidget(QWidget):
 
         root.addLayout(self._build_path_row(AppConfig.KEY_IL2_FC, "path_il2_fc"))
         root.addLayout(self._build_path_row(AppConfig.KEY_ROF, "path_rof"))
-        root.addLayout(self._build_path_row(AppConfig.KEY_PWCG, "path_pwcg"))
+        root.addLayout(self._build_path_row(AppConfig.KEY_PWCG_IL2, "path_pwcg_il2"))
+        root.addLayout(self._build_path_row(AppConfig.KEY_PWCG_ROF, "path_pwcg_rof"))
+
+        # compatibilidade com chave legada: mantém editável sem priorizar na UI
+        legacy = self._config.get_path(AppConfig.KEY_PWCG)
+        if legacy:
+            if not self._config.get_path(AppConfig.KEY_PWCG_IL2):
+                self._config.set_path(AppConfig.KEY_PWCG_IL2, legacy)
+            if not self._config.get_path(AppConfig.KEY_PWCG_ROF):
+                self._config.set_path(AppConfig.KEY_PWCG_ROF, legacy)
 
         self.btn_save = QPushButton(self._t("save_settings"))
         self.btn_save.clicked.connect(self.save)

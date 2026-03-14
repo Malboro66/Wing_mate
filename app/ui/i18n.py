@@ -188,6 +188,14 @@ class AppI18n:
             PT_BR: "PWCG:",
             EN_US: "PWCG:",
         },
+        "path_pwcg_il2": {
+            PT_BR: "IL-2 (PWCG):",
+            EN_US: "IL-2 (PWCG):",
+        },
+        "path_pwcg_rof": {
+            PT_BR: "RoF (PWCG):",
+            EN_US: "RoF (PWCG):",
+        },
         "browse": {
             PT_BR: "Procurar",
             EN_US: "Browse",

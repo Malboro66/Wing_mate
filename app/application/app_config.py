@@ -18,6 +18,8 @@ class AppConfig:
     KEY_IL2_FC = "paths/il2_fc"
     KEY_ROF = "paths/rof"
     KEY_PWCG = "paths/pwcg"
+    KEY_PWCG_IL2 = "paths/pwcg_il2"
+    KEY_PWCG_ROF = "paths/pwcg_rof"
 
     REQUIRED_WW1 = (KEY_IL2_FC, KEY_ROF)
     REQUIRED_WW2 = tuple()
@@ -42,6 +44,15 @@ class AppConfig:
 
     def path_status(self, key: str) -> ValidationResult:
         return self.validate_path(self.get_path(key))
+
+    def get_pwcg_path(self, simulator: str) -> str:
+        """Retorna o caminho PWCG por simulador com fallback para chave legada."""
+        sim = str(simulator or "").strip().lower()
+        if sim == "il2":
+            return self.get_path(self.KEY_PWCG_IL2) or self.get_path(self.KEY_PWCG)
+        if sim == "rof":
+            return self.get_path(self.KEY_PWCG_ROF) or self.get_path(self.KEY_PWCG)
+        return self.get_path(self.KEY_PWCG)
 
     def ww1_ready(self) -> bool:
         return all(self.path_status(k).is_valid for k in self.REQUIRED_WW1)

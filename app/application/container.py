@@ -28,25 +28,34 @@ logger = logging.getLogger("IL2CampaignAnalyzer")
 # Caminhos relativos onde o jogo costuma colocar o cp.db
 _CP_DB_CANDIDATES = (
     "cp.db",
-    "data/cp.db",
+    "Career/cp.db",
     "career/cp.db",
+    "data/Career/cp.db",
+    "data/career/cp.db",
+    "data/cp.db",
     "il2/cp.db",
     "Flying Circus/cp.db",
 )
 
 
 def _find_cp_db(base: Path) -> Optional[Path]:
-    """Busca cp.db em locais candidatos a partir de base."""
+    """Busca cp.db em locais candidatos a partir de base.
+
+    Suporta tanto caminho raiz do jogo quanto pasta data/Career, com variações
+    de capitalização do nome do arquivo em sistemas case-sensitive.
+    """
     for rel in _CP_DB_CANDIDATES:
         candidate = base / rel
         if candidate.exists() and candidate.is_file():
             return candidate
-    # Busca recursiva limitada a 3 nÃ­veis
-    for depth in range(1, 4):
-        pattern = "/".join(["*"] * depth) + "/cp.db"
-        found = list(base.glob(pattern))
-        if found:
-            return found[0]
+
+    # Busca recursiva limitada a 3 níveis (case-insensitive por variantes).
+    for name_variant in ("cp.db", "Cp.db", "CP.db", "CP.DB"):
+        for depth in range(1, 4):
+            pattern = "/".join(["*"] * depth) + f"/{name_variant}"
+            found = list(base.glob(pattern))
+            if found:
+                return found[0]
     return None
 
 
@@ -237,4 +246,3 @@ class AppContainer:
             self._content_registry = ContentModuleRegistry(assets_root)
             self._content_registry.load_external_modules()
         return self._content_registry
-

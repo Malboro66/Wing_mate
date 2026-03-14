@@ -260,6 +260,42 @@ class TestCpDbReader:
         assert career["id"] == 1
         assert career["tvd"] == 28
 
+    def test_active_career_fallback_when_state_1_missing(self, test_db):
+        conn = sqlite3.connect(str(test_db))
+        conn.execute("UPDATE career SET state=0 WHERE id=1")
+        conn.commit()
+        conn.close()
+
+        from app.infrastructure.cp_db_reader import CpDbReader
+        with CpDbReader(test_db) as reader:
+            career = reader.get_active_career()
+
+        assert career is not None
+        assert career["id"] == 1
+
+    def test_list_careers_works_with_minimal_legacy_schema(self, tmp_path):
+        legacy_db = tmp_path / "legacy.db"
+        conn = sqlite3.connect(str(legacy_db))
+        conn.executescript(
+            """
+            CREATE TABLE career (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                state INTEGER NOT NULL DEFAULT 0,
+                isDeleted INTEGER NOT NULL DEFAULT 0
+            );
+            INSERT INTO career (state, isDeleted) VALUES (0, 0);
+            """
+        )
+        conn.commit()
+        conn.close()
+
+        from app.infrastructure.cp_db_reader import CpDbReader
+        with CpDbReader(legacy_db) as reader:
+            careers = reader.list_careers()
+
+        assert careers
+        assert int(careers[0]["id"]) == 1
+
     def test_personage(self, test_db):
         from app.infrastructure.cp_db_reader import CpDbReader
         with CpDbReader(test_db) as reader:
@@ -583,6 +619,21 @@ class TestAppContainerCpDb:
         container = AppContainer()
         container.set_source_mode(AppContainer.SOURCE_IL2_VANILLA)
         container.set_pwcgfc_path(str(simulator_dir))
+
+        assert container.has_cp_db()
+
+    def test_auto_detection_from_game_root_data_career(self, tmp_path, test_db):
+        import shutil
+        from app.application.container import AppContainer
+
+        game_root = tmp_path / "IL2_root"
+        career_dir = game_root / "data" / "Career"
+        career_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy(test_db, career_dir / "cp.db")
+
+        container = AppContainer()
+        container.set_source_mode(AppContainer.SOURCE_IL2_VANILLA)
+        container.set_pwcgfc_path(str(game_root))
 
         assert container.has_cp_db()
 
