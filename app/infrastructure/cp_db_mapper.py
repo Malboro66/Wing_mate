@@ -187,6 +187,31 @@ def _sum_plane_kills(row: Dict[str, Any]) -> int:
     return sum(_safe_int(row.get(col)) for col in _KILL_PLANE_COLS)
 
 
+def _compute_morale_from_sorties(sorties: List[Dict[str, Any]]) -> int:
+    """Deriva a moral do piloto a partir das últimas 5 sorties."""
+    recent = sorties[-5:] if len(sorties) > 5 else sorties
+    morale = 50
+    for sortie in recent:
+        status = _safe_int(sortie.get("status"))
+        kills = _sum_plane_kills(sortie)
+        if status == 1:
+            morale -= 25
+        elif status == 0 and kills > 0:
+            morale += 10
+    return max(0, min(100, morale))
+
+
+def _morale_mood_icon(morale: int) -> str:
+    """Retorna ícone de humor idêntico ao de IL2DataProcessor.morale_mood_icon()."""
+    if morale < 20:
+        return "😵 Exausto"
+    if morale < 50:
+        return "😟 Abalado"
+    if morale <= 80:
+        return "😐 Estável"
+    return "🔥 Inspirado"
+
+
 # ------------------------------------------------------------------ #
 # Mappers públicos                                                     #
 # ------------------------------------------------------------------ #
@@ -234,21 +259,32 @@ class CpDbMapper:
 
     @staticmethod
     def pilot_to_pilot_data(
-        pilot: Dict[str, Any],
-        sorties: List[Dict[str, Any]],
+        pilot: dict,
+        sorties: list,
         squad_name: str = "N/A",
-    ) -> Dict[str, Any]:
+    ) -> dict:
         """
         Produz o dict "pilot" consumido por ProfileTab / MainWindow._update_profile_from_data().
+
+        Regras de negócio alinhadas com IL2DataProcessor.process_pilot_data():
+          - XP base   = (missões×100) + (vitórias×500) + (sobrevivências×200)
+          - XP final  = round(xp_base × (1.2 se morale > 80 senão 1.0))
+          - Moral     = derivada das últimas 5 sorties via _compute_morale_from_sorties()
+          - Exausto   = morale < 20
         """
         total_victories = _sum_plane_kills(pilot)
         total_missions = len(sorties)
         survival_count = sum(
-            1 for s in sorties if _safe_int(s.get("status")) == 0
+            1 for sortie in sorties if _safe_int(sortie.get("status")) == 0
         )
-        flight_time_s = sum(_safe_int(s.get("flightTime")) for s in sorties)
+        flight_time_s = sum(_safe_int(sortie.get("flightTime")) for sortie in sorties)
 
         xp_base = (total_missions * 100) + (total_victories * 500) + (survival_count * 200)
+
+        morale = _compute_morale_from_sorties(sorties)
+        xp_multiplier = 1.2 if morale > 80 else 1.0
+        xp = int(round(xp_base * xp_multiplier))
+        exhausted = morale < 20
 
         return {
             "name": _safe_str(pilot.get("name")),
@@ -257,13 +293,13 @@ class CpDbMapper:
             "total_victories": total_victories,
             "survival_count": survival_count,
             "flight_time_minutes": flight_time_s // 60,
-            "xp": xp_base,
+            "xp": xp,
             "xp_base": xp_base,
-            "xp_multiplier": 1.0,
-            "morale": 50,
-            "morale_state": "Ativo",
-            "morale_mood": "😐 Estável",
-            "needs_rest": False,
+            "xp_multiplier": xp_multiplier,
+            "morale": morale,
+            "morale_state": "Exausto" if exhausted else "Ativo",
+            "morale_mood": _morale_mood_icon(morale),
+            "needs_rest": exhausted,
             "rank_id": _safe_int(pilot.get("rankId")),
             "country": _normalize_country(pilot.get("country")),
         }
