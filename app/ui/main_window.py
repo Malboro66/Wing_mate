@@ -790,20 +790,21 @@ class MainWindow(QMainWindow):
 
         campaign: str = self._selected_campaign_id()
 
-        # PaÃ­s e medalhas do Personnel
-        pilot_name = ((self.current_data.get("pilot", {}) or {}).get("name", "") or "").strip()
-        personnel_info = self.personnel_resolution_service.resolve(campaign, pilot_name)
-        country_code = personnel_info.country_code
-        display_name = personnel_info.display_name
-        earned_ids = set(personnel_info.earned_medal_ids)
+        # País e medalhas
         if self.container.has_cp_db():
             cpdb_country = ((self.current_data.get("pilot", {}) or {}).get("country", "") or "").strip()
             country_code, display_name = PersonnelResolutionService._map_country_to_folder_and_label(cpdb_country)
-        if self.container.has_cp_db():
+            earned_ids = set()
             try:
                 earned_ids = set(self.container.get_cp_db_repository().get_earned_medal_ids(campaign))
             except Exception:
                 logger.exception("Falha ao carregar medalhas do cp.db")
+        else:
+            pilot_name = ((self.current_data.get("pilot", {}) or {}).get("name", "") or "").strip()
+            personnel_info = self.personnel_resolution_service.resolve(campaign, pilot_name)
+            country_code = personnel_info.country_code
+            display_name = personnel_info.display_name
+            earned_ids = set(personnel_info.earned_medal_ids)
 
         # Aba Medalhas (carregamento lazy + atualizaÃ§Ã£o Ãºnica de contexto)
         self.medals_tab.set_context(country_code, display_name, earned_ids)
