@@ -54,7 +54,15 @@ def _fmt_date(raw: Any) -> str:
     if raw is None:
         return "N/A"
     s = str(raw).strip()
-    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"):
+    for fmt in (
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%d",
+        "%Y.%m.%d %H:%M:%S",
+        "%Y.%m.%d",
+        "%d.%m.%Y %H:%M:%S",
+        "%d.%m.%Y",
+    ):
         try:
             return datetime.strptime(s, fmt).strftime("%d/%m/%Y")
         except ValueError:
@@ -67,12 +75,52 @@ def _fmt_time(raw: Any) -> str:
     if raw is None:
         return ""
     s = str(raw).strip()
-    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S", "%H:%M:%S", "%H:%M"):
+    for fmt in (
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y.%m.%d %H:%M:%S",
+        "%d.%m.%Y %H:%M:%S",
+        "%H:%M:%S",
+        "%H:%M",
+    ):
         try:
             return datetime.strptime(s, fmt).strftime("%H:%M")
         except ValueError:
             continue
     return ""
+
+
+def _normalize_country(raw_country: Any) -> str:
+    value = str(raw_country or "").strip().upper()
+    if value in {"GER", "DE", "DEU", "GERMANY"}:
+        return "GERMANY"
+    if value in {"FRA", "FR", "FRANCE"}:
+        return "FRANCE"
+    if value in {"GB", "UK", "GBR", "BRITAIN"}:
+        return "BRITAIN"
+    if value in {"BEL", "BE", "BELGIUM", "BELGIAN"}:
+        return "BELGIAN"
+    if value in {"USA", "US", "UNITED STATES"}:
+        return "USA"
+    if value:
+        return value
+    return "GERMANY"
+
+
+def _clean_aircraft_name(raw_value: Any) -> str:
+    text = str(raw_value or "").strip().strip('"')
+    if not text:
+        return "N/A"
+
+    normalized = text.replace("\\", "/")
+    if "/" in normalized:
+        normalized = normalized.rsplit("/", 1)[-1]
+
+    if normalized.lower().endswith(".txt"):
+        normalized = normalized[:-4]
+
+    normalized = normalized.replace("_", " ").replace("-", " ").strip()
+    return normalized or "N/A"
 
 
 # ------------------------------------------------------------------ #
@@ -217,7 +265,7 @@ class CpDbMapper:
             "morale_mood": "😐 Estável",
             "needs_rest": False,
             "rank_id": _safe_int(pilot.get("rankId")),
-            "country": _safe_str(pilot.get("country"), "BRITAIN"),
+            "country": _normalize_country(pilot.get("country")),
         }
 
     # ---------- sortie rows → mission dicts ---------- #
@@ -236,7 +284,13 @@ class CpDbMapper:
             mission_row = missions_by_id.get(mission_id, {})
 
             date_raw = s.get("date") or mission_row.get("date")
-            aircraft = _safe_str(s.get("model") or s.get("name"), "N/A")
+            aircraft = _clean_aircraft_name(
+                s.get("model")
+                or s.get("name")
+                or mission_row.get("plane")
+                or mission_row.get("playerPlane")
+                or mission_row.get("aircraft")
+            )
             victories = _sum_plane_kills(s)
             status_code = _safe_int(s.get("status"))
             status_str = _sortie_status_str(status_code)
@@ -254,8 +308,16 @@ class CpDbMapper:
                 badge = "Veterano"
 
             airfield = _safe_str(mission_row.get("airfield"), "N/A")
+            duty = _safe_str(
+                mission_row.get("type")
+                or mission_row.get("task")
+                or mission_row.get("name")
+                or "Missão",
+                "Missão",
+            )
             description = (
-                f"Missão em {_fmt_date(date_raw)} — {aircraft}. "
+                f"Missão em {_fmt_date(date_raw)} {_fmt_time(date_raw)} — {aircraft}. "
+                f"Tipo: {duty}. "
                 f"Status: {status_str}. "
                 f"Abates aéreos: {victories}. "
                 f"Aeródromo: {airfield}."
@@ -266,7 +328,7 @@ class CpDbMapper:
                 "time": _fmt_time(date_raw),
                 "aircraft": aircraft,
                 "aircraft_badge": badge,
-                "duty": _safe_str(mission_row.get("type"), "N/A"),
+                "duty": duty,
                 "locality": airfield,
                 "airfield": airfield,
                 "pilots": [],
@@ -333,14 +395,16 @@ class CpDbMapper:
         out: List[Dict[str, Any]] = []
         pb = pilots_by_id or {}
         for ace in aces:
-            pilot = pb.get(_safe_int(ace.get("id")), {})
-            victories = _sum_plane_kills(pilot) if pilot else 0
+            pilot = pb.get(_safe_int(ace.get("pilotId")), {}) if pb else {}
+            victories = _safe_int(ace.get("victories"), -1)
+            if victories < 0:
+                victories = _sum_plane_kills(pilot) if pilot else 0
             out.append({
                 "name": _safe_str(ace.get("name")),
-                "rank": _safe_str(pilot.get("rank"), "N/A") if pilot else "N/A",
-                "country": _safe_str(pilot.get("country"), ""),
+                "rank": _safe_str(ace.get("rank") or pilot.get("rank"), "N/A"),
+                "country": _normalize_country(ace.get("country") or pilot.get("country")),
                 "victories": victories,
-                "missions_flown": _safe_int(pilot.get("sortiesNum"), 0) if pilot else 0,
+                "missions_flown": _safe_int(ace.get("sortiesNum") or pilot.get("sortiesNum"), 0),
             })
         out.sort(key=lambda x: x["victories"], reverse=True)
         return out
