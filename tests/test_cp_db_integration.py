@@ -9,6 +9,7 @@ Utilizam banco em memória (`:memory:`) para não depender do arquivo real.
 from __future__ import annotations
 
 import sqlite3
+import struct
 import tempfile
 from pathlib import Path
 from typing import Any, Dict
@@ -190,6 +191,50 @@ def _create_test_db(path: Path) -> None:
     conn.close()
 
 
+def _create_fake_scg_gtp(path: Path, squadron_names: Dict[int, str]) -> None:
+    """Cria um Scg.gtp mínimo com uma entrada de squadrons-codes.cfg."""
+    lines = ["// test catalog", ""]
+    for squad_id, squad_name in squadron_names.items():
+        lines.extend(
+            [
+                f"[Squadron={int(squad_id)}]",
+                '\tname="' + str(squad_name) + '"',
+                "[end]",
+                "",
+            ]
+        )
+    payload = ("\r\n".join(lines) + "\r\n").encode("utf-8")
+    blob = b"STRMFILE" + (b"\x00" * 24) + payload
+
+    entry_path = "/scg/99/squadrons-codes.cfg"
+    path_bytes = entry_path.encode("utf-8")
+
+    index_len = 8 + len(path_bytes) + 1 + 4 + 4 + 16
+    data_offset = max(4096, index_len + 256)
+
+    index = b"".join(
+        [
+            struct.pack("<I", len(path_bytes) + 1),
+            struct.pack("<I", 0),
+            path_bytes,
+            b"\x00",
+            b"FILE",
+            struct.pack("<I", 1),
+            struct.pack("<I", data_offset),
+            struct.pack("<I", len(blob)),
+            struct.pack("<I", 0),
+            struct.pack("<I", len(payload)),
+        ]
+    )
+
+    raw = bytearray()
+    raw.extend(index)
+    if len(raw) < data_offset:
+        raw.extend(b"\x00" * (data_offset - len(raw)))
+    raw.extend(blob)
+    path.write_bytes(bytes(raw))
+
+
 @pytest.fixture
 def test_db(tmp_path: Path) -> Path:
     db_path = tmp_path / "cp.db"
@@ -242,6 +287,24 @@ class TestCpDbReader:
             awards = reader.get_awards(1)
         assert len(awards) == 1
         assert awards[0]["type"] == 2
+
+    def test_award_binary_field_does_not_break_fetch(self, test_db):
+        conn = sqlite3.connect(str(test_db))
+        conn.execute(
+            "UPDATE award SET PersonageAwardId=? WHERE id=1",
+            (sqlite3.Binary(b"\x80\xff\x00AB"),),
+        )
+        conn.commit()
+        conn.close()
+
+        from app.infrastructure.cp_db_reader import CpDbReader
+
+        with CpDbReader(test_db) as reader:
+            rows = reader._rows("SELECT * FROM award WHERE id=1")
+
+        assert len(rows) == 1
+        assert "PersonageAwardId" in rows[0]
+        assert isinstance(rows[0]["PersonageAwardId"], str)
 
     def test_soft_delete_filtered(self, test_db):
         """Registros deletados (isDeleted=1) não devem aparecer."""
@@ -355,6 +418,20 @@ class TestCpDbCampaignRepository:
         assert data["pilot"]["name"] == "Lt. James Bigglesworth"
         assert len(data["missions"]) == 1
 
+    def test_process_career_uses_award_squad_name_fallback(self, test_db):
+        conn = sqlite3.connect(str(test_db))
+        conn.execute(
+            "UPDATE award SET squadName='No.45 Squadron', SquadId=1, squadConfigId=1 WHERE id=1"
+        )
+        conn.commit()
+        conn.close()
+
+        from app.infrastructure.cp_db_repository import CpDbCampaignRepository
+
+        repo = CpDbCampaignRepository(test_db)
+        data = repo.process_career("1")
+        assert data["pilot"]["squadron"] == "No.45 Squadron"
+
     def test_list_career_ids(self, test_db):
         from app.infrastructure.cp_db_repository import CpDbCampaignRepository
         repo = CpDbCampaignRepository(test_db)
@@ -411,11 +488,43 @@ class TestAppContainerCpDb:
         from app.application.container import AppContainer
 
         # Copia o db para simular presença na pasta do simulador
-        dest = tmp_path / "cp.db"
+        simulator_dir = tmp_path / "simulator_root"
+        simulator_dir.mkdir(parents=True, exist_ok=True)
+        dest = simulator_dir / "cp.db"
         shutil.copy(test_db, dest)
 
         container = AppContainer()
-        container.set_pwcgfc_path(str(tmp_path))
+        container.set_pwcgfc_path(str(simulator_dir))
+        assert container.has_cp_db()
+
+    def test_source_mode_pwcg_json_disables_auto_cp_db_detection(self, tmp_path, test_db):
+        import shutil
+        from app.application.container import AppContainer
+
+        simulator_dir = tmp_path / "simulator_root"
+        simulator_dir.mkdir(parents=True, exist_ok=True)
+        dest = simulator_dir / "cp.db"
+        shutil.copy(test_db, dest)
+
+        container = AppContainer()
+        container.set_source_mode(AppContainer.SOURCE_PWCG_JSON)
+        container.set_pwcgfc_path(str(simulator_dir))
+
+        assert not container.has_cp_db()
+
+    def test_source_mode_vanilla_enables_auto_cp_db_detection(self, tmp_path, test_db):
+        import shutil
+        from app.application.container import AppContainer
+
+        simulator_dir = tmp_path / "simulator_root"
+        simulator_dir.mkdir(parents=True, exist_ok=True)
+        dest = simulator_dir / "cp.db"
+        shutil.copy(test_db, dest)
+
+        container = AppContainer()
+        container.set_source_mode(AppContainer.SOURCE_IL2_VANILLA)
+        container.set_pwcgfc_path(str(simulator_dir))
+
         assert container.has_cp_db()
 
 
@@ -471,3 +580,46 @@ class TestVanillaMissionReportReader:
         description = data["missions"][-1]["description"]
         assert "[FlightLogs]" in description
         assert "Sopwith Strutter" in description
+
+
+class TestVanillaSquadronCatalog:
+    def test_catalog_reads_name_from_scg_gtp(self, tmp_path):
+        from app.infrastructure.vanilla_squadron_catalog import VanillaSquadronCatalog
+
+        career_dir = tmp_path / "data" / "Career"
+        career_dir.mkdir(parents=True)
+        db_path = career_dir / "cp.db"
+        db_path.write_bytes(b"SQLite format 3")
+
+        scg_path = tmp_path / "data" / "Scg.gtp"
+        _create_fake_scg_gtp(scg_path, {302045: "No.45 Squadron"})
+
+        catalog = VanillaSquadronCatalog(db_path)
+        assert catalog.get_name(302045) == "No.45 Squadron"
+
+
+class TestIL2DataParserPathResolution:
+    def test_parser_accepts_user_campaigns_path(self, tmp_path):
+        from app.core.data_parser import IL2DataParser
+
+        campaigns_dir = tmp_path / "PWCGFC" / "User" / "Campaigns"
+        (campaigns_dir / "Campaign A").mkdir(parents=True)
+
+        parser = IL2DataParser(campaigns_dir)
+        campaigns = parser.get_campaigns()
+
+        assert parser.campaigns_path == campaigns_dir
+        assert "Campaign A" in campaigns
+
+    def test_parser_accepts_single_campaign_directory(self, tmp_path):
+        from app.core.data_parser import IL2DataParser
+
+        campaign_dir = tmp_path / "PWCGFC" / "User" / "Campaigns" / "Campaign B"
+        campaign_dir.mkdir(parents=True)
+        (campaign_dir / "Campaign.json").write_text("{}", encoding="utf-8")
+
+        parser = IL2DataParser(campaign_dir)
+        campaigns = parser.get_campaigns()
+
+        assert parser.campaigns_path == campaign_dir.parent
+        assert "Campaign B" in campaigns

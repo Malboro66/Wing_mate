@@ -53,9 +53,15 @@ def _find_cp_db(base: Path) -> Optional[Path]:
 class AppContainer:
     """Container de DI manual com suporte a fonte JSON (PWCG) e SQLite (cp.db)."""
 
+    SOURCE_AUTO = "auto"
+    SOURCE_PWCG_JSON = "pwcg_json"
+    SOURCE_IL2_VANILLA = "il2_vanilla"
+    _VALID_SOURCE_MODES = {SOURCE_AUTO, SOURCE_PWCG_JSON, SOURCE_IL2_VANILLA}
+
     def __init__(self, pwcgfc_path: Optional[str] = None) -> None:
         self._pwcgfc_path = pwcgfc_path or ""
         self._cp_db_path: Optional[Path] = None
+        self._source_mode = self.SOURCE_AUTO
 
         # JSON source
         self._parser: Optional[IL2DataParser] = None
@@ -72,6 +78,24 @@ class AppContainer:
     # ConfiguraÃ§Ã£o de caminho                                              #
     # ------------------------------------------------------------------ #
 
+    def set_source_mode(self, mode: str) -> None:
+        normalized = str(mode or self.SOURCE_AUTO).strip().lower()
+        if normalized not in self._VALID_SOURCE_MODES:
+            normalized = self.SOURCE_AUTO
+
+        if normalized == self._source_mode:
+            return
+
+        self._source_mode = normalized
+        self._reset_json_sources()
+
+        if self._source_mode == self.SOURCE_PWCG_JSON:
+            self._reset_cp_db()
+            self._cp_db_path = None
+
+    def get_source_mode(self) -> str:
+        return self._source_mode
+
     def set_pwcgfc_path(self, path: str) -> None:
         normalized = path or ""
         if normalized == self._pwcgfc_path:
@@ -84,7 +108,8 @@ class AppContainer:
         self._cp_db_path = None
 
         # Tenta localizar cp.db automaticamente no novo caminho
-        if normalized:
+        # (exceto quando o modo foi fixado para PWCG JSON).
+        if normalized and self._source_mode != self.SOURCE_PWCG_JSON:
             found = _find_cp_db(Path(normalized))
             if found:
                 self.set_cp_db_path(found)
@@ -99,6 +124,11 @@ class AppContainer:
     def has_cp_db(self) -> bool:
         """Retorna True se um cp.db vÃ¡lido foi encontrado/configurado."""
         return self._cp_db_path is not None and self._cp_db_path.exists() and self._cp_db_path.is_file()
+
+    def _should_use_cp_db(self) -> bool:
+        if self._source_mode == self.SOURCE_PWCG_JSON:
+            return False
+        return self.has_cp_db()
 
     # ------------------------------------------------------------------ #
     # Reset helpers                                                        #
@@ -168,7 +198,7 @@ class AppContainer:
         - Se cp.db disponÃ­vel: retorna IDs de carreiras.
         - Caso contrÃ¡rio: usa parser JSON.
         """
-        if self.has_cp_db():
+        if self._should_use_cp_db():
             try:
                 return self.get_cp_db_repository().list_career_ids()
             except Exception:
@@ -181,7 +211,7 @@ class AppContainer:
         - cp.db disponÃ­vel â†’ usa CpDbCampaignRepository.process_career()
         - caso contrÃ¡rio  â†’ usa IL2DataProcessor.process_campaign()
         """
-        if self.has_cp_db():
+        if self._should_use_cp_db():
             try:
                 return self.get_cp_db_repository().process_career(campaign_name)
             except Exception:

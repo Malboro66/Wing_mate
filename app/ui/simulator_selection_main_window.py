@@ -102,6 +102,7 @@ class MainWindow(QMainWindow):
             self.stack.setCurrentIndex(self._idx_ww1)
 
     def _on_simulator_selected(self, simulator_id: str) -> None:
+        self.wing_mate_widget.set_data_source_mode(self._resolve_data_source_mode(simulator_id))
         suggested_path = self._resolve_campaign_path_for_simulator(simulator_id)
         if suggested_path:
             self.wing_mate_widget.set_campaign_path(suggested_path, show_cp_db_notice=True)
@@ -109,20 +110,53 @@ class MainWindow(QMainWindow):
             notify_info(self._t("sim_select_set_path_hint"))
         self._go_to(self._idx_wing_mate)
 
+    @staticmethod
+    def _resolve_data_source_mode(simulator_id: str) -> str:
+        if simulator_id == WW1SimulatorSelectionWidget.SIM_IL2_VANILLA:
+            return WingMateMainWindow.SOURCE_IL2_VANILLA
+        if simulator_id in {
+            WW1SimulatorSelectionWidget.SIM_IL2_PWCG,
+            WW1SimulatorSelectionWidget.SIM_ROF_PWCG,
+            WW1SimulatorSelectionWidget.SIM_ROF_VANILLA,
+        }:
+            return WingMateMainWindow.SOURCE_PWCG_JSON
+        return WingMateMainWindow.SOURCE_AUTO
+
     def _resolve_campaign_path_for_simulator(self, simulator_id: str) -> Optional[str]:
         if simulator_id == WW1SimulatorSelectionWidget.SIM_IL2_VANILLA:
             return self._resolve_il2_vanilla_campaign_path()
 
         if simulator_id == WW1SimulatorSelectionWidget.SIM_IL2_PWCG:
-            return self._resolve_existing_directory(self.config.get_path(AppConfig.KEY_PWCG))
+            return self._resolve_pwcg_campaign_path(self.config.get_path(AppConfig.KEY_PWCG))
 
         if simulator_id == WW1SimulatorSelectionWidget.SIM_ROF_VANILLA:
-            return self._resolve_existing_directory(self.config.get_path(AppConfig.KEY_ROF))
+            return self._resolve_pwcg_campaign_path(self.config.get_path(AppConfig.KEY_ROF))
 
         if simulator_id == WW1SimulatorSelectionWidget.SIM_ROF_PWCG:
-            return self._resolve_existing_directory(self.config.get_path(AppConfig.KEY_PWCG))
+            return self._resolve_pwcg_campaign_path(self.config.get_path(AppConfig.KEY_PWCG))
 
         return None
+
+    @staticmethod
+    def _resolve_pwcg_campaign_path(raw_path: str) -> Optional[str]:
+        normalized = MainWindow._resolve_existing_directory(raw_path)
+        if not normalized:
+            return None
+
+        path_obj = Path(normalized)
+        if (path_obj / "User" / "Campaigns").is_dir():
+            return str(path_obj)
+
+        if path_obj.name.lower() == "campaigns" and path_obj.parent.name.lower() == "user":
+            return str(path_obj)
+
+        if path_obj.name.lower() == "user" and (path_obj / "Campaigns").is_dir():
+            return str(path_obj / "Campaigns")
+
+        if (path_obj / "Campaign.json").is_file():
+            return str(path_obj.parent)
+
+        return str(path_obj)
 
     def _resolve_il2_vanilla_campaign_path(self) -> Optional[str]:
         configured_fc = self._resolve_existing_directory(self.config.get_path(AppConfig.KEY_IL2_FC))

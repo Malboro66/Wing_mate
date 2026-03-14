@@ -47,12 +47,50 @@ class IL2DataParser:
                     "Usando diretório de trabalho atual."
                 )
                 self.pwcgfc_path: Path = Path.cwd()
-        
-        self.campaigns_path: Path = self.pwcgfc_path / 'User' / 'Campaigns'
+
+        resolved_root, resolved_campaigns = self._resolve_pwcg_paths(self.pwcgfc_path)
+        self.pwcgfc_path = resolved_root
+        self.campaigns_path: Path = resolved_campaigns
         self._json_cache: Dict[str, Optional[Any]] = {}
         self._cache_hits: int = 0
         self._cache_misses: int = 0
         logger.info(f"Parser inicializado com caminho: {self.pwcgfc_path}")
+
+    @staticmethod
+    def _looks_like_campaign_dir(path_obj: Path) -> bool:
+        return (path_obj / "Campaign.json").is_file()
+
+    @classmethod
+    def _resolve_pwcg_paths(cls, raw_path: Path) -> Tuple[Path, Path]:
+        """
+        Aceita múltiplos formatos de entrada:
+        - raiz do PWCGFC
+        - pasta User/Campaigns
+        - pasta de uma campanha específica
+        """
+        path_obj = raw_path
+        if not str(path_obj).strip():
+            return raw_path, raw_path / "User" / "Campaigns"
+
+        candidates = [path_obj, *path_obj.parents]
+
+        for candidate in candidates[:10]:
+            if (candidate / "User" / "Campaigns").is_dir():
+                return candidate, candidate / "User" / "Campaigns"
+
+        for candidate in candidates[:10]:
+            if candidate.name.lower() == "campaigns":
+                if candidate.parent.name.lower() == "user":
+                    return candidate.parent.parent, candidate
+                return candidate.parent, candidate
+
+        if cls._looks_like_campaign_dir(path_obj):
+            campaigns_dir = path_obj.parent
+            if campaigns_dir.name.lower() == "campaigns" and campaigns_dir.parent.name.lower() == "user":
+                return campaigns_dir.parent.parent, campaigns_dir
+            return campaigns_dir.parent, campaigns_dir
+
+        return path_obj, path_obj / "User" / "Campaigns"
 
     def clear_cache(self) -> None:
         """Limpa o cache de JSON desta instância."""

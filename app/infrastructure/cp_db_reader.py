@@ -44,7 +44,9 @@ class CpDbReader:
         try:
             self._conn = sqlite3.connect(uri, uri=True, check_same_thread=False)
             self._conn.row_factory = sqlite3.Row
-            self._conn.text_factory = lambda b: b.decode("utf-8", errors="replace")
+            # Evita erro de decode em colunas com bytes não UTF-8 (ex.: PersonageAwardId).
+            # A normalização para string fica no _rows().
+            self._conn.text_factory = bytes
             # NOTA: NÃƒO executar PRAGMA journal_mode=WAL em conexÃ£o read-only
             # (gera "attempt to write a readonly database").
             # O banco usa DELETE mode (padrÃ£o do jogo) â€” leituras sÃ£o seguras.
@@ -81,7 +83,10 @@ class CpDbReader:
             normalized_row: List[Any] = []
             for value in row:
                 if isinstance(value, bytes):
-                    normalized_row.append(value.decode("utf-8", errors="replace"))
+                    try:
+                        normalized_row.append(value.decode("utf-8"))
+                    except UnicodeDecodeError:
+                        normalized_row.append(value.hex())
                 else:
                     normalized_row.append(value)
             result.append(dict(zip(cols, normalized_row)))
@@ -181,17 +186,47 @@ class CpDbReader:
 
     def get_awards(self, career_id: int) -> List[Dict[str, Any]]:
         return self._rows(
-            "SELECT id, careerId, type, date, pilotId, pilotName, pilotRank, squadName " +
+            "SELECT id, careerId, type, date, pilotId, pilotName, pilotRank, squadName, SquadId, squadConfigId " +
             "FROM award WHERE careerId=? AND isDeleted=0 ORDER BY date",
             (career_id,),
         )
 
     def get_pilot_awards(self, pilot_id: int) -> List[Dict[str, Any]]:
         return self._rows(
-            "SELECT id, careerId, type, date, pilotId, pilotName, pilotRank, squadName " +
+            "SELECT id, careerId, type, date, pilotId, pilotName, pilotRank, squadName, SquadId, squadConfigId " +
             "FROM award WHERE pilotId=? AND isDeleted=0 ORDER BY date",
             (pilot_id,),
         )
+
+    def get_latest_award_squad_name(
+        self,
+        career_id: int,
+        *,
+        squad_config_id: Optional[int] = None,
+        squad_id: Optional[int] = None,
+    ) -> Optional[str]:
+        sql = (
+            "SELECT squadName FROM award "
+            "WHERE careerId=? AND isDeleted=0 "
+            "AND squadName IS NOT NULL AND TRIM(squadName)<>''"
+        )
+        params: List[Any] = [career_id]
+
+        if squad_config_id is not None and squad_config_id >= 0:
+            sql += " AND squadConfigId=?"
+            params.append(int(squad_config_id))
+
+        if squad_id is not None and squad_id >= 0:
+            sql += " AND SquadId=?"
+            params.append(int(squad_id))
+
+        sql += " ORDER BY date DESC, id DESC LIMIT 1"
+        row = self._one(sql, tuple(params))
+        if not row:
+            return None
+
+        value = str(row.get("squadName", "") or "").strip()
+        return value or None
 
     # ------------------------------------------------------------------ #
     # event                                                                #

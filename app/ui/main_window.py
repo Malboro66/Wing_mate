@@ -228,6 +228,10 @@ class MainWindow(QMainWindow):
     - PersistÃªncia via QSettings
     """
 
+    SOURCE_AUTO = AppContainer.SOURCE_AUTO
+    SOURCE_PWCG_JSON = AppContainer.SOURCE_PWCG_JSON
+    SOURCE_IL2_VANILLA = AppContainer.SOURCE_IL2_VANILLA
+
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
@@ -237,6 +241,7 @@ class MainWindow(QMainWindow):
         self.mission_validation_service = MissionValidationService()
 
         self.pwcgfc_path: str = ""
+        self._data_source_mode: str = self.SOURCE_AUTO
         self._full_path_text: str = ""
         self.current_data: Dict[str, Any] = {}
         self._validated_missions: List[Mission] = []
@@ -592,6 +597,28 @@ class MainWindow(QMainWindow):
         QApplication.clipboard().setText(self._full_path_text)
         self.statusBar().showMessage(self._t("copy_path_success"), 2500)
 
+    def set_data_source_mode(self, mode: str) -> None:
+        normalized = str(mode or self.SOURCE_AUTO).strip().lower()
+        if normalized not in {self.SOURCE_AUTO, self.SOURCE_PWCG_JSON, self.SOURCE_IL2_VANILLA}:
+            normalized = self.SOURCE_AUTO
+        self._data_source_mode = normalized
+        self.container.set_source_mode(self._data_source_mode)
+
+    @staticmethod
+    def _resolve_pwcg_root_for_tools(raw_path: str) -> Optional[str]:
+        if not raw_path:
+            return None
+
+        path_obj = Path(str(raw_path).strip())
+        if not path_obj.exists():
+            return None
+
+        candidates = [path_obj, *path_obj.parents]
+        for candidate in candidates[:8]:
+            if (candidate / "FCData" / "Input").is_dir() and (candidate / "User" / "Campaigns").is_dir():
+                return str(candidate)
+        return None
+
     def set_campaign_path(self, folder_path: str, *, show_cp_db_notice: bool = True) -> bool:
         normalized = str(folder_path or "").strip()
         if not normalized:
@@ -603,6 +630,7 @@ class MainWindow(QMainWindow):
             return False
 
         self.pwcgfc_path = str(path_obj)
+        self.container.set_source_mode(self._data_source_mode)
         self.container.set_pwcgfc_path(self.pwcgfc_path)
 
         if show_cp_db_notice and self.container.has_cp_db():
@@ -616,7 +644,9 @@ class MainWindow(QMainWindow):
 
         self._load_campaigns()
 
-        tabs_path = "" if self.container.has_cp_db() else self.pwcgfc_path
+        tabs_path = ""
+        if not self.container.has_cp_db():
+            tabs_path = self._resolve_pwcg_root_for_tools(self.pwcgfc_path) or ""
 
         try:
             self.insert_squads_tab.set_pwcgfc_path(tabs_path)

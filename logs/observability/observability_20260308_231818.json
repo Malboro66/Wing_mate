@@ -1,14 +1,14 @@
 {
-  "release": "20260308_232557",
-  "session_id": "6844b46bdc134ae6b8f98603434dedab",
-  "generated_at_epoch_ms": 1773023157183,
+  "release": "20260308_231818",
+  "session_id": "4d91ac4503dd4184be8cae9739f71126",
+  "generated_at_epoch_ms": 1773022698325,
   "metrics": {
-    "startup_time_ms": 5465.54,
-    "action_duration_ms": 2.22,
+    "startup_time_ms": 5495.33,
+    "action_duration_ms": 2.17,
     "error_rate": 0.0,
     "cache_hit_rate": 0.0,
-    "max_tab_switch_ms": 0.01,
-    "actions_total": 6.0,
+    "max_tab_switch_ms": 2.5,
+    "actions_total": 7.0,
     "actions_failed": 0.0,
     "cache_hits": 0.0,
     "cache_misses": 0.0
@@ -19,10 +19,10 @@
     "critical_action_within_slo": true
   },
   "baseline_delta": {
-    "startup_time_ms": -640.31,
-    "action_duration_ms": 0.78,
+    "startup_time_ms": -5437.27,
+    "action_duration_ms": -3.89,
     "error_rate": 0.0,
     "cache_hit_rate": 0.0,
-    "max_tab_switch_ms": -2.23
+    "max_tab_switch_ms": -36.25
   }
 }

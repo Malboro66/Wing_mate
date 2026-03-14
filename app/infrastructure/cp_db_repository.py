@@ -21,6 +21,7 @@ from app.core.repositories import Campaign, CampaignRepositoryPort
 from app.infrastructure.cp_db_mapper import CpDbMapper
 from app.infrastructure.cp_db_reader import CpDbReader
 from app.infrastructure.vanilla_mission_report import VanillaMissionReportReader
+from app.infrastructure.vanilla_squadron_catalog import VanillaSquadronCatalog
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
 
@@ -33,6 +34,7 @@ class CpDbCampaignRepository:
         self._reader = CpDbReader(db_path)
         self._mapper = CpDbMapper()
         self._mission_report_reader = VanillaMissionReportReader(db_path)
+        self._squadron_catalog = VanillaSquadronCatalog(db_path)
 
     # ------------------------------------------------------------------ #
     # CampaignRepositoryPort                                               #
@@ -57,6 +59,10 @@ class CpDbCampaignRepository:
             personage = self._reader.get_personage(personage_id) if personage_id else None
             pilot = self._reader.get_player_pilot(personage_id) if personage_id else None
             squadron = self._reader.get_squadron(int(career.get("squadronId", -1)))
+            squadron_name = self._resolve_squadron_name(int(career.get("id", -1)), squadron)
+            if squadron is not None:
+                squadron = dict(squadron)
+                squadron["name"] = squadron_name
 
             info = CpDbMapper.career_to_campaign_dict(career, personage, pilot, squadron)
 
@@ -139,9 +145,7 @@ class CpDbCampaignRepository:
             missions_by_id = {int(m["id"]): m for m in missions_list}
             aces_list = self._reader.get_aces(career_id)
 
-            squad_name = "N/A"
-            if squadron_row:
-                squad_name = str(squadron_row.get("name") or squadron_row.get("airfield", "N/A"))
+            squad_name = self._resolve_squadron_name(career_id, squadron_row)
 
             pilot_data = CpDbMapper.pilot_to_pilot_data(
                 pilot_row or {}, sorties, squad_name
@@ -162,6 +166,39 @@ class CpDbCampaignRepository:
         except Exception:
             logger.exception("cp.db: falha ao processar carreira '%s'", career_id_str)
             return {}
+
+    @staticmethod
+    def _as_int(value: Any, default: int = -1) -> int:
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return default
+
+    def _resolve_squadron_name(
+        self,
+        career_id: int,
+        squadron_row: Optional[Dict[str, Any]],
+    ) -> str:
+        if not squadron_row:
+            return "N/A"
+
+        squad_config_id = self._as_int(squadron_row.get("configId"), -1)
+        squad_id = self._as_int(squadron_row.get("id"), -1)
+
+        name_from_award = self._reader.get_latest_award_squad_name(
+            career_id,
+            squad_config_id=squad_config_id,
+            squad_id=squad_id,
+        )
+        if name_from_award:
+            return name_from_award
+
+        name_from_gtp = self._squadron_catalog.get_name(squad_config_id)
+        if name_from_gtp:
+            return name_from_gtp
+
+        fallback = str(squadron_row.get("name") or squadron_row.get("airfield") or "").strip()
+        return fallback or "N/A"
 
     def _enrich_latest_mission_with_flight_log(self, missions: List[Dict[str, Any]]) -> None:
         if not missions:
