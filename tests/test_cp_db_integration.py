@@ -458,6 +458,25 @@ class TestCpDbCampaignRepository:
         assert data["pilot"]["name"] == "Lt. James Bigglesworth"
         assert len(data["missions"]) == 1
 
+    def test_process_career_enriches_ace_country_by_name(self, test_db):
+        conn = sqlite3.connect(str(test_db))
+        conn.execute(
+            "INSERT INTO ace (careerId, name, deathDate, isDeleted) VALUES (?, ?, ?, ?)",
+            (1, "Lt. James Bigglesworth", "1916-12-31", 0),
+        )
+        conn.commit()
+        conn.close()
+
+        from app.infrastructure.cp_db_repository import CpDbCampaignRepository
+
+        repo = CpDbCampaignRepository(test_db)
+        data = repo.process_career("1")
+
+        assert data.get("aces")
+        ace = data["aces"][0]
+        assert ace["name"] == "Lt. James Bigglesworth"
+        assert ace["country"] == "BRITAIN"
+
     def test_process_career_uses_award_squad_name_fallback(self, test_db):
         conn = sqlite3.connect(str(test_db))
         conn.execute(
@@ -620,6 +639,44 @@ class TestVanillaMissionReportReader:
         description = data["missions"][-1]["description"]
         assert "[FlightLogs]" in description
         assert "Sopwith Strutter" in description
+
+    def test_repo_enriches_all_missions_with_matching_flightlogs(self, tmp_path, test_db):
+        import shutil
+        import sqlite3
+
+        from app.infrastructure.cp_db_repository import CpDbCampaignRepository
+
+        career_dir = tmp_path / "data" / "Career"
+        logs_dir = tmp_path / "data" / "FlightLogs"
+        career_dir.mkdir(parents=True)
+        logs_dir.mkdir(parents=True)
+
+        db_path = career_dir / "cp.db"
+        shutil.copy(test_db, db_path)
+
+        conn = sqlite3.connect(str(db_path))
+        conn.execute(
+            "INSERT INTO mission (careerId, date, airfield, type) VALUES (?, ?, ?, ?)",
+            (1, "1916-10-18 09:15:00", "St. Omer", "Escort"),
+        )
+        conn.execute(
+            "INSERT INTO sortie (missionId, pilotId, status, model, killLightFighter, flightTime, date) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (2, 1, 0, "Sopwith 1.5 Strutter", 0, 2400, "1916-10-18 09:15:00"),
+        )
+        conn.commit()
+        conn.close()
+
+        (logs_dir / "missionReport(1916-10-17_08-30-00).mlg").write_bytes(b"\x00First Mission Pilot\x00")
+        (logs_dir / "missionReport(1916-10-18_09-15-00).mlg").write_bytes(b"\x00Second Mission Pilot\x00")
+
+        repo = CpDbCampaignRepository(db_path)
+        data = repo.process_career("1")
+
+        assert len(data.get("missions", [])) >= 2
+        descriptions = [m.get("description", "") for m in data["missions"]]
+        assert any("First Mission Pilot" in d for d in descriptions)
+        assert any("Second Mission Pilot" in d for d in descriptions)
 
 
 class TestVanillaSquadronCatalog:

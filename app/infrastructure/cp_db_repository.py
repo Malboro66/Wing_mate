@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import logging
 import re
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -109,7 +110,7 @@ class CpDbCampaignRepository:
             }
 
             missions_data = CpDbMapper.sorties_to_missions(sorties, missions_by_id)
-            self._enrich_latest_mission_with_flight_log(missions_data)
+            self._enrich_missions_with_flight_logs(missions_data)
             return missions_data
         except Exception:
             logger.exception("cp.db: falha ao obter missÃƒÂµes da carreira '%s'", campaign_name)
@@ -160,7 +161,14 @@ class CpDbCampaignRepository:
             pilot_row = self._reader.get_player_pilot(personage_id)
             squadron_row = self._reader.get_squadron(int(career.get("squadronId", -1)))
             all_pilots = self._reader.get_pilots(int(career.get("squadronId", -1)))
-            pilots_by_id = {int(p.get("id", -1)): p for p in all_pilots}
+            pilots_lookup: Dict[Any, Dict[str, Any]] = {}
+            for pilot in all_pilots:
+                pilot_id = int(pilot.get("id", -1))
+                if pilot_id >= 0:
+                    pilots_lookup[pilot_id] = pilot
+                normalized_name = str(pilot.get("name", "") or "").strip().casefold()
+                if normalized_name:
+                    pilots_lookup[normalized_name] = pilot
             sorties = self._reader.get_pilot_sorties(int(pilot_row["id"])) if pilot_row else []
             missions_list = self._reader.get_missions(career_id)
             missions_by_id = {int(m["id"]): m for m in missions_list}
@@ -172,9 +180,9 @@ class CpDbCampaignRepository:
                 pilot_row or {}, sorties, squad_name
             )
             missions_data = CpDbMapper.sorties_to_missions(sorties, missions_by_id)
-            self._enrich_latest_mission_with_flight_log(missions_data)
+            self._enrich_missions_with_flight_logs(missions_data)
             squadron_data = CpDbMapper.pilots_to_squadron(all_pilots)
-            aces_data = CpDbMapper.aces_to_aces_data(aces_list, pilots_by_id)
+            aces_data = CpDbMapper.aces_to_aces_data(aces_list, pilots_lookup)
             if not aces_data:
                 for pilot_row in all_pilots:
                     member = CpDbMapper.pilots_to_squadron([pilot_row])[0]
@@ -233,26 +241,81 @@ class CpDbCampaignRepository:
         fallback = str(squadron_row.get("name") or squadron_row.get("airfield") or "").strip()
         return fallback or "N/A"
 
-    def _enrich_latest_mission_with_flight_log(self, missions: List[Dict[str, Any]]) -> None:
+    @staticmethod
+    def _parse_mission_datetime(mission: Dict[str, Any]) -> Optional[datetime]:
+        date_part = str(mission.get("date", "") or "").strip()
+        time_part = str(mission.get("time", "") or "").strip()
+        if not date_part:
+            return None
+
+        value = f"{date_part} {time_part}".strip()
+        formats = (
+            "%d/%m/%Y %H:%M",
+            "%d/%m/%Y",
+            "%Y-%m-%d %H:%M:%S",
+            "%Y-%m-%d %H:%M",
+            "%Y-%m-%d",
+        )
+        for fmt in formats:
+            try:
+                return datetime.strptime(value, fmt)
+            except ValueError:
+                continue
+        return None
+
+    def _enrich_missions_with_flight_logs(self, missions: List[Dict[str, Any]]) -> None:
         if not missions:
             return
 
-        summary = self._mission_report_reader.build_latest_report_summary()
-        if not summary:
+        summaries_by_dt = self._mission_report_reader.build_report_summaries_by_datetime()
+        if not summaries_by_dt:
+            # fallback legado para manter comportamento mínimo
+            summary = self._mission_report_reader.build_latest_report_summary()
+            if not summary:
+                return
+            latest = missions[-1]
+            current_description = str(latest.get("description", "") or "").strip()
+            flight_log_block = "[FlightLogs]\n" + summary
+            if flight_log_block not in current_description:
+                latest["description"] = (
+                    f"{current_description}\n\n{flight_log_block}" if current_description else flight_log_block
+                )
+            latest["haReport"] = summary
             return
 
-        latest = missions[-1]
-        current_description = str(latest.get("description", "") or "").strip()
-        flight_log_block = "[FlightLogs]\n" + summary
+        reports_by_minute: Dict[datetime, str] = {}
+        for report_dt, summary in summaries_by_dt.items():
+            reports_by_minute[report_dt.replace(second=0, microsecond=0)] = summary
 
-        if flight_log_block not in current_description:
-            latest["description"] = (
-                f"{current_description}\n\n{flight_log_block}"
-                if current_description
-                else flight_log_block
-            )
+        matched_any = False
+        for mission in missions:
+            mission_dt = self._parse_mission_datetime(mission)
+            if mission_dt is None:
+                continue
+            summary = reports_by_minute.get(mission_dt.replace(second=0, microsecond=0))
+            if not summary:
+                continue
+            matched_any = True
 
-        latest["haReport"] = summary
+            current_description = str(mission.get("description", "") or "").strip()
+            flight_log_block = "[FlightLogs]\n" + summary
+            if flight_log_block not in current_description:
+                mission["description"] = (
+                    f"{current_description}\n\n{flight_log_block}" if current_description else flight_log_block
+                )
+            mission["haReport"] = summary
+
+        if not matched_any and summaries_by_dt:
+            latest_report_dt = max(summaries_by_dt.keys())
+            summary = summaries_by_dt[latest_report_dt]
+            latest = missions[-1]
+            current_description = str(latest.get("description", "") or "").strip()
+            flight_log_block = "[FlightLogs]\n" + summary
+            if flight_log_block not in current_description:
+                latest["description"] = (
+                    f"{current_description}\n\n{flight_log_block}" if current_description else flight_log_block
+                )
+            latest["haReport"] = summary
 
     def get_earned_medal_ids(self, career_id_str: str) -> set:
         """Retorna set de IDs de medalhas conquistadas."""

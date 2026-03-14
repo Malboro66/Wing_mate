@@ -123,6 +123,10 @@ def _clean_aircraft_name(raw_value: Any) -> str:
     return normalized or "N/A"
 
 
+def _normalize_person_name(raw_name: Any) -> str:
+    return str(raw_name or "").strip().casefold()
+
+
 # ------------------------------------------------------------------ #
 # Mapeamento de status                                                 #
 # ------------------------------------------------------------------ #
@@ -422,7 +426,7 @@ class CpDbMapper:
     @staticmethod
     def aces_to_aces_data(
         aces: List[Dict[str, Any]],
-        pilots_by_id: Optional[Dict[int, Dict[str, Any]]] = None,
+        pilots_by_id: Optional[Dict[Any, Dict[str, Any]]] = None,
     ) -> List[Dict[str, Any]]:
         """
         Produz lista de dicts de ases compatível com AcesTab.set_aces().
@@ -431,7 +435,11 @@ class CpDbMapper:
         out: List[Dict[str, Any]] = []
         pb = pilots_by_id or {}
         for ace in aces:
-            pilot = pb.get(_safe_int(ace.get("pilotId")), {}) if pb else {}
+            pilot: Dict[str, Any] = {}
+            if pb:
+                pilot = pb.get(_safe_int(ace.get("pilotId")), {})
+                if not pilot:
+                    pilot = pb.get(_normalize_person_name(ace.get("name")), {})
             victories = _safe_int(ace.get("victories"), -1)
             if victories < 0:
                 victories = _sum_plane_kills(pilot) if pilot else 0

@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import logging
 import re
+from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
 
@@ -34,6 +35,35 @@ class VanillaMissionReportReader:
 
         body = "\n".join(f"- {chunk}" for chunk in chunks)
         return f"{header}\n{body}"
+
+    def build_report_summaries_by_datetime(self, max_lines: int = 10) -> Dict[datetime, str]:
+        """Retorna sumários de todos os reports indexados pelo datetime do nome do arquivo."""
+        logs_dir = self._resolve_flight_logs_dir()
+        if logs_dir is None:
+            return {}
+
+        candidates = [p for p in logs_dir.glob(self._PRIMARY_PATTERN) if p.is_file()]
+        if not candidates:
+            candidates = [p for p in logs_dir.glob("*.mlg") if p.is_file()]
+
+        out: Dict[datetime, str] = {}
+        for report_path in candidates:
+            report_dt = self._extract_report_datetime(report_path)
+            if report_dt is None:
+                continue
+
+            try:
+                blob = report_path.read_bytes()
+            except OSError:
+                logger.exception("flightlogs: failed to read mission report '%s'", report_path)
+                continue
+
+            chunks = self._extract_text_chunks(blob, max_lines=max_lines)
+            header = f"Arquivo: {report_path.name}"
+            summary = header if not chunks else f"{header}\n" + "\n".join(f"- {chunk}" for chunk in chunks)
+            out[report_dt] = summary
+
+        return out
 
     def latest_report_path(self) -> Optional[Path]:
         logs_dir = self._resolve_flight_logs_dir()
@@ -78,6 +108,18 @@ class VanillaMissionReportReader:
             return path.stat().st_mtime
         except OSError:
             return 0.0
+
+    @staticmethod
+    def _extract_report_datetime(report_path: Path) -> Optional[datetime]:
+        match = re.search(r"\((\d{4}-\d{2}-\d{2})_(\d{2}-\d{2}-\d{2})\)", report_path.name)
+        if not match:
+            return None
+
+        date_part, time_part = match.group(1), match.group(2).replace("-", ":")
+        try:
+            return datetime.strptime(f"{date_part} {time_part}", "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            return None
 
     @classmethod
     def _extract_text_chunks(cls, blob: bytes, max_lines: int = 10) -> List[str]:
@@ -136,4 +178,3 @@ class VanillaMissionReportReader:
             return True
 
         return False
-
