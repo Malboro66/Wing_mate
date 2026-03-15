@@ -380,6 +380,7 @@ class TestCpDbMapper:
         assert result["name"] == "Lt. Biggles"
         assert result["total_missions"] == 3
         assert result["total_victories"] == 3   # 3 sorties × 1 killLightFighter
+        assert result["flight_time_formatted"] == "3h 0m"
 
     def test_pilot_morale_high_wins_applies_xp_multiplier(self):
         """Piloto com 5 vitórias seguidas deve ter morale > 80 e XP × 1.2."""
@@ -430,6 +431,15 @@ class TestCpDbMapper:
         result = CpDbMapper.sorties_to_missions(sorties, missions_by_id)
         assert result[0]["date"] == "17/10/1916"
         assert result[0]["time"] == "08:30"
+        assert result[0]["flight_time_formatted"] == "1h 0m"
+
+
+    def test_fmt_flight_time(self):
+        from app.infrastructure.cp_db_mapper import fmt_flight_time
+
+        assert fmt_flight_time(0) == "0m"
+        assert fmt_flight_time(90) == "1m"
+        assert fmt_flight_time(4980) == "1h 23m"
 
     def test_awards_to_earned_ids(self):
         from app.infrastructure.cp_db_mapper import CpDbMapper

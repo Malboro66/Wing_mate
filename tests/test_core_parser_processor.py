@@ -1,4 +1,5 @@
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -52,7 +53,7 @@ def test_parser_get_campaign_info_returns_empty_when_missing(tmp_path: Path):
 
 
 
-def test_parser_clear_cache_refreshes_changed_file(tmp_path: Path):
+def test_parser_cache_auto_invalidates_when_file_mtime_changes(tmp_path: Path):
     base = tmp_path / "pwcg"
     campaign_dir = _build_campaign_tree(base)
     campaign_file = campaign_dir / "Campaign.json"
@@ -62,10 +63,9 @@ def test_parser_clear_cache_refreshes_changed_file(tmp_path: Path):
     campaign_file.write_text('{"name":"v1"}', encoding="utf-8")
     assert parser.get_campaign_info("camp1") == {"name": "v1"}
 
+    time.sleep(0.02)
     campaign_file.write_text('{"name":"v2"}', encoding="utf-8")
-    assert parser.get_campaign_info("camp1") == {"name": "v1"}
 
-    parser.clear_cache()
     assert parser.get_campaign_info("camp1") == {"name": "v2"}
 
 
@@ -297,3 +297,29 @@ def test_resolve_aircraft_badge_prioritizes_ace_by_confirmed_victories():
 def test_process_pilot_data_does_not_use_setdefault_fallback_block():
     src = Path("app/core/data_processor.py").read_text(encoding="utf-8")
     assert "pilot.setdefault" not in src
+
+
+def test_process_missions_data_weather_uses_dedicated_parser_block_only():
+    processor = IL2DataProcessor(None)
+
+    class _Parser:
+        def get_mission_data(self, _campaign, _report):
+            return {
+                "missionDescription": (
+                    "Intro\n"
+                    "Weather Report:\n"
+                    "Visibility: 6 km\n"
+                    "Wind: 12 km/h NE\n"
+                    "\n"
+                    "Objective: Something else"
+                )
+            }
+
+    processor.parser = _Parser()
+    reports = [{"date": "19180101", "type": "SPAD"}]
+
+    missions, _ = processor.process_missions_data("camp", reports, "1")
+
+    assert "Weather Report" in missions[0]["weather"]
+    assert "Objective" not in missions[0]["weather"]
+
