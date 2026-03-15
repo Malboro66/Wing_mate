@@ -157,9 +157,11 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
             
             # Coluna 3: Tipo de missão
             duty = m.duty
-            duty_item = QTableWidgetItem(duty)
+            duration = (m.flight_time_formatted or "").strip()
+            duty_label = f"{duty}  ⏱ {duration}" if duration else duty
+            duty_item = QTableWidgetItem(duty_label)
             duty_item.setTextAlignment(Qt.AlignCenter)
-            duty_item.setToolTip(duty)
+            duty_item.setToolTip(duty_label)
             self.table.setItem(r, 3, duty_item)
 
             ratio = 0.0
@@ -370,6 +372,9 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
         if 0 <= idx < len(self._missions):
             data: Mission = self._missions[idx]
             description = data.description
+            duration = (data.flight_time_formatted or "").strip()
+            if duration:
+                description = f"Flight Time: {duration}\n\n{description}" if description else f"Flight Time: {duration}"
             
             # ADICIONA DIA DA SEMANA EM INGLÊS
             date_str = data.date

@@ -18,7 +18,11 @@ class Mission:
     aircraft: str = ""
     aircraft_badge: str = ""
     duty: str = ""
+    locality: str = ""
+    airfield: str = ""
+    weather: str = ""
     description: str = ""
+    flight_time_formatted: str = ""
 
 
 class MissionValidationService:
@@ -44,7 +48,11 @@ class MissionValidationService:
                     aircraft=str(raw.get("aircraft", "") or ""),
                     aircraft_badge=str(raw.get("aircraft_badge", "") or ""),
                     duty=str(raw.get("duty", "") or ""),
+                    locality=str(raw.get("locality", "") or ""),
+                    airfield=str(raw.get("airfield", "") or ""),
+                    weather=str(raw.get("weather", "") or ""),
                     description=str(raw.get("description", "") or ""),
+                    flight_time_formatted=str(raw.get("flight_time_formatted", "") or ""),
                 )
             except (TypeError, ValueError) as e:
                 logger.warning("Missão inválida no índice %s: %s", idx, e)

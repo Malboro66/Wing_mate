@@ -380,6 +380,7 @@ class TestCpDbMapper:
         assert result["name"] == "Lt. Biggles"
         assert result["total_missions"] == 3
         assert result["total_victories"] == 3   # 3 sorties × 1 killLightFighter
+        assert result["flight_time_formatted"] == "3h 0m"
 
     def test_pilot_morale_high_wins_applies_xp_multiplier(self):
         """Piloto com 5 vitórias seguidas deve ter morale > 80 e XP × 1.2."""
@@ -430,6 +431,15 @@ class TestCpDbMapper:
         result = CpDbMapper.sorties_to_missions(sorties, missions_by_id)
         assert result[0]["date"] == "17/10/1916"
         assert result[0]["time"] == "08:30"
+        assert result[0]["flight_time_formatted"] == "1h 0m"
+
+
+    def test_fmt_flight_time(self):
+        from app.infrastructure.cp_db_mapper import fmt_flight_time
+
+        assert fmt_flight_time(0) == "0m"
+        assert fmt_flight_time(90) == "1m"
+        assert fmt_flight_time(4980) == "1h 23m"
 
     def test_awards_to_earned_ids(self):
         from app.infrastructure.cp_db_mapper import CpDbMapper
@@ -634,6 +644,20 @@ class TestAppContainerCpDb:
         container = AppContainer()
         container.set_source_mode(AppContainer.SOURCE_IL2_VANILLA)
         container.set_pwcgfc_path(str(game_root))
+
+        assert container.has_cp_db()
+
+    def test_auto_detection_supports_uppercase_cp_db_name(self, tmp_path, test_db):
+        import shutil
+        from app.application.container import AppContainer
+
+        simulator_dir = tmp_path / "simulator_root"
+        simulator_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy(test_db, simulator_dir / "CP.DB")
+
+        container = AppContainer()
+        container.set_source_mode(AppContainer.SOURCE_IL2_VANILLA)
+        container.set_pwcgfc_path(str(simulator_dir))
 
         assert container.has_cp_db()
 

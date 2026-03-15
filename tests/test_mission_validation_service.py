@@ -17,7 +17,11 @@ def test_validation_service_returns_typed_missions_once():
                 "aircraft": "SPAD",
                 "aircraft_badge": "Novato",
                 "duty": "Escort",
+                "locality": "Frontline",
+                "airfield": "St. Omer",
+                "weather": "Weather Report: Clear",
                 "description": "Mission text",
+                "flight_time_formatted": "1h 23m",
             }
         ]
     )
@@ -29,7 +33,11 @@ def test_validation_service_returns_typed_missions_once():
             aircraft="SPAD",
             aircraft_badge="Novato",
             duty="Escort",
+            locality="Frontline",
+            airfield="St. Omer",
+            weather="Weather Report: Clear",
             description="Mission text",
+            flight_time_formatted="1h 23m",
         )
     ]
 
@@ -41,3 +49,14 @@ def test_validation_service_skips_non_dict_items():
 
     assert len(missions) == 1
     assert missions[0].description == "ok"
+
+
+def test_validation_service_propagates_locality_airfield_weather_defaults():
+    service = MissionValidationService()
+
+    missions = service.validate([{"description": "ok"}])
+
+    assert len(missions) == 1
+    assert missions[0].locality == ""
+    assert missions[0].airfield == ""
+    assert missions[0].weather == ""

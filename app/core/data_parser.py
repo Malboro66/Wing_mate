@@ -6,11 +6,18 @@
 import json
 import re
 import logging
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Any, Union, Optional, Tuple, Set
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
+
+
+@dataclass(frozen=True)
+class _CacheEntry:
+    data: Optional[Any]
+    mtime: float
 
 
 class IL2DataParser:
@@ -51,7 +58,7 @@ class IL2DataParser:
         resolved_root, resolved_campaigns = self._resolve_pwcg_paths(self.pwcgfc_path)
         self.pwcgfc_path = resolved_root
         self.campaigns_path: Path = resolved_campaigns
-        self._json_cache: Dict[str, Optional[Any]] = {}
+        self._json_cache: Dict[str, _CacheEntry] = {}
         self._cache_hits: int = 0
         self._cache_misses: int = 0
         logger.info(f"Parser inicializado com caminho: {self.pwcgfc_path}")
@@ -98,15 +105,31 @@ class IL2DataParser:
         self._cache_hits = 0
         self._cache_misses = 0
 
-    def _get_json_data_cached(self, file_path_str: str) -> Optional[Any]:
-        """Versão cacheada de carregamento de JSON por instância."""
-        if file_path_str in self._json_cache:
+    def _get_json_data_cached(self, file_path: Path) -> Optional[Any]:
+        """Versão cacheada de carregamento de JSON por instância com invalidação por mtime."""
+        file_path_str = str(file_path)
+        current_mtime = self._safe_stat_mtime(file_path)
+        if current_mtime is None:
+            self._cache_misses += 1
+            self._json_cache.pop(file_path_str, None)
+            return self._load_json_file(file_path)
+
+        cached_entry = self._json_cache.get(file_path_str)
+        if cached_entry and cached_entry.mtime == current_mtime:
             self._cache_hits += 1
-            return self._json_cache[file_path_str]
+            return cached_entry.data
 
         self._cache_misses += 1
-        self._json_cache[file_path_str] = self._load_json_file(Path(file_path_str))
-        return self._json_cache[file_path_str]
+        data = self._load_json_file(file_path)
+        self._json_cache[file_path_str] = _CacheEntry(data=data, mtime=current_mtime)
+        return data
+
+    @staticmethod
+    def _safe_stat_mtime(file_path: Path) -> Optional[float]:
+        try:
+            return file_path.stat().st_mtime
+        except (FileNotFoundError, PermissionError, OSError):
+            return None
     
     def get_json_many(self, file_paths: List[Path]) -> Dict[Path, Optional[Any]]:
         """Carrega múltiplos arquivos JSON em batch reutilizando cache da instância.
@@ -119,7 +142,7 @@ class IL2DataParser:
             resolved_path: Path = file_path
             try:
                 resolved_path = file_path.resolve()
-                loaded[file_path] = self._get_json_data_cached(str(resolved_path))
+                loaded[file_path] = self._get_json_data_cached(resolved_path)
             except (TypeError, ValueError, OSError):
                 loaded[file_path] = self._load_json_file(resolved_path)
         return loaded
@@ -147,7 +170,7 @@ class IL2DataParser:
         """
         try:
             file_path_resolved = file_path.resolve()
-            return self._get_json_data_cached(str(file_path_resolved))
+            return self._get_json_data_cached(file_path_resolved)
         except (TypeError, ValueError, OSError) as e:
             # OSError para symlinks quebrados, TypeError/ValueError para paths inválidos
             logger.warning(f"Não foi possível resolver caminho {file_path}: {e}")

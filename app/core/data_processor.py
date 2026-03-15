@@ -10,6 +10,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Any, Union, Optional, Tuple
 
+from app.core.aircraft_registry import canonical as canonical_aircraft_model
+from app.core.weather_parser import WeatherParser
+
 logger = logging.getLogger("IL2CampaignAnalyzer")
 
 try:
@@ -154,22 +157,14 @@ class IL2DataProcessor:
                 except re.error:
                     logger.warning(f"Erro de regex ao processar haReport: {ha_report[:50]}...")
 
-            weather_text = str("Não disponível")
             description_text = str(
                 mission_details.get("missionDescription", "Descrição da missão não encontrada.")
                 if mission_details
                 else "Descrição da missão não encontrada."
             )
+            weather_text = WeatherParser.parse(description_text).raw
 
             try:
-                if mission_details:
-                    # Busca Weather Report na descrição
-                    match: Optional[re.Match] = re.search(
-                        r"(Weather Report.*?)$", description_text, re.DOTALL | re.IGNORECASE
-                    )
-                    if match:
-                        weather_text = match.group(1).strip()
-
                 if not player_squadron_id:
                     mission_planes: Dict[str, Any] = mission_details.get("missionPlanes", {}) or {}
                     for k, v in mission_planes.items():

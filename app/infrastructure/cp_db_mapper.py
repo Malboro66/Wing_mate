@@ -216,6 +216,16 @@ def _morale_mood_icon(morale: int) -> str:
     return "🔥 Inspirado"
 
 
+def fmt_flight_time(seconds: int) -> str:
+    total_seconds = max(0, _safe_int(seconds, 0))
+    total_minutes = total_seconds // 60
+    hours = total_minutes // 60
+    minutes = total_minutes % 60
+    if hours > 0:
+        return f"{hours}h {minutes}m"
+    return f"{minutes}m"
+
+
 # ------------------------------------------------------------------ #
 # Mappers públicos                                                     #
 # ------------------------------------------------------------------ #
@@ -297,6 +307,7 @@ class CpDbMapper:
             "total_victories": total_victories,
             "survival_count": survival_count,
             "flight_time_minutes": flight_time_s // 60,
+            "flight_time_formatted": fmt_flight_time(flight_time_s),
             "xp": xp,
             "xp_base": xp_base,
             "xp_multiplier": xp_multiplier,
@@ -381,6 +392,7 @@ class CpDbMapper:
                 "status": status_str,
                 "score": _safe_int(s.get("score")),
                 "flight_time_s": _safe_int(s.get("flightTime")),
+                "flight_time_formatted": fmt_flight_time(_safe_int(s.get("flightTime"))),
             })
         return out
 
