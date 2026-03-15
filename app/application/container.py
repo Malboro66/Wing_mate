@@ -50,7 +50,12 @@ def _find_cp_db(base: Path) -> Optional[Path]:
             return candidate
 
     # Busca recursiva limitada a 3 níveis (case-insensitive por variantes).
+    # Inclui também o diretório base para cobrir nomes como ./CP.DB.
     for name_variant in ("cp.db", "Cp.db", "CP.db", "CP.DB"):
+        direct_candidate = base / name_variant
+        if direct_candidate.exists() and direct_candidate.is_file():
+            return direct_candidate
+
         for depth in range(1, 4):
             pattern = "/".join(["*"] * depth) + f"/{name_variant}"
             found = list(base.glob(pattern))

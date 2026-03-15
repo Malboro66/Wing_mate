@@ -637,6 +637,20 @@ class TestAppContainerCpDb:
 
         assert container.has_cp_db()
 
+    def test_auto_detection_supports_uppercase_cp_db_name(self, tmp_path, test_db):
+        import shutil
+        from app.application.container import AppContainer
+
+        simulator_dir = tmp_path / "simulator_root"
+        simulator_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy(test_db, simulator_dir / "CP.DB")
+
+        container = AppContainer()
+        container.set_source_mode(AppContainer.SOURCE_IL2_VANILLA)
+        container.set_pwcgfc_path(str(simulator_dir))
+
+        assert container.has_cp_db()
+
 
 # ---------------------------------------------------------------------------
 # Testes: Vanilla FlightLogs (missionReport .mlg)
