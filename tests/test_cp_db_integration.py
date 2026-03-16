@@ -373,7 +373,7 @@ class TestCpDbMapper:
     def test_pilot_to_pilot_data(self):
         from app.infrastructure.cp_db_mapper import CpDbMapper
         pilot = {"name": "Lt. Biggles", "rank": "Lieutenant", "country": "BRITAIN",
-                 "killLightFighter": 3}
+                 "rankId": 2, "killLightFighter": 3}
         sorties = [{"status": 0, "flightTime": 3600, "model": "Strutter",
                     "killLightFighter": 1}] * 3
         result = CpDbMapper.pilot_to_pilot_data(pilot, sorties, "No.45 Sqn")
@@ -381,6 +381,7 @@ class TestCpDbMapper:
         assert result["total_missions"] == 3
         assert result["total_victories"] == 3   # 3 sorties × 1 killLightFighter
         assert result["flight_time_formatted"] == "3h 0m"
+        assert result["rank"] == "Lieutenant"
 
     def test_pilot_morale_high_wins_applies_xp_multiplier(self):
         """Piloto com 5 vitórias seguidas deve ter morale > 80 e XP × 1.2."""
@@ -430,6 +431,7 @@ class TestCpDbMapper:
         missions_by_id = {1: {"date": "1916-10-17 08:30:00", "airfield": "St. Omer", "type": "Patrol"}}
         result = CpDbMapper.sorties_to_missions(sorties, missions_by_id)
         assert result[0]["date"] == "17/10/1916"
+        assert result[0]["source"] == "vanilla_db"
         assert result[0]["time"] == "08:30"
         assert result[0]["flight_time_formatted"] == "1h 0m"
 
@@ -795,3 +797,11 @@ class TestIL2DataParserPathResolution:
 
         assert parser.campaigns_path == campaign_dir.parent
         assert "Campaign B" in campaigns
+
+
+def test_resolve_rank_by_country_and_id():
+    from app.core.rank_registry import resolve_rank
+
+    assert resolve_rank("GERMANY", 1) == "Leutnant"
+    assert resolve_rank("BRITAIN", 3) == "Captain"
+    assert resolve_rank("RUSSIA", 999) == "N/A"

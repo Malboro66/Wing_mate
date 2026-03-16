@@ -66,3 +66,24 @@ def test_container_clears_parser_cache_before_reset(tmp_path: Path, monkeypatch)
     container.set_pwcgfc_path(path_b)
 
     assert called["value"] is True
+
+
+def test_container_reset_invalidates_parser_and_processor(tmp_path: Path):
+    container = AppContainer(str(tmp_path))
+
+    parser_a = container.get_parser()
+    processor_a = container.get_processor()
+
+    container.reset()
+
+    parser_b = container.get_parser()
+    processor_b = container.get_processor()
+
+    assert parser_a is not parser_b
+    assert processor_a is not processor_b
+
+
+def test_app_container_module_reexports_container_class():
+    from app.application.app_container import AppContainer as AliasAppContainer
+
+    assert AliasAppContainer is AppContainer

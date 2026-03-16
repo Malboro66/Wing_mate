@@ -2,11 +2,18 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Any, List
+from enum import Enum
+from typing import Any, List, Optional
 
 from utils.notification_bus import notify_warning
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
+
+
+class DataSource(str, Enum):
+    PWCG_JSON = "pwcg_json"
+    VANILLA_DB = "vanilla_db"
+    UNKNOWN = "unknown"
 
 
 @dataclass(frozen=True)
@@ -23,6 +30,20 @@ class Mission:
     weather: str = ""
     description: str = ""
     flight_time_formatted: str = ""
+    victories: Optional[int] = None
+    status: Optional[int] = None
+    score: Optional[int] = None
+    flight_time_s: Optional[int] = None
+    source: DataSource = DataSource.UNKNOWN
+
+
+def _parse_source(raw_source: Any) -> DataSource:
+    value = str(raw_source or "").strip().lower()
+    if value == DataSource.PWCG_JSON.value:
+        return DataSource.PWCG_JSON
+    if value == DataSource.VANILLA_DB.value:
+        return DataSource.VANILLA_DB
+    return DataSource.UNKNOWN
 
 
 class MissionValidationService:
@@ -53,6 +74,11 @@ class MissionValidationService:
                     weather=str(raw.get("weather", "") or ""),
                     description=str(raw.get("description", "") or ""),
                     flight_time_formatted=str(raw.get("flight_time_formatted", "") or ""),
+                    victories=int(raw["victories"]) if raw.get("victories") is not None else None,
+                    status=int(raw["status"]) if raw.get("status") is not None else None,
+                    score=int(raw["score"]) if raw.get("score") is not None else None,
+                    flight_time_s=int(raw["flight_time_s"]) if raw.get("flight_time_s") is not None else None,
+                    source=_parse_source(raw.get("source")),
                 )
             except (TypeError, ValueError) as e:
                 logger.warning("Missão inválida no índice %s: %s", idx, e)
