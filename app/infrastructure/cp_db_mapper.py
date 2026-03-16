@@ -398,7 +398,8 @@ class CpDbMapper:
                 "haReport": "",
                 # metadata extra
                 "victories": victories,
-                "status": status_str,
+                "status": status_code,
+                "status_text": status_str,
                 "score": _safe_int(s.get("score")),
                 "flight_time_s": _safe_int(s.get("flightTime")),
                 "source": "vanilla_db",

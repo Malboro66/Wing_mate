@@ -92,3 +92,12 @@ def test_validation_service_defaults_to_unknown_source():
     missions = service.validate([{"description": "ok"}])
 
     assert missions[0].source == DataSource.UNKNOWN
+
+
+def test_validation_service_accepts_datasource_enum_instance():
+    service = MissionValidationService()
+
+    missions = service.validate([{"source": DataSource.PWCG_JSON}])
+
+    assert len(missions) == 1
+    assert missions[0].source == DataSource.PWCG_JSON

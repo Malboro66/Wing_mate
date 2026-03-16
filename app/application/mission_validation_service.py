@@ -38,6 +38,9 @@ class Mission:
 
 
 def _parse_source(raw_source: Any) -> DataSource:
+    if isinstance(raw_source, DataSource):
+        return raw_source
+
     value = str(raw_source or "").strip().lower()
     if value == DataSource.PWCG_JSON.value:
         return DataSource.PWCG_JSON

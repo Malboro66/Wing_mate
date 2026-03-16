@@ -432,6 +432,8 @@ class TestCpDbMapper:
         result = CpDbMapper.sorties_to_missions(sorties, missions_by_id)
         assert result[0]["date"] == "17/10/1916"
         assert result[0]["source"] == "vanilla_db"
+        assert result[0]["status"] == 0
+        assert result[0]["status_text"] == "Retornou"
         assert result[0]["time"] == "08:30"
         assert result[0]["flight_time_formatted"] == "1h 0m"
 
