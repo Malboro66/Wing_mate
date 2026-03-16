@@ -81,3 +81,42 @@ def test_app_config_get_pwcg_path_falls_back_to_legacy_key(tmp_path: Path):
 
     assert cfg.get_pwcg_path("il2") == str(legacy)
     assert cfg.get_pwcg_path("rof") == str(legacy)
+
+
+def test_app_config_ww2_ready_true_when_marker_subdir_exists(tmp_path: Path):
+    settings = _FakeSettings()
+    cfg = AppConfig(settings)
+
+    il2 = tmp_path / "il2"
+    il2.mkdir()
+    (il2 / "BoS").mkdir()
+
+    cfg.set_path(AppConfig.KEY_IL2_FC, str(il2))
+
+    assert cfg.ww2_ready() is True
+
+
+def test_app_config_ww2_ready_true_when_marker_file_exists(tmp_path: Path):
+    settings = _FakeSettings()
+    cfg = AppConfig(settings)
+
+    il2 = tmp_path / "il2"
+    il2.mkdir()
+    (il2 / "BoM.exe").write_text("marker", encoding="utf-8")
+
+    cfg.set_path(AppConfig.KEY_IL2_FC, str(il2))
+
+    assert cfg.ww2_ready() is True
+
+
+def test_app_config_ww2_ready_false_when_no_markers(tmp_path: Path):
+    settings = _FakeSettings()
+    cfg = AppConfig(settings)
+
+    il2 = tmp_path / "il2"
+    il2.mkdir()
+    (il2 / "data").mkdir()
+
+    cfg.set_path(AppConfig.KEY_IL2_FC, str(il2))
+
+    assert cfg.ww2_ready() is False
