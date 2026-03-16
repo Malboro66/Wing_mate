@@ -139,7 +139,7 @@ class DataSyncThread(QThread):
             self.progress.emit(90)
 
             if not isinstance(data, dict) or not data:
-                msg = "NÃ£o foi possÃ­vel carregar os dados da campanha."
+                msg = "Não foi possível carregar os dados da campanha."
                 logger.warning("Dados de campanha invÃ¡lidos: %s", type(data))
                 record_action_duration(
                     structured_logger,
