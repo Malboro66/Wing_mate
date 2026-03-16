@@ -159,6 +159,17 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
             duty = m.duty
             duration = (m.flight_time_formatted or "").strip()
             duty_label = f"{duty}  ⏱ {duration}" if duration else duty
+
+            extras: List[str] = []
+            if m.victories is not None:
+                extras.append(f"✈ {m.victories}")
+            if m.score is not None:
+                extras.append(f"★ {m.score}")
+            if m.status is not None:
+                extras.append(f"S:{m.status}")
+            if extras:
+                duty_label = f"{duty_label}  {' | '.join(extras)}"
+
             duty_item = QTableWidgetItem(duty_label)
             duty_item.setTextAlignment(Qt.AlignCenter)
             duty_item.setToolTip(duty_label)
@@ -368,24 +379,36 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
         Atualiza o painel de detalhes e emite sinal com dia da semana em inglês.
         """
         idx: int = self.selected_index()
-        
+
         if 0 <= idx < len(self._missions):
             data: Mission = self._missions[idx]
             description = data.description
             duration = (data.flight_time_formatted or "").strip()
+
+            detail_lines: List[str] = []
             if duration:
-                description = f"Flight Time: {duration}\n\n{description}" if description else f"Flight Time: {duration}"
-            
+                detail_lines.append(f"Flight Time: {duration}")
+            if data.flight_time_s is not None:
+                detail_lines.append(f"Flight Time (s): {data.flight_time_s}")
+            if data.victories is not None:
+                detail_lines.append(f"Victories: {data.victories}")
+            if data.score is not None:
+                detail_lines.append(f"Score: {data.score}")
+            if data.status is not None:
+                detail_lines.append(f"Status: {data.status}")
+
+            if detail_lines:
+                header = "\n".join(detail_lines)
+                description = f"{header}\n\n{description}" if description else header
+
             # ADICIONA DIA DA SEMANA EM INGLÊS
             date_str = data.date
             weekday = self._get_weekday(date_str)
-            
+
             if weekday:
-                # Injeta o dia da semana logo após "Date: X.X.XXXX"
                 date_match = re.search(r'(Date[:\s]+\d{1,2}\.\d{1,2}\.\d{4})', description)
                 if date_match:
                     date_line = date_match.group(1)
-                    # Adiciona dia da semana em inglês após a data
                     enhanced_description = description.replace(
                         date_line,
                         f"{date_line} ({weekday})"
@@ -395,7 +418,7 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
                     self.details.setText(description)
             else:
                 self.details.setText(description)
-            
+
             self.missionSelected.emit(idx, data)
         else:
             self.details.clear()

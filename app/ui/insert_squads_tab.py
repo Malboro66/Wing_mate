@@ -10,6 +10,7 @@ import shutil
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from app.application.content_module_registry import ContentModuleRegistry
 from app.application.squadron_enrichment_application_service import (
     SquadronEnrichmentApplicationService,
 )
@@ -40,6 +41,7 @@ class InsertSquadsTab(QWidget):
     def __init__(
         self,
         app_service: Optional[SquadronEnrichmentApplicationService] = None,
+        content_registry: Optional[ContentModuleRegistry] = None,
         parent: Optional[QWidget] = None,
     ) -> None:
         super().__init__(parent)
@@ -50,15 +52,20 @@ class InsertSquadsTab(QWidget):
             )
         else:
             self._app_service = app_service
+        if content_registry is None:
+            assets_root = Path(__file__).resolve().parents[1] / "assets"
+            self._content_registry = ContentModuleRegistry(assets_root)
+            self._content_registry.load_external_modules()
+        else:
+            self._content_registry = content_registry
         self._pwcgfc_path: Optional[Path] = None
         self._squadron_dir: Optional[Path] = None
         self._selected_json_path: Optional[Path] = None
         self._selected_emblem_src: Optional[Path] = None
 
-        # Destino dentro de assets
-        self._assets_root: Path = Path(__file__).resolve().parents[1] / "assets"
-        self._assets_emblems_dir: Path = self._assets_root / "squadrons" / "images"
-        self._assets_meta_dir: Path = self._assets_root / "squadrons" / "meta"
+        # Destino de assets resolvido via ContentModuleRegistry
+        self._assets_emblems_dir: Path = self._content_registry.resolve("squadrons", "images")
+        self._assets_meta_dir: Path = self._content_registry.resolve("squadrons", "meta")
 
         self._build_ui()
 

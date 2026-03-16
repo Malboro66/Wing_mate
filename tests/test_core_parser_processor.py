@@ -5,7 +5,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.core.data_parser import IL2DataParser
-from app.core.data_processor import IL2DataProcessor
+from app.core.data_processor import HaReportEntry, HaReportParser, IL2DataProcessor
 
 
 def _build_campaign_tree(root: Path, campaign_name: str = "camp1") -> Path:
@@ -76,6 +76,41 @@ def test_processor_format_date_and_status_mapping():
     assert processor.format_date("invalid") == "invalid"
     assert processor.get_pilot_status(2) == "Morto em Combate (KIA)"
     assert processor.get_pilot_status(999) == "Desconhecido"
+
+
+
+
+def test_ha_report_parser_detects_semantic_events():
+    parser = HaReportParser()
+    text = (
+        "This mission started at dawn\n"
+        "Pilot A flew Sopwith Camel\n"
+        "Pilot B shot down Albatros D.V flying Fokker Dr.I\n"
+        "Pilot C returned in SPAD XIII\n"
+        "Pilot D damaged Balloon\n"
+    )
+
+    entries = parser.parse(text)
+
+    assert entries == [
+        HaReportEntry(pilot_name="Pilot A", event="flew", aircraft="Sopwith Camel", target=""),
+        HaReportEntry(
+            pilot_name="Pilot B",
+            event="shot down",
+            aircraft="Fokker Dr.I",
+            target="Albatros D.V",
+        ),
+        HaReportEntry(pilot_name="Pilot C", event="returned", aircraft="SPAD XIII", target=""),
+        HaReportEntry(pilot_name="Pilot D", event="damaged", aircraft="", target="Balloon"),
+    ]
+
+
+def test_ha_report_parser_falls_back_to_flew_for_plain_lines():
+    parser = HaReportParser()
+
+    entries = parser.parse("Pilot A\nThe mission ended")
+
+    assert entries == [HaReportEntry(pilot_name="Pilot A", event="flew", aircraft="", target="")]
 
 
 def test_processor_process_squadron_data_converts_and_sorts():
@@ -287,6 +322,7 @@ def test_process_campaign_preserves_pilots_in_mission_in_final_payload():
     payload = processor.process_campaign("camp")
 
     assert payload["missions"][0]["pilots_in_mission"] == ["Pilot A", "Pilot B"]
+    assert payload["missions"][0]["source"] == "pwcg_json"
 
 
 def test_resolve_aircraft_badge_prioritizes_ace_by_confirmed_victories():
