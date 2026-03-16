@@ -6,9 +6,79 @@
 
 import re
 import logging
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Any, Union, Optional, Tuple
+
+
+@dataclass(frozen=True)
+class HaReportEntry:
+    pilot_name: str
+    event: str
+    aircraft: str = ""
+    target: str = ""
+
+
+class HaReportParser:
+    _IGNORE_PREFIXES = ("this mission", "the mission")
+
+    _SHOT_DOWN_PATTERNS = (
+        re.compile(r"^(?P<pilot>.+?)\s+shot\s+down\s+(?P<target>.+?)\s+flying\s+(?P<aircraft>.+)$", re.IGNORECASE),
+        re.compile(r"^(?P<pilot>.+?)\s+shot\s+down\s+(?P<target>.+)$", re.IGNORECASE),
+    )
+    _FLEW_PATTERN = re.compile(r"^(?P<pilot>.+?)\s+flew(?:\s+(?P<aircraft>.+))?$", re.IGNORECASE)
+    _RETURNED_PATTERN = re.compile(r"^(?P<pilot>.+?)\s+returned(?:\s+in\s+(?P<aircraft>.+))?$", re.IGNORECASE)
+    _DAMAGED_PATTERNS = (
+        re.compile(r"^(?P<pilot>.+?)\s+damaged\s+(?P<target>.+?)\s+flying\s+(?P<aircraft>.+)$", re.IGNORECASE),
+        re.compile(r"^(?P<pilot>.+?)\s+damaged\s+(?P<target>.+)$", re.IGNORECASE),
+    )
+
+    def parse(self, text: str) -> List[HaReportEntry]:
+        if not text:
+            return []
+
+        entries: List[HaReportEntry] = []
+        for raw_line in re.findall(r"^.+$", str(text), re.MULTILINE):
+            line = str(raw_line).strip()
+            if not line or line.lower().startswith(self._IGNORE_PREFIXES):
+                continue
+            parsed = self._parse_line(line)
+            if parsed:
+                entries.append(parsed)
+
+        return entries
+
+    def _parse_line(self, line: str) -> HaReportEntry:
+        for pattern in self._SHOT_DOWN_PATTERNS:
+            match = pattern.match(line)
+            if match:
+                return self._entry_from_match(match, "shot down")
+
+        for pattern in self._DAMAGED_PATTERNS:
+            match = pattern.match(line)
+            if match:
+                return self._entry_from_match(match, "damaged")
+
+        flew_match = self._FLEW_PATTERN.match(line)
+        if flew_match:
+            return self._entry_from_match(flew_match, "flew")
+
+        returned_match = self._RETURNED_PATTERN.match(line)
+        if returned_match:
+            return self._entry_from_match(returned_match, "returned")
+
+        return HaReportEntry(pilot_name=line, event="flew")
+
+    @staticmethod
+    def _entry_from_match(match: re.Match, event: str) -> HaReportEntry:
+        data = match.groupdict()
+        return HaReportEntry(
+            pilot_name=str(data.get("pilot") or "").strip(),
+            event=event,
+            aircraft=str(data.get("aircraft") or "").strip(),
+            target=str(data.get("target") or "").strip(),
+        )
 
 from app.core.aircraft_registry import canonical as canonical_aircraft_model
 from app.core.weather_parser import WeatherParser
@@ -35,6 +105,7 @@ class IL2DataProcessor:
             pwcgfc_path: Caminho para o diretório PWCGFC
         """
         self.parser = IL2DataParser(pwcgfc_path)
+        self.ha_report_parser = HaReportParser()
         self._last_aircraft_progression: Dict[str, Dict[str, Any]] = {}
 
     def process_campaign(self, campaign_name: str) -> Dict[str, Any]:
@@ -150,10 +221,8 @@ class IL2DataProcessor:
 
             if ha_report:
                 try:
-                    for line in re.findall(r"^.+$", ha_report, re.MULTILINE):
-                        clean = str(line).strip()
-                        if clean and not clean.lower().startswith(("this mission", "the mission")):
-                            pilots_in_mission.append(clean)
+                    entries = self.ha_report_parser.parse(ha_report)
+                    pilots_in_mission = [entry.pilot_name for entry in entries if entry.pilot_name]
                 except re.error:
                     logger.warning(f"Erro de regex ao processar haReport: {ha_report[:50]}...")
 
@@ -209,6 +278,7 @@ class IL2DataProcessor:
                 "weather": weather_text,
                 "description": description_text,
                 "haReport": report.get("haReport", ""),
+                "source": "pwcg_json",
             }
 
             missions_with_key.append((raw_date or "99999999", mission_entry))

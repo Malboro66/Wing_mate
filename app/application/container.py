@@ -114,11 +114,12 @@ class AppContainer:
         normalized = path or ""
         if normalized == self._pwcgfc_path:
             return
+
         if self._parser is not None:
             self._parser.clear_cache()
+
         self._pwcgfc_path = normalized
-        self._reset_json_sources()
-        self._reset_cp_db()
+        self.reset()
         self._cp_db_path = None
 
         # Tenta localizar cp.db automaticamente no novo caminho
@@ -147,6 +148,11 @@ class AppContainer:
     # ------------------------------------------------------------------ #
     # Reset helpers                                                        #
     # ------------------------------------------------------------------ #
+
+    def reset(self) -> None:
+        """Invalida instâncias lazily carregadas dependentes de caminho/fonte."""
+        self._reset_json_sources()
+        self._reset_cp_db()
 
     def _reset_json_sources(self) -> None:
         self._parser = None

@@ -31,6 +31,8 @@ import logging
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Set
 
+from app.core.rank_registry import resolve_rank
+
 logger = logging.getLogger("IL2CampaignAnalyzer")
 
 
@@ -176,8 +178,8 @@ def _award_medal_id(award_type: int) -> str:
 # Soma de kills de uma row                                             #
 # ------------------------------------------------------------------ #
 
-# Colunas de kill confirmadas no schema (subset mais relevante)
-_KILL_PLANE_COLS = (
+# Colunas de kill de aeronaves confirmadas no schema SQLite (pilot/sortie)
+_KILL_COLS = (
     "killLightPlane", "killLightFighter", "killMediumPlane", "killMediumFighter",
     "killHeavyPlane", "killHeavyFighter",
     "killLightAttackPlane", "killMediumAttackPlane", "killHeavyAttackPlane",
@@ -188,7 +190,10 @@ _KILL_PLANE_COLS = (
 
 
 def _sum_plane_kills(row: Dict[str, Any]) -> int:
-    return sum(_safe_int(row.get(col)) for col in _KILL_PLANE_COLS)
+    total_kills = 0
+    for col in _KILL_COLS:
+        total_kills += _safe_int(row.get(col))
+    return total_kills
 
 
 def _compute_morale_from_sorties(sorties: List[Dict[str, Any]]) -> int:
@@ -300,6 +305,9 @@ class CpDbMapper:
         xp = int(round(xp_base * xp_multiplier))
         exhausted = morale < 20
 
+        country = _normalize_country(pilot.get("country"))
+        rank_id = _safe_int(pilot.get("rankId"))
+
         return {
             "name": _safe_str(pilot.get("name")),
             "squadron": squad_name,
@@ -315,8 +323,9 @@ class CpDbMapper:
             "morale_state": "Exausto" if exhausted else "Ativo",
             "morale_mood": _morale_mood_icon(morale),
             "needs_rest": exhausted,
-            "rank_id": _safe_int(pilot.get("rankId")),
-            "country": _normalize_country(pilot.get("country")),
+            "rank_id": rank_id,
+            "rank": resolve_rank(country, rank_id),
+            "country": country,
         }
 
     # ---------- sortie rows → mission dicts ---------- #
@@ -389,9 +398,11 @@ class CpDbMapper:
                 "haReport": "",
                 # metadata extra
                 "victories": victories,
-                "status": status_str,
+                "status": status_code,
+                "status_text": status_str,
                 "score": _safe_int(s.get("score")),
                 "flight_time_s": _safe_int(s.get("flightTime")),
+                "source": "vanilla_db",
                 "flight_time_formatted": fmt_flight_time(_safe_int(s.get("flightTime"))),
             })
         return out

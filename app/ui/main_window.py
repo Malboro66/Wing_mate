@@ -52,6 +52,7 @@ from app.ui.toast_widget import ToastWidget
 from app.ui.i18n import AppI18n
 from app.ui.war_propaganda_popup import WarPropagandaPopup
 
+from app.application.app_config import AppConfig
 from app.application.container import AppContainer
 from app.application.mission_validation_service import Mission, MissionValidationService
 from app.application.personnel_resolution_service import PersonnelResolutionService
@@ -138,7 +139,7 @@ class DataSyncThread(QThread):
             self.progress.emit(90)
 
             if not isinstance(data, dict) or not data:
-                msg = "NÃ£o foi possÃ­vel carregar os dados da campanha."
+                msg = "Não foi possível carregar os dados da campanha."
                 logger.warning("Dados de campanha invÃ¡lidos: %s", type(data))
                 record_action_duration(
                     structured_logger,
@@ -237,12 +238,13 @@ class MainWindow(QMainWindow):
         super().__init__(parent)
 
         self.settings: QSettings = QSettings("IL2CampaignAnalyzer", "Settings")
+        self.config = AppConfig(self.settings)
         self.container: AppContainer = AppContainer()
         self.personnel_resolution_service = PersonnelResolutionService(self.container.get_parser)
         self.mission_validation_service = MissionValidationService()
 
         self.pwcgfc_path: str = ""
-        self._data_source_mode: str = self.SOURCE_AUTO
+        self._data_source_mode: str = self.config.get_data_source()
         self._full_path_text: str = ""
         self.current_data: Dict[str, Any] = {}
         self._validated_missions: List[Mission] = []
@@ -261,6 +263,7 @@ class MainWindow(QMainWindow):
         self.lbl_campaign: QLabel
         self.lbl_language: QLabel
         self.campaign_combo: QComboBox
+        self.source_combo: QComboBox
         self.language_combo: QComboBox
         self.tabs: QTabWidget
 
@@ -424,6 +427,14 @@ class MainWindow(QMainWindow):
         self.campaign_combo.setAccessibleName("campaign_selector")
         self.campaign_combo.currentTextChanged.connect(self._on_campaign_changed)
         row.addWidget(self.campaign_combo, 1)
+        self.source_combo = QComboBox()
+        self.source_combo.setAccessibleName("data_source_selector")
+        self.source_combo.addItem("AUTO", self.SOURCE_AUTO)
+        self.source_combo.addItem("PWCG", self.SOURCE_PWCG_JSON)
+        self.source_combo.addItem("Vanilla", self.SOURCE_IL2_VANILLA)
+        self.source_combo.currentIndexChanged.connect(self._on_data_source_changed)
+        row.addWidget(self.source_combo)
+
         self.lbl_language = QLabel(self._t("language_label"))
         row.addWidget(self.lbl_language)
         self.language_combo = QComboBox()
@@ -456,7 +467,8 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self.medals_tab, self._t("medals_tab"))
 
         self.insert_squads_tab = InsertSquadsTab(
-            app_service=self.container.get_squadron_enrichment_application_service()
+            app_service=self.container.get_squadron_enrichment_application_service(),
+            content_registry=self.container.get_content_module_registry(),
         )
         self.tabs.addTab(self.insert_squads_tab, self._t("insert_squads_tab"))
 
@@ -614,6 +626,17 @@ class MainWindow(QMainWindow):
             normalized = self.SOURCE_AUTO
         self._data_source_mode = normalized
         self.container.set_source_mode(self._data_source_mode)
+        self.config.set_data_source(self._data_source_mode)
+
+        if hasattr(self, "source_combo"):
+            idx = self.source_combo.findData(self._data_source_mode)
+            if idx >= 0 and self.source_combo.currentIndex() != idx:
+                self.source_combo.blockSignals(True)
+                self.source_combo.setCurrentIndex(idx)
+                self.source_combo.blockSignals(False)
+
+    def _on_data_source_changed(self, _index: int) -> None:
+        self.set_data_source_mode(str(self.source_combo.currentData() or self.SOURCE_AUTO))
 
     @staticmethod
     def _resolve_pwcg_root_for_tools(raw_path: str) -> Optional[str]:
@@ -952,6 +975,8 @@ class MainWindow(QMainWindow):
     # ---------------- PersistÃªncia ----------------
 
     def _load_saved_settings(self) -> None:
+        self.set_data_source_mode(self.config.get_data_source())
+
         saved_path: str = str(self.settings.value("pwcgfc_path", "") or "")
         if saved_path and Path(saved_path).exists():
             if not self.set_campaign_path(saved_path, show_cp_db_notice=False):
