@@ -28,15 +28,62 @@ class AcesTab(QWidget):
     ROW_HEIGHT = 60
     ROUNDEL_COLUMN_WIDTH = 70
     
-    # ✅ CORRIGIDO: Mapeamento para arquivos PNG
     COUNTRY_ROUNDELS = {
+        # Alemanha
         'GERMANY': 'theme_german.png',
+        # Grã-Bretanha
         'BRITAIN': 'theme_rfc.png',
+        # França
         'FRANCE': 'theme_french.png',
+        # EUA
         'USA': 'theme_american.png',
+        # Bélgica — ambas as grafias canônicas
+        'BELGIUM': 'theme_belgium.png',
         'BELGIAN': 'theme_belgium.png',
-        'BELGIUM': 'theme_belgium.png'
     }
+
+    @staticmethod
+    def _normalize_country_code(raw: str) -> str:
+        """Normaliza variações de nomes de países para chave canônica do dicionário.
+
+        Recebe o valor bruto do campo country (já em maiúsculas) e retorna
+        a chave canônica usada em COUNTRY_ROUNDELS, ou o próprio valor se
+        não houver mapeamento conhecido.
+
+        Args:
+            raw: String do país já convertida para maiúsculas.
+
+        Returns:
+            Chave canônica para lookup em COUNTRY_ROUNDELS.
+        """
+        _ALIAS_SUBSTRINGS = (
+            # Britânicos (Royal Flying Corps, RNAS, UK)
+            ("GREAT BRITAIN", "BRITAIN"),
+            ("RFC", "BRITAIN"),
+            ("RNAS", "BRITAIN"),
+            ("ENGLAND", "BRITAIN"),
+            ("BRITISH", "BRITAIN"),
+            ("UK", "BRITAIN"),
+            # Alemanha
+            ("GERMAN", "GERMANY"),
+            ("DEUTSCH", "GERMANY"),
+            ("PRUSSIA", "GERMANY"),
+            ("PRUSSIAN", "GERMANY"),
+            # França
+            ("FRENCH", "FRANCE"),
+            # EUA
+            ("AMERICAN", "USA"),
+            ("UNITED STATES", "USA"),
+            # Bélgica
+            ("BELGIAN", "BELGIUM"),
+            ("BELGE", "BELGIUM"),
+        )
+
+        for alias, canonical in _ALIAS_SUBSTRINGS:
+            if alias in raw:
+                return canonical
+
+        return raw
     
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         """Inicializa a aba de Ases."""
@@ -151,9 +198,10 @@ class AcesTab(QWidget):
             return None
         
         # Busca arquivo de roundel
-        roundel_filename = self.COUNTRY_ROUNDELS.get(country_code)
+        canonical = self._normalize_country_code(country_code)
+        roundel_filename = self.COUNTRY_ROUNDELS.get(canonical)
         if not roundel_filename:
-            logger.warning(f"Roundel não mapeada para país: {country_code}")
+            logger.debug("Roundel não mapeada para país '%s' (canônico: '%s')", country_code, canonical)
             return None
         
         # Caminho: app/assets/icons/

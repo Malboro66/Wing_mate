@@ -6,6 +6,8 @@
 import json
 import re
 import logging
+
+import cache_manager
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -106,7 +108,14 @@ class IL2DataParser:
         self._cache_misses = 0
 
     def _get_json_data_cached(self, file_path: Path) -> Optional[Any]:
-        """Versão cacheada de carregamento de JSON por instância com invalidação por mtime."""
+        """Cache em duas camadas: memória (instância) + persistente (entre sessões).
+
+        Diagnóstico aplicado:
+        - o cache anterior era somente por instância (`self._json_cache`) e não sobrevivia
+          a reinicializações do app, mantendo observabilidade de cache em 0 nas sessões.
+        - agora usamos cache persistente com chave estável por caminho+mtime para gerar
+          HITs reais a partir da segunda execução, sem alterar regra de negócio.
+        """
         file_path_str = str(file_path)
         current_mtime = self._safe_stat_mtime(file_path)
         if current_mtime is None:
@@ -119,9 +128,18 @@ class IL2DataParser:
             self._cache_hits += 1
             return cached_entry.data
 
+        persistent_key = f"json:{file_path_str}:v1:mtime:{current_mtime}"
+        persistent_cached = cache_manager.get(persistent_key)
+        if persistent_cached is not None:
+            self._cache_hits += 1
+            self._json_cache[file_path_str] = _CacheEntry(data=persistent_cached, mtime=current_mtime)
+            return persistent_cached
+
         self._cache_misses += 1
         data = self._load_json_file(file_path)
         self._json_cache[file_path_str] = _CacheEntry(data=data, mtime=current_mtime)
+        if data is not None:
+            cache_manager.set(persistent_key, data, expire=3600)
         return data
 
     @staticmethod

@@ -216,6 +216,7 @@ class ProfileTab(QWidget):
 
         self._campaign_key = "default"
         self._pilot_key = "default"
+        self._country_folder: str = "germany"
         self._recruit_ref_year = self.MIN_ENLIST_YEAR
         self._max_recruit_age = int(self.settings.value("profile/max_recruit_age", self.DEFAULT_MAX_RECRUIT_AGE))
 
@@ -523,9 +524,10 @@ class ProfileTab(QWidget):
         return None
 
     def set_rank(self, rank: str):
-        self.set_rank_with_insignia(rank_name=rank, country_folder="germany")
+        self.set_rank_with_insignia(rank_name=rank, country_folder=self._country_folder)
 
     def set_rank_with_insignia(self, rank_name: str, country_folder: str = "germany"):
+        self._country_folder = (country_folder or "germany").strip().lower()
         display = rank_name or "N/A"
         self.rank_text_label.setText(display)
 

@@ -44,21 +44,23 @@ def atomic_json_write(filepath: Path):
 
 @contextmanager
 def atomic_write(filepath: Path, mode: str = 'w', encoding: str = 'utf-8'):
-    """Context manager genérico para escrita atômica de arquivos de texto.
-    
-    Versão mais genérica que suporta diferentes modos de escrita.
-    
+    """Context manager genérico para escrita atômica e durável de arquivos de texto.
+
+    O conteúdo é escrito em arquivo temporário no mesmo diretório, com flush +
+    ``os.fsync`` antes do ``os.replace`` para reduzir risco de truncamento após
+    quedas de energia.
+
     Args:
         filepath: Caminho do arquivo de destino
         mode: Modo de abertura ('w', 'a', etc)
         encoding: Encoding do arquivo (padrão: utf-8)
-        
+
     Yields:
         File handle para escrita
-        
+
     Raises:
         OSError: Se houver falha na escrita ou renomeação do arquivo
-    
+
     Example:
         >>> with atomic_write(Path("data.txt")) as f:
         ...     f.write("Hello, World!")
@@ -69,12 +71,15 @@ def atomic_write(filepath: Path, mode: str = 'w', encoding: str = 'utf-8'):
         suffix=filepath.suffix
     )
     tmp_file = Path(tmp_path)
-    
+
     try:
-        with open(tmp_fd, mode, encoding=encoding) as f:
+        with os.fdopen(tmp_fd, mode, encoding=encoding) as f:
             yield f
+            f.flush()
+            os.fsync(f.fileno())
+
         tmp_file.replace(filepath)
-        
+
     except Exception:
         if tmp_file.exists():
             try:
@@ -82,12 +87,6 @@ def atomic_write(filepath: Path, mode: str = 'w', encoding: str = 'utf-8'):
             except OSError:
                 pass
         raise
-        
-    finally:
-        try:
-            os.close(tmp_fd)
-        except OSError:
-            pass
 
 
 def safe_read_json(filepath: Path, default=None):
