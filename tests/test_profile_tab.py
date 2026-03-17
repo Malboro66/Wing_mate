@@ -161,3 +161,113 @@ def test_compute_age_static_method():
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+
+
+# ── testes para set_rank / set_rank_with_insignia ────────────────────────
+
+def test_set_rank_default_country_is_germany(qtbot):
+    """Sem configuração prévia, o país padrão deve ser germany."""
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+
+    assert tab._country_folder == "germany", (
+        f"País padrão esperado 'germany', obtido '{tab._country_folder}'"
+    )
+
+
+def test_set_rank_with_insignia_stores_country_folder(qtbot):
+    """set_rank_with_insignia deve persistir o country_folder na instância."""
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+
+    tab.set_rank_with_insignia("Captain", country_folder="britain")
+
+    assert tab._country_folder == "britain", (
+        f"Esperado 'britain', obtido '{tab._country_folder}'"
+    )
+
+
+def test_set_rank_with_insignia_stores_country_folder_france(qtbot):
+    """set_rank_with_insignia deve funcionar para qualquer nacionalidade."""
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+
+    tab.set_rank_with_insignia("Adjudant", country_folder="france")
+
+    assert tab._country_folder == "france", (
+        f"Esperado 'france', obtido '{tab._country_folder}'"
+    )
+
+
+def test_set_rank_uses_stored_country_not_hardcoded_germany(qtbot):
+    """set_rank deve usar o _country_folder armazenado, não 'germany' fixo.
+
+    Este é o teste de regressão central do bug: após configurar o país para
+    'britain', chamar set_rank() NÃO deve resetar o país para 'germany'.
+    """
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+
+    # Configura país britânico
+    tab.set_rank_with_insignia("Lieutenant", country_folder="britain")
+    assert tab._country_folder == "britain"
+
+    # Chama set_rank — deve manter 'britain', não resetar para 'germany'
+    tab.set_rank("Captain")
+
+    assert tab._country_folder == "britain", (
+        f"set_rank() resetou o país para '{tab._country_folder}' — "
+        "esperado 'britain' (bug de hardcoding 'germany' ainda presente)"
+    )
+
+
+def test_set_rank_updates_rank_text_label(qtbot):
+    """set_rank deve atualizar o label de texto da patente."""
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+
+    tab.set_rank("Major")
+
+    assert tab.rank_text_label.text() == "Major", (
+        f"rank_text_label esperado 'Major', obtido '{tab.rank_text_label.text()}'"
+    )
+
+
+def test_set_rank_with_insignia_updates_rank_text_label(qtbot):
+    """set_rank_with_insignia deve atualizar o label de texto da patente."""
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+
+    tab.set_rank_with_insignia("Capitaine", country_folder="france")
+
+    assert tab.rank_text_label.text() == "Capitaine", (
+        f"rank_text_label esperado 'Capitaine', obtido '{tab.rank_text_label.text()}'"
+    )
+
+
+def test_set_rank_with_insignia_normalizes_country_folder(qtbot):
+    """country_folder deve ser normalizado para lowercase."""
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+
+    tab.set_rank_with_insignia("Captain", country_folder="BRITAIN")
+
+    assert tab._country_folder == "britain", (
+        f"Esperado 'britain' (lowercase), obtido '{tab._country_folder}'"
+    )
+
+
+def test_set_rank_country_persists_across_multiple_calls(qtbot):
+    """O país configurado deve persistir por múltiplas chamadas a set_rank."""
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+
+    tab.set_rank_with_insignia("Sergeant", country_folder="usa")
+
+    tab.set_rank("Corporal")
+    tab.set_rank("Private")
+    tab.set_rank("General")
+
+    assert tab._country_folder == "usa", (
+        f"País esperado 'usa' após múltiplas chamadas, obtido '{tab._country_folder}'"
+    )
