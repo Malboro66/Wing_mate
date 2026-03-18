@@ -56,6 +56,7 @@ from app.application.app_config import AppConfig
 from app.application.container import AppContainer
 from app.application.mission_validation_service import Mission, MissionValidationService
 from app.application.personnel_resolution_service import PersonnelResolutionService
+from app.core.country_normalizer import country_display_name
 from app.core.data_parser import IL2DataParser
 from app.core.data_processor import IL2DataProcessor
 from utils.notification_bus import notification_bus, notify_error, notify_info, notify_warning
@@ -937,12 +938,7 @@ class MainWindow(QMainWindow):
 
     @staticmethod
     def _roundel_display_label(country_code: str, display_name: str) -> str:
-        c: str = (country_code or "").strip().upper()
-        if c == "BRITAIN":
-            return "Great Britain"
-        if c == "BELGIAN":
-            return "Belgium"
-        return display_name or "Germany"
+        return display_name or country_display_name(country_code)
 
     # ---------------- Datas de missÃµes ----------------
 

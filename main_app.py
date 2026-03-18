@@ -18,7 +18,7 @@ from typing import Any, Callable, Optional
 
 from PyQt5.QtCore import QLockFile, Qt
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QApplication, QMessageBox, QSplashScreen
+from PyQt5.QtWidgets import QApplication, QDesktopWidget, QMessageBox, QSplashScreen
 
 from utils.observability import (
     publish_release_report,
@@ -187,22 +187,25 @@ def _watchdog_start(timeout_s: float, phase_provider: Callable[[], list[str]]) -
     return timer
 
 
-def _finish_splash_when_ready(app: QApplication, splash: Optional[QSplashScreen], win: Any) -> None:
+def _center_window_on_screen(win: Any) -> None:
+    frame_geometry = win.frameGeometry()
+    screen_center = QDesktopWidget().availableGeometry(win).center()
+    frame_geometry.moveCenter(screen_center)
+    win.move(frame_geometry.topLeft())
+
+
+
+def _wait_for_splash_minimum_duration(app: QApplication, splash: Optional[QSplashScreen]) -> None:
     if splash is None:
         return
 
     shown_monotonic = float(splash.property("shown_monotonic") or time.monotonic())
     min_display_s = float(splash.property("minimum_display_s") or 0.0)
-    remaining_ms = max(0, int((min_display_s - (time.monotonic() - shown_monotonic)) * 1000.0))
+    end_time = shown_monotonic + min_display_s
 
-    if remaining_ms <= 0:
-        splash.finish(win)
-        return
-
-    # lazy import de QTimer para reduzir custo no caminho inicial do módulo
-    from PyQt5.QtCore import QTimer
-
-    QTimer.singleShot(remaining_ms, lambda: splash.finish(win))
+    while time.monotonic() < end_time:
+        app.processEvents()
+        time.sleep(0.01)
 
 
 if __name__ == "__main__":
@@ -258,8 +261,11 @@ if __name__ == "__main__":
             from app.ui.simulator_selection_main_window import MainWindow
 
             win = MainWindow()
+            _center_window_on_screen(win)
+            _wait_for_splash_minimum_duration(app, splash)
+            if splash is not None:
+                splash.finish(win)
             win.show()
-            _finish_splash_when_ready(app, splash, win)
         except Exception as exc:
             logger.exception("Falha ao construir/mostrar MainWindow")
             raise RuntimeError(str(exc)) from exc

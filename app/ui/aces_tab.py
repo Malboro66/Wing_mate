@@ -10,6 +10,7 @@ import logging
 
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QPixmap
+from app.core.country_normalizer import COUNTRY_ROUNDEL_STEMS, canonicalize_country_code
 from app.ui.widgets.stats_bar import StatsBar
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, 
@@ -29,17 +30,8 @@ class AcesTab(QWidget):
     ROUNDEL_COLUMN_WIDTH = 70
     
     COUNTRY_ROUNDELS = {
-        # Alemanha
-        'GERMANY': 'theme_german.png',
-        # Grã-Bretanha
-        'BRITAIN': 'theme_rfc.png',
-        # França
-        'FRANCE': 'theme_french.png',
-        # EUA
-        'USA': 'theme_american.png',
-        # Bélgica — ambas as grafias canônicas
-        'BELGIUM': 'theme_belgium.png',
-        'BELGIAN': 'theme_belgium.png',
+        country: f"{stem}.png"
+        for country, stem in COUNTRY_ROUNDEL_STEMS.items()
     }
 
     @staticmethod
@@ -198,7 +190,7 @@ class AcesTab(QWidget):
             return None
         
         # Busca arquivo de roundel
-        canonical = self._normalize_country_code(country_code)
+        canonical = canonicalize_country_code(country_code)
         roundel_filename = self.COUNTRY_ROUNDELS.get(canonical)
         if not roundel_filename:
             logger.debug("Roundel não mapeada para país '%s' (canônico: '%s')", country_code, canonical)
