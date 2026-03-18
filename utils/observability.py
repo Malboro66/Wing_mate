@@ -11,6 +11,8 @@ from typing import Any, Optional
 
 from utils.structured_logger import StructuredLogger
 
+import cache_manager
+
 # SLOs de UX (máquina de referência)
 STARTUP_SLO_MS = 2500.0
 TAB_SWITCH_SLO_MS = 200.0
@@ -30,6 +32,8 @@ class Events:
 class _MetricsState:
     def __init__(self) -> None:
         self.startup_time_ms: float = 0.0
+        self.startup_phases_ms: dict[str, float] = {}
+        self.startup_error: Optional[str] = None
         self.actions_total: int = 0
         self.actions_failed: int = 0
         self.action_duration_ms_total: float = 0.0
@@ -37,13 +41,15 @@ class _MetricsState:
         self.cache_hits: int = 0
         self.cache_misses: int = 0
 
-    def snapshot(self) -> dict[str, float]:
+    def snapshot(self) -> dict[str, Any]:
         error_rate = (self.actions_failed / self.actions_total) if self.actions_total else 0.0
         cache_total = self.cache_hits + self.cache_misses
         cache_hit_rate = (self.cache_hits / cache_total) if cache_total else 0.0
         avg_action = (self.action_duration_ms_total / self.actions_total) if self.actions_total else 0.0
-        return {
+        snapshot: dict[str, Any] = {
             "startup_time_ms": round(self.startup_time_ms, 2),
+            "startup_phases_ms": {k: round(v, 2) for k, v in self.startup_phases_ms.items()},
+            "startup_error": self.startup_error,
             "action_duration_ms": round(avg_action, 2),
             "error_rate": round(error_rate, 4),
             "cache_hit_rate": round(cache_hit_rate, 4),
@@ -53,6 +59,17 @@ class _MetricsState:
             "cache_hits": float(self.cache_hits),
             "cache_misses": float(self.cache_misses),
         }
+        # Diagnóstico aplicado:
+        # Os campos de cache ficavam 0.0 por não refletirem um backend persistente.
+        # Aqui damos preferência às estatísticas reais do cache_manager no momento
+        # de serializar a observabilidade da sessão.
+        try:
+            cache_stats = cache_manager.stats_para_observabilidade()
+            if isinstance(cache_stats, dict):
+                snapshot.update(cache_stats)
+        except Exception:
+            pass
+        return snapshot
 
 
 _SESSION_ID = uuid.uuid4().hex
@@ -70,6 +87,18 @@ def emit_event(logger: StructuredLogger, event: str, level: str = "info", **cont
 def record_startup_time(logger: StructuredLogger, startup_time_ms: float) -> None:
     _METRICS.startup_time_ms = max(0.0, float(startup_time_ms))
     emit_event(logger, Events.STARTUP_COMPLETED, startup_time_ms=round(_METRICS.startup_time_ms, 2))
+
+
+def record_startup_phase(phase_name: str, duration_ms: float) -> None:
+    normalized_name = str(phase_name or "").strip()
+    if not normalized_name:
+        return
+    _METRICS.startup_phases_ms[normalized_name] = max(0.0, float(duration_ms))
+
+
+def record_startup_error(error_message: str) -> None:
+    normalized_message = str(error_message or "").strip()
+    _METRICS.startup_error = normalized_message or None
 
 
 def record_action_duration(
@@ -100,11 +129,19 @@ def record_cache_stats(cache_hits: int, cache_misses: int) -> None:
     _METRICS.cache_misses = max(0, int(cache_misses))
 
 
-def metrics_snapshot() -> dict[str, float]:
+def increment_cache_hit() -> None:
+    _METRICS.cache_hits += 1
+
+
+def increment_cache_miss() -> None:
+    _METRICS.cache_misses += 1
+
+
+def metrics_snapshot() -> dict[str, Any]:
     return _METRICS.snapshot()
 
 
-def evaluate_ux_budget(snapshot: Optional[dict[str, float]] = None) -> dict[str, bool]:
+def evaluate_ux_budget(snapshot: Optional[dict[str, Any]] = None) -> dict[str, bool]:
     snap = snapshot or metrics_snapshot()
     return {
         "startup_within_slo": float(snap.get("startup_time_ms", 0.0)) <= STARTUP_SLO_MS,

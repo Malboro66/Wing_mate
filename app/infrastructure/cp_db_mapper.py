@@ -31,6 +31,7 @@ import logging
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Set
 
+from app.core.country_normalizer import canonicalize_country_code
 from app.core.rank_registry import resolve_rank
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
@@ -93,20 +94,7 @@ def _fmt_time(raw: Any) -> str:
 
 
 def _normalize_country(raw_country: Any) -> str:
-    value = str(raw_country or "").strip().upper()
-    if value in {"GER", "DE", "DEU", "GERMANY"}:
-        return "GERMANY"
-    if value in {"FRA", "FR", "FRANCE"}:
-        return "FRANCE"
-    if value in {"GB", "UK", "GBR", "BRITAIN"}:
-        return "BRITAIN"
-    if value in {"BEL", "BE", "BELGIUM", "BELGIAN"}:
-        return "BELGIAN"
-    if value in {"USA", "US", "UNITED STATES"}:
-        return "USA"
-    if value:
-        return value
-    return "GERMANY"
+    return canonicalize_country_code(raw_country)
 
 
 def _clean_aircraft_name(raw_value: Any) -> str:
