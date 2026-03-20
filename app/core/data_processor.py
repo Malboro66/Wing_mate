@@ -96,6 +96,13 @@ except ImportError:
 
 class IL2DataProcessor:
     """Processador de dados das campanhas IL-2."""
+
+    _VICTORY_FIELDS: tuple[str, ...] = (
+        "confirmedVictory",
+        "confirmedVictories",
+        "victories",
+        "victoryCount",
+    )
     
     def __init__(self, pwcgfc_path: Union[str, Path, None] = None) -> None:
         """
@@ -157,21 +164,37 @@ class IL2DataProcessor:
             "aircraft_progression": self._last_aircraft_progression,
         }
 
-    @staticmethod
-    def _extract_confirmed_victories(report: Dict[str, Any]) -> int:
-        candidates = (
-            report.get("confirmedVictory"),
-            report.get("confirmedVictories"),
-            report.get("victories"),
-            report.get("victoryCount"),
-        )
-        for value in candidates:
+    @classmethod
+    def _victories_from_report(cls, report: Dict[str, Any]) -> int:
+        """Extrai contagem de vitórias confirmadas de um relatório de combate.
+
+        Tenta os campos candidatos em ordem de prioridade e emite warning
+        quando nenhum campo candidato existe no relatório.
+        """
+        field_found = any(field in report for field in cls._VICTORY_FIELDS)
+
+        for field in cls._VICTORY_FIELDS:
+            value = report.get(field)
+            if value is None:
+                continue
             if isinstance(value, int):
                 return max(0, value)
             if isinstance(value, (list, tuple, dict)):
                 return max(0, len(value))
             if str(value or "").isdigit():
                 return max(0, int(value))
+
+        if not field_found:
+            present_keys = [
+                k for k in sorted(report.keys())
+                if k not in {"date", "time", "type", "duty", "haReport", "reportPilotName", "locality"}
+            ]
+            logger.warning(
+                "Nenhum campo de vitórias encontrado no relatório. Campos esperados: %s. Chaves presentes: %s",
+                cls._VICTORY_FIELDS,
+                present_keys[:15],
+            )
+
         return 0
 
     @staticmethod
@@ -249,7 +272,7 @@ class IL2DataProcessor:
                 pass
 
             aircraft_model = str(report.get("type", "NA") or "NA").strip() or "NA"
-            confirmed_victories = self._extract_confirmed_victories(report)
+            confirmed_victories = self._victories_from_report(report)
             model_stats = aircraft_progression_map.setdefault(
                 aircraft_model,
                 {"missions": 0, "confirmed_victories": 0, "badge": "Novato"},
@@ -423,23 +446,6 @@ class IL2DataProcessor:
             return yyyymmdd
 
     @staticmethod
-    def _extract_report_victories(report: Dict[str, Any]) -> int:
-        candidates = (
-            report.get("confirmedVictory"),
-            report.get("confirmedVictories"),
-            report.get("victories"),
-            report.get("victoryCount"),
-        )
-        for value in candidates:
-            if isinstance(value, int):
-                return max(0, value)
-            if isinstance(value, (list, tuple, dict)):
-                return max(0, len(value))
-            if str(value or "").isdigit():
-                return max(0, int(value))
-        return 0
-
-    @staticmethod
     def _is_survival_report(report: Dict[str, Any]) -> bool:
         status_candidates = (
             str(report.get("pilotStatus", "") or ""),
@@ -518,7 +524,7 @@ class IL2DataProcessor:
         valid_reports = [r for r in combat_reports if isinstance(r, dict)]
         pilot_squadron = squadron_name or "NA"
         pilot_total_missions = len(valid_reports)
-        pilot_total_victories = sum(self._extract_report_victories(r) for r in valid_reports)
+        pilot_total_victories = sum(self._victories_from_report(r) for r in valid_reports)
         pilot_survival_count = sum(1 for r in valid_reports if self._is_survival_report(r))
         pilot_xp_base = (
             (pilot_total_missions * 100)

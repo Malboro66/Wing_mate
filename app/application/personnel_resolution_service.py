@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, FrozenSet, List, Optional, Tuple
 
 from app.core.batch_repository import JsonBatchRepository
+from app.core.country_normalizer import canonicalize_country_code, country_display_name
 from app.core.data_parser import IL2DataParser
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
@@ -102,15 +103,5 @@ class PersonnelResolutionService:
 
     @staticmethod
     def _map_country_to_folder_and_label(country: str) -> tuple[str, str]:
-        c = (country or "").strip().upper()
-        if c in ("GERMANY", "GER", "DE", "DEU", "ALEMANHA", "ALLEMAGNE", "DEUTSCHLAND"):
-            return ("GERMANY", "Germany")
-        if c in ("FRANCE", "FR", "FRA"):
-            return ("FRANCE", "France")
-        if c in ("BRITAIN", "UK", "GB", "GBR", "UNITED KINGDOM", "BRIT"):
-            return ("BRITAIN", "Britain")
-        if c in ("BELGIAN", "BELGIUM", "BE", "BEL"):
-            return ("BELGIAN", "Belgian")
-        if c in ("USA", "US", "UNITED STATES", "UNITED STATES OF AMERICA"):
-            return ("USA", "USA")
-        return ("GERMANY", "Germany")
+        canonical = canonicalize_country_code(country)
+        return canonical, country_display_name(canonical)

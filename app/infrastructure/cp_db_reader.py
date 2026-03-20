@@ -165,6 +165,13 @@ class CpDbReader:
             (personage_id,),
         )
 
+    def get_pilot(self, pilot_id: int) -> Optional[Dict[str, Any]]:
+        """Piloto identificado pelo id primário do cp.db."""
+        return self._one(
+            "SELECT * FROM pilot WHERE id=? AND isDeleted=0 LIMIT 1",
+            (pilot_id,),
+        )
+
     # ------------------------------------------------------------------ #
     # mission                                                              #
     # ------------------------------------------------------------------ #

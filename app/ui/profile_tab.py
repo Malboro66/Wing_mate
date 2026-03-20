@@ -13,10 +13,15 @@ from __future__ import annotations
 
 import re
 import time
-from pathlib import Path
-from typing import Optional, Tuple, Set, List
-
 from datetime import datetime
+from pathlib import Path
+from typing import List, Optional, Set, Tuple
+
+from app.core.country_normalizer import (
+    COUNTRY_ROUNDEL_STEMS,
+    canonicalize_country_code,
+    country_display_name,
+)
 
 from PyQt5.QtCore import Qt, QDate, QSettings, QSize, QRect, QPoint
 from PyQt5.QtGui import QPixmap, QIcon, QMouseEvent
@@ -216,6 +221,7 @@ class ProfileTab(QWidget):
 
         self._campaign_key = "default"
         self._pilot_key = "default"
+        self._country_folder: str = "germany"
         self._recruit_ref_year = self.MIN_ENLIST_YEAR
         self._max_recruit_age = int(self.settings.value("profile/max_recruit_age", self.DEFAULT_MAX_RECRUIT_AGE))
 
@@ -482,13 +488,11 @@ class ProfileTab(QWidget):
             self.frame_label.raise_()
 
     def set_roundel(self, country_code: str, display_name: Optional[str] = None):
-        code = (country_code or "").strip().upper()
-        name_map = {"GERMANY": "Germany", "BRITAIN": "Great Britain", "USA": "USA", "FRANCE": "France", "BELGIAN": "Belgium"}
-        label = display_name or name_map.get(code, "Germany")
+        code = canonicalize_country_code(country_code)
+        label = display_name or country_display_name(code)
         self.roundel_text_label.setText(label)
 
-        stem_map = {"GERMANY": "theme_german", "BRITAIN": "theme_rfc", "USA": "theme_american", "FRANCE": "theme_french", "BELGIAN": "theme_belgium"}
-        stem = stem_map.get(code, "theme_german")
+        stem = COUNTRY_ROUNDEL_STEMS.get(code, COUNTRY_ROUNDEL_STEMS["GERMANY"])
         base = self._icons_base_dir()
         img_path = self._find_image_file(base, stem)
 
@@ -523,9 +527,10 @@ class ProfileTab(QWidget):
         return None
 
     def set_rank(self, rank: str):
-        self.set_rank_with_insignia(rank_name=rank, country_folder="germany")
+        self.set_rank_with_insignia(rank_name=rank, country_folder=self._country_folder)
 
     def set_rank_with_insignia(self, rank_name: str, country_folder: str = "germany"):
+        self._country_folder = (country_folder or "germany").strip().lower()
         display = rank_name or "N/A"
         self.rank_text_label.setText(display)
 
@@ -634,7 +639,7 @@ class ProfileTab(QWidget):
                 self._ribbons_layout.addWidget(QLabel(self.tr("Sem condecorações registradas.")))
             return
 
-        code = (country_code or "GERMANY").upper()
+        code = canonicalize_country_code(country_code)
         base = self._medals_base_dir() / code
         if not base.exists():
             if self._ribbons_layout:

@@ -10,7 +10,7 @@ import logging  # <-- Importação adicionada
 from PyQt5.QtCore import Qt, QTimer, QPoint, pyqtSignal
 from PyQt5.QtGui import QPixmap, QTransform, QColor, QMouseEvent, QIcon, QPainter, QFont
 from app.application.viewmodels import SquadronViewModel
-from app.ui.design_system import DSStyles, DSStates, DSSpacing, apply_section_group
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_section_group
 from app.ui.shortcut_mixin import CtrlFFocusMixin
 from app.ui.widgets.stats_bar import StatsBar
 from PyQt5.QtWidgets import (
@@ -208,6 +208,7 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
 
         # Cabeçalho (emblema + texto organizado)
         self.header_group: QGroupBox = QGroupBox(self.tr("Esquadrão"))
+        self.header_group.setStyleSheet(DSStyles.GROUP_BOX)
         apply_section_group(self.header_group)
         header_h: QHBoxLayout = QHBoxLayout(self.header_group)
 
@@ -226,13 +227,18 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         title_font.setBold(True)
         self.title_label.setFont(title_font)
         self.title_label.setWordWrap(True)
+        self.title_label.setStyleSheet(
+            f"color:{DSColors.AMBER}; font-size:20px; font-weight:700; letter-spacing:1px;"
+        )
 
         self.details_label: QLabel = QLabel("")
         self.details_label.setWordWrap(True)
         self.details_label.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         self.details_label.setTextFormat(Qt.RichText)
         self.details_label.setOpenExternalLinks(True)
-        self.details_label.setStyleSheet("font-size: 12pt;")
+        self.details_label.setStyleSheet(
+            f"color:{DSColors.TEXT_SECONDARY}; font-size:12px; line-height:160%;"
+        )
 
         text_v.addWidget(self.title_label)
 
@@ -251,6 +257,7 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         controls_row: QHBoxLayout = QHBoxLayout()
         controls_row.addWidget(QLabel(self.tr("Filtro rápido:")))
         self.filter_edit: QLineEdit = QLineEdit()
+        self.filter_edit.setStyleSheet(DSStyles.INPUT)
         self.filter_edit.setPlaceholderText(self.tr("Filtrar por nome, patente ou status"))
         self.filter_edit.setToolTip(self.tr("Atalho: Ctrl+F para focar o filtro"))
         self.filter_edit.textChanged.connect(self._apply_filter)
@@ -286,6 +293,10 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         self.table.setAlternatingRowColors(True)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.setToolTip(self.tr("Use setas para navegar entre os pilotos."))
+        self.table.setStyleSheet(DSStyles.TABLE)
+        self.table.verticalHeader().setVisible(False)
+        self.table.horizontalHeader().setHighlightSections(False)
+        self.table.setAlternatingRowColors(False)
         self._status_delegate = SquadronStatusDelegate(status_column=4, parent=self.table)
         self.table.setItemDelegate(self._status_delegate)
         root.addWidget(self.table)
@@ -627,15 +638,20 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
             return len(table) + len(heuristics) + 100
 
     def _set_view_state(self, state: str, message: str) -> None:
-        self.state_label.setText(message)
-        if state == DSStates.SUCCESS:
-            self.state_label.setStyleSheet(DSStyles.STATE_SUCCESS)
-        elif state == DSStates.ERROR:
-            self.state_label.setStyleSheet(DSStyles.STATE_ERROR)
-        elif state == DSStates.EMPTY:
-            self.state_label.setStyleSheet(DSStyles.STATE_WARNING)
-        else:
-            self.state_label.setStyleSheet(DSStyles.STATE_INFO)
+        icons = {
+            DSStates.SUCCESS: "✓",
+            DSStates.ERROR:   "✗",
+            DSStates.EMPTY:   "◌",
+            DSStates.LOADING: "⟳",
+        }
+        icon = icons.get(state, "ℹ")
+        self.state_label.setText(f"{icon}  {message}")
+        styles = {
+            DSStates.SUCCESS: DSStyles.STATE_SUCCESS,
+            DSStates.ERROR:   DSStyles.STATE_ERROR,
+            DSStates.EMPTY:   DSStyles.STATE_WARNING,
+        }
+        self.state_label.setStyleSheet(styles.get(state, DSStyles.STATE_INFO))
 
     def _apply_filter(self, text: str) -> None:
         rows: List[Dict[str, str]] = []
@@ -679,17 +695,15 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         self._stats_bar.update_stat(self.tr("Missões"), str(missions))
 
     def _toggle_high_contrast(self, enabled: bool) -> None:
-        if enabled:
-            self.table.setStyleSheet(
-                "QTableWidget { background:#111; color:#fff; gridline-color:#777; }"
-                "QHeaderView::section { background:#222; color:#fff; font-weight:bold; }"
-            )
-            self.header_group.setStyleSheet("QGroupBox { color:#fff; }")
-        else:
-            self.table.setStyleSheet("")
-            self.header_group.setStyleSheet("")
+        self.table.setStyleSheet(
+            DSStyles.TABLE_HIGH_CONTRAST if enabled else DSStyles.TABLE
+        )
+        self.header_group.setStyleSheet(
+            f"QGroupBox {{ color:#f0ead8; border-color:#505060; }}" if enabled else ""
+        )
 
     # -------- Preenchimento da tabela --------
+
     def set_squadron(self, members: List[Dict[str, Any]]) -> None:
         members = members or []
         member_state = self._vm.state_for_members(members)

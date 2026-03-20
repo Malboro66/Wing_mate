@@ -50,16 +50,18 @@ from app.ui.input_medals_tab import InputMedalsTab
 from app.ui.skeleton_widget import SkeletonWidget
 from app.ui.toast_widget import ToastWidget
 from app.ui.i18n import AppI18n
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates
 from app.ui.war_propaganda_popup import WarPropagandaPopup
 
 from app.application.app_config import AppConfig
 from app.application.container import AppContainer
 from app.application.mission_validation_service import Mission, MissionValidationService
 from app.application.personnel_resolution_service import PersonnelResolutionService
+from app.core.country_normalizer import country_display_name
 from app.core.data_parser import IL2DataParser
 from app.core.data_processor import IL2DataProcessor
 from utils.notification_bus import notification_bus, notify_error, notify_info, notify_warning
-from utils.observability import Events, emit_event, record_action_duration, record_cache_stats
+from utils.observability import Events, emit_event, record_action_duration
 from utils.structured_logger import StructuredLogger
 from utils.settings_manager import settings as settings_manager
 from utils.flight_streak import compute_flight_streak
@@ -362,6 +364,7 @@ class MainWindow(QMainWindow):
         tb.setMovable(False)
         tb.setIconSize(QSize(20, 20))
         self.addToolBar(tb)
+        tb.setStyleSheet(DSStyles.TOOLBAR)
 
         self.action_open_folder = QAction(
             self._icon_from_asset("config.png", QStyle.SP_DirOpenIcon),
@@ -397,6 +400,12 @@ class MainWindow(QMainWindow):
         self.action_go_back.triggered.connect(self.go_back_requested.emit)
 
         tb.addAction(self.action_go_back)
+        _brand = QLabel("✈  WING MATE")
+        _brand.setStyleSheet(
+            f"color:{DSColors.GOLD}; font-size:14px; font-weight:700;"
+            f" letter-spacing:2px; margin-right:8px; background:transparent;"
+        )
+        tb.insertWidget(tb.actions()[0], _brand)
         tb.addSeparator()
         tb.addAction(self.action_open_folder)
         tb.addAction(self.action_sync)
@@ -406,6 +415,9 @@ class MainWindow(QMainWindow):
         # Linha do caminho (compacta)
         path_row = QHBoxLayout()
         self.path_label = QLabel(self._t("no_path_selected"))
+        self.path_label.setStyleSheet(
+            f"color:{DSColors.TEXT_MUTED}; font-size:11px; background:transparent;"
+        )
         self.path_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
         path_row.addWidget(self.path_label, 1)
 
@@ -424,6 +436,7 @@ class MainWindow(QMainWindow):
         self.lbl_campaign = QLabel(self._t("campaign_label"))
         row.addWidget(self.lbl_campaign)
         self.campaign_combo = QComboBox()
+        self.campaign_combo.setStyleSheet(DSStyles.COMBO)
         self.campaign_combo.setAccessibleName("campaign_selector")
         self.campaign_combo.currentTextChanged.connect(self._on_campaign_changed)
         row.addWidget(self.campaign_combo, 1)
@@ -438,6 +451,7 @@ class MainWindow(QMainWindow):
         self.lbl_language = QLabel(self._t("language_label"))
         row.addWidget(self.lbl_language)
         self.language_combo = QComboBox()
+        self.language_combo.setStyleSheet(DSStyles.COMBO)
         self.language_combo.addItem(AppI18n.LANG_LABELS[AppI18n.PT_BR], AppI18n.PT_BR)
         self.language_combo.addItem(AppI18n.LANG_LABELS[AppI18n.EN_US], AppI18n.EN_US)
         idx = self.language_combo.findData(self._language_code)
@@ -448,6 +462,8 @@ class MainWindow(QMainWindow):
 
         # Tabs
         self.tabs = QTabWidget()
+        self.tabs.setStyleSheet(DSStyles.TAB_WIDGET)
+        self.tabs.setDocumentMode(True)
         self.tabs.setAccessibleName("main_tabs")
 
         self.profile_tab = ProfileTab(settings=self.settings)
@@ -492,17 +508,23 @@ class MainWindow(QMainWindow):
         # StatusBar + progress embutido
         sb = QStatusBar()
         self.setStatusBar(sb)
+        sb.setStyleSheet(DSStyles.STATUS_BAR)
 
         self.progress_bar = QProgressBar()
+        self.progress_bar.setStyleSheet(DSStyles.PROGRESS_BAR)
+        self.progress_bar.setFixedHeight(4)
+        self.progress_bar.setTextVisible(False)
         self.progress_bar.setRange(0, 100)
         self.progress_bar.setVisible(False)
         self.progress_bar.setFixedWidth(180)
-        self.progress_bar.setTextVisible(True)
         sb.addPermanentWidget(self.progress_bar)
 
         self.flight_streak_label = QLabel()
         self.flight_streak_label.setObjectName("flight_streak_indicator")
-        self.flight_streak_label.setStyleSheet("padding:2px 8px;")
+        self.flight_streak_label.setStyleSheet(
+            f"color:{DSColors.AMBER}; font-weight:700; padding:2px 10px;"
+            f" letter-spacing:1px; background:transparent;"
+        )
         sb.addPermanentWidget(self.flight_streak_label)
 
         self._toast = ToastWidget(self)
@@ -778,10 +800,10 @@ class MainWindow(QMainWindow):
         self._set_ui_busy(True, "Sincronizando campanha...")
         self.progress_bar.setValue(0)
 
-        if not self.container.has_cp_db():
-            parser = self.container.get_parser()
-            parser_metrics = getattr(parser, "get_cache_metrics", lambda: {"hits": 0, "misses": 0})()
-            record_cache_stats(int(parser_metrics.get("hits", 0)), int(parser_metrics.get("misses", 0)))
+        # Diagnóstico aplicado:
+        # O preenchimento manual de cache em observabilidade aqui ocorria antes da
+        # leitura real dos arquivos, gravando contadores zerados. As métricas agora
+        # são coletadas no publish via cache_manager.stats_para_observabilidade().
 
         self.sync_thread = DataSyncThread(
             self.pwcgfc_path,
@@ -937,12 +959,7 @@ class MainWindow(QMainWindow):
 
     @staticmethod
     def _roundel_display_label(country_code: str, display_name: str) -> str:
-        c: str = (country_code or "").strip().upper()
-        if c == "BRITAIN":
-            return "Great Britain"
-        if c == "BELGIAN":
-            return "Belgium"
-        return display_name or "Germany"
+        return display_name or country_display_name(country_code)
 
     # ---------------- Datas de missÃµes ----------------
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QLabel, QWidget
 
-from app.ui.design_system import DSFeedback
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates
 
 
 class ToastWidget(QLabel):
@@ -25,17 +25,21 @@ class ToastWidget(QLabel):
         self.hide()
 
     def show_toast(self, level: str, message: str, timeout_ms: int) -> None:
+        LEVEL_ICONS = {"info": "ℹ", "warning": "⚠", "error": "✗", "success": "✓"}
+        icon = LEVEL_ICONS.get(level, "ℹ")
         base = self._STYLES.get(level, self._STYLES["info"])
-        self.setStyleSheet(f"border-radius:8px; padding:8px; {base}")
-        self.setText(message or "")
+        self.setStyleSheet(
+            f"QLabel {{ border-radius:2px; padding:8px 16px; {base} }}"
+        )
+        self.setText(f"{icon}  {message or ''}")
 
         parent = self.parentWidget()
         if parent is not None:
-            max_width = max(280, int(parent.width() * 0.65))
+            max_width = max(300, int(parent.width() * 0.60))
             self.setMaximumWidth(max_width)
             self.adjustSize()
             x = max(8, (parent.width() - self.width()) // 2)
-            y = max(8, parent.height() - self.height() - 14)
+            y = max(8, parent.height() - self.height() - 18)
             self.move(x, y)
 
         self.raise_()
