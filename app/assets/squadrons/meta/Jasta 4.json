@@ -1,23 +1,51 @@
 {
-  "_comment": "V2 - Estrutura JSON otimizada para normalização, consistência e escalabilidade. As chaves seguem a convenção camelCase.",
+  "meta": {
+    "schemaVersion": "2.1",
+    "lastUpdated": "2024-01-01",
+    "notes": "V2.1 - Compatível com SquadronEnrichmentService (pipeline) e squadron_tab.py (UI vanilla/PWCG). Campos raiz adicionados, airfields normalizados, datas em YYYYMMDD, estrutura history expandida para UI."
+  },
+
+  "squadronName": "Jasta 4",
+  "name": "Jasta 4",
+  "id": "jasta_4_germany",
+  "country": "DEU",
+  "emblemImage": "squadrons/images/Jasta_4.png",
+
   "squadronInfo": {
     "id": "jasta_4_germany",
     "name": "Jasta 4",
     "countryIsoCode": "DEU"
   },
+
   "history": {
     "summary": "A 'hunting group' (fighter squadron) of the Luftstreitkräfte, known for being part of Manfred von Richthofen's famed Flying Circus (Jagdgeschwader I). The unit scored 192 confirmed victories during the war.",
-    "formationDate": "1916-08-25",
-    "formationContext": "Founded on 25 August 1916, drawing personnel from FFA 23, other two-seater reconnaissance units within 2 Armee, Kampfeinsitzerkommando Vaux, and Armee-Flugpark Nr. 2.",
-    "disbandmentDate": "1918-11-16",
-    "disbandmentContext": "Disbanded at FEA 9, Darmstadt, shortly after the Armistice.",
+    "formation": {
+      "date": "1916-08-25",
+      "context": "Founded on 25 August 1916, drawing personnel from FFA 23, other two-seater reconnaissance units within 2 Armee, Kampfeinsitzerkommando Vaux, and Armee-Flugpark Nr. 2."
+    },
+    "disbandment": {
+      "date": "1918-11-16",
+      "context": "Disbanded at FEA 9, Darmstadt, shortly after the Armistice."
+    },
     "notableEvents": [
       {
         "date": "1917-06-24",
         "description": "Became part of the forming Jagdgeschwader I (JG I), the famed 'Flying Circus'."
       }
+    ],
+    "commanders": [
+      {
+        "name": "Kurt-Bertram von Döring",
+        "tenure": "1917 (Temporary command of JG I while Richthofen was wounded)"
+      }
+    ],
+    "notablePilots": [
+      "Kurt-Bertram von Döring",
+      "Hans Klein",
+      "Fritz Anders"
     ]
   },
+
   "keyPersonnel": [
     {
       "name": "Kurt-Bertram von Döring",
@@ -35,14 +63,16 @@
       "roles": ["Notable Pilot"]
     }
   ],
+
   "statistics": {
-    "confirmedVictories": 192,
-    "personnelLosses": {
+    "totalVictories": 192,
+    "casualties": {
       "killedInAction": 11,
       "woundedInAction": 9,
       "prisonersOfWar": 2
     }
   },
+
   "equipment": {
     "aircraftUsed": [
       "Halberstadt D.II",
@@ -55,60 +85,64 @@
       "Halberstadt D.V",
       "Fokker D.VII"
     ],
-    "markingsDescription": "Initially included black and white bands around the fuselage. In 1918, Fokker Triplanes were reportedly striped red and turquoise on wings and fuselages."
+    "markings": {
+      "description": "Initially included black and white bands around the fuselage. In 1918, Fokker Triplanes were reportedly striped red and turquoise on wings and fuselages."
+    }
   },
+
   "media": {
-    "emblemImagePath": "squadrons/images/Jasta 4.png"
+    "emblemImagePath": "squadrons/images/Jasta_4.png"
   },
-  "deploymentHistory": [
+
+  "airfields": [
     {
-      "airfieldId": "roupy",
-      "startDate": "1916-08-25",
-      "endDate": "1916-12-01"
+      "airfield": "roupy",
+      "start": "19160825",
+      "end": "19161201"
     },
     {
-      "airfieldId": "bellevue_ferme",
-      "startDate": "1916-12-01",
-      "endDate": "1917-02-01"
+      "airfield": "bellevue_ferme",
+      "start": "19161201",
+      "end": "19170201"
     },
     {
-      "airfieldId": "douai",
-      "startDate": "1917-02-01",
-      "endDate": "1917-06-01"
+      "airfield": "douai",
+      "start": "19170201",
+      "end": "19170601"
     },
     {
-      "airfieldId": "lomme",
-      "startDate": "1917-06-01",
-      "endDate": "1917-07-01"
+      "airfield": "lomme",
+      "start": "19170601",
+      "end": "19170701"
     },
     {
-      "airfieldId": "douai",
-      "startDate": "1917-07-01",
-      "endDate": "1917-09-01"
+      "airfield": "douai",
+      "start": "19170701",
+      "end": "19170901"
     },
     {
-      "airfieldId": "roucourt",
-      "startDate": "1917-09-01",
-      "endDate": "1917-11-01"
+      "airfield": "roucourt",
+      "start": "19170901",
+      "end": "19171101"
     },
     {
-      "airfieldId": "bullecourt",
-      "startDate": "1917-11-01",
-      "endDate": "1918-03-01"
+      "airfield": "bullecourt",
+      "start": "19171101",
+      "end": "19180301"
     },
     {
-      "airfieldId": "champien",
-      "startDate": "1918-03-01",
-      "endDate": "1918-10-01"
+      "airfield": "champien",
+      "start": "19180301",
+      "end": "19181001"
     },
     {
-      "airfieldId": "ugny_lequipee",
-      "startDate": "1918-10-01",
-      "endDate": "1918-11-11"
+      "airfield": "ugny_lequipee",
+      "start": "19181001",
+      "end": "19181111"
     }
   ],
+
   "source": {
-    "pwcgSquadronFile": "pwcg_files/Jasta 4.json",
-    "comment": "Original source path was an absolute path, changed to a relative one for portability."
+    "pwcg_squadron_file": "pwcg_files/Jasta_4.json"
   }
 }

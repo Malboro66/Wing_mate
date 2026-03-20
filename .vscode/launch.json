@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Wing Mate - Debug",
+        "type": "debugpy",
+        "request": "launch",
+        "program": "${workspaceFolder}/main_app.py",
+        "console": "integratedTerminal",
+        "justMyCode": false,
+        "env": {
+          "PYTHONDONTWRITEBYTECODE": "1"
+        }
+      }
+    ]
+  }
