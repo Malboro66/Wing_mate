@@ -33,6 +33,49 @@ class AcesTab(QWidget):
         country: f"{stem}.png"
         for country, stem in COUNTRY_ROUNDEL_STEMS.items()
     }
+
+    @staticmethod
+    def _normalize_country_code(raw: str) -> str:
+        """Normaliza variações de nomes de países para chave canônica do dicionário.
+
+        Recebe o valor bruto do campo country (já em maiúsculas) e retorna
+        a chave canônica usada em COUNTRY_ROUNDELS, ou o próprio valor se
+        não houver mapeamento conhecido.
+
+        Args:
+            raw: String do país já convertida para maiúsculas.
+
+        Returns:
+            Chave canônica para lookup em COUNTRY_ROUNDELS.
+        """
+        _ALIAS_SUBSTRINGS = (
+            # Britânicos (Royal Flying Corps, RNAS, UK)
+            ("GREAT BRITAIN", "BRITAIN"),
+            ("RFC", "BRITAIN"),
+            ("RNAS", "BRITAIN"),
+            ("ENGLAND", "BRITAIN"),
+            ("BRITISH", "BRITAIN"),
+            ("UK", "BRITAIN"),
+            # Alemanha
+            ("GERMAN", "GERMANY"),
+            ("DEUTSCH", "GERMANY"),
+            ("PRUSSIA", "GERMANY"),
+            ("PRUSSIAN", "GERMANY"),
+            # França
+            ("FRENCH", "FRANCE"),
+            # EUA
+            ("AMERICAN", "USA"),
+            ("UNITED STATES", "USA"),
+            # Bélgica
+            ("BELGIAN", "BELGIUM"),
+            ("BELGE", "BELGIUM"),
+        )
+
+        for alias, canonical in _ALIAS_SUBSTRINGS:
+            if alias in raw:
+                return canonical
+
+        return raw
     
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         """Inicializa a aba de Ases."""

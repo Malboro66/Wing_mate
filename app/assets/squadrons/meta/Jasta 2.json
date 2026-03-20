@@ -1,16 +1,33 @@
 {
-  "_comment": "V2 - Estrutura JSON otimizada para normalização, consistência e escalabilidade. As chaves seguem a convenção camelCase.",
+  "meta": {
+    "schemaVersion": "2.1",
+    "lastUpdated": "2024-01-01",
+    "notes": "V2.1 - Compatível com SquadronEnrichmentService (pipeline) e squadron_tab.py (UI vanilla/PWCG). Campos raiz adicionados, airfields normalizados, datas em YYYYMMDD, estrutura history expandida para UI."
+  },
+
+  "squadronName": "Jasta 2",
+  "name": "Jasta 2",
+  "id": "jasta_2_germany",
+  "displayName": "Jasta Boelcke",
+  "squadronAlias": "Jasta Boelcke",
+  "country": "DEU",
+  "emblemImage": "squadrons/images/Jasta_2.png",
+
   "squadronInfo": {
     "id": "jasta_2_germany",
     "name": "Jasta 2",
-    "alias": "Jasta Boelcke",
+    "displayName": "Jasta Boelcke",
     "countryIsoCode": "DEU"
   },
+
   "history": {
     "summary": "One of the best-known German Luftstreitkräfte squadrons in World War I, founded by the great aerial tactician Oswald Boelcke. It was the incubator for several notable aviation careers and the birthplace of modern fighter aviation tactics.",
-    "formationDate": "1916-08-10",
-    "formationLocation": "Bertincourt, France",
-    "formationContext": "Formed from scratch with no parent unit, as part of a reorganization of the German air force (Luftstreitkräfte), inspired by Boelcke himself.",
+    "formation": {
+      "date": "1916-08-10",
+      "location": "Bertincourt, France",
+      "firstCommander": "Oswald Boelcke",
+      "context": "Formed from scratch with no parent unit, as part of a reorganization of the German air force (Luftstreitkräfte), inspired by Boelcke himself."
+    },
     "notableEvents": [
       {
         "date": "1916-09-17",
@@ -28,8 +45,36 @@
         "date": "1918-02-01",
         "description": "Became part of the new Royal Prussian Jagdgeschwader III, under Bruno Loerzer."
       }
+    ],
+    "commanders": [
+      {
+        "name": "Oswald Boelcke",
+        "tenure": "1916-08-30 to 1916-10-28",
+        "fate": "Killed in Action"
+      },
+      {
+        "name": "Stefan Kirmaier",
+        "tenure": "1916-10-28 to 1916-11-22",
+        "fate": "Killed in Action"
+      },
+      {
+        "name": "Franz Walz",
+        "tenure": "1916-11-29 to 1918-02-01"
+      },
+      {
+        "name": "Bruno Loerzer",
+        "tenure": "1918-02-01 to 1918-11-11"
+      }
+    ],
+    "notablePilots": [
+      "Manfred von Richthofen",
+      "Erwin Böhme",
+      "Stefan Kirmaier",
+      "Hans Reimann",
+      "Otto Höhne"
     ]
   },
+
   "keyPersonnel": [
     {
       "name": "Oswald Boelcke",
@@ -78,16 +123,18 @@
       "roles": ["Notable Pilot"]
     }
   ],
+
   "statistics": {
-    "confirmedVictories": 336,
+    "totalVictories": 336,
     "aces": 23,
-    "personnelLosses": {
+    "casualties": {
       "killedInAction": 31,
       "woundedInAction": 9,
       "prisonersOfWar": 2,
       "accidents": 2
     }
   },
+
   "equipment": {
     "aircraftUsed": [
       "Fokker D.III",
@@ -95,55 +142,59 @@
       "Albatros D.II",
       "Halberstadt D.II"
     ],
-    "markingsDescription": "Black and white tailplanes and elevators (top and bottom)—one side black, one side white."
+    "markings": {
+      "description": "Black and white tailplanes and elevators (top and bottom)—one side black, one side white."
+    }
   },
+
   "media": {
-    "emblemImagePath": "squadrons/images/Jasta 2.png"
+    "emblemImagePath": "squadrons/images/Jasta_2.png"
   },
-  "deploymentHistory": [
+
+  "airfields": [
     {
-      "airfieldId": "lagnicourt",
-      "startDate": "1916-09-01",
-      "endDate": "1916-11-01"
+      "airfield": "lagnicourt",
+      "start": "19160901",
+      "end": "19161101"
     },
     {
-      "airfieldId": "houplin",
-      "startDate": "1916-11-01",
-      "endDate": "1916-12-01"
+      "airfield": "houplin",
+      "start": "19161101",
+      "end": "19161201"
     },
     {
-      "airfieldId": "pronville",
-      "startDate": "1916-12-01",
-      "endDate": "1917-08-01"
+      "airfield": "pronville",
+      "start": "19161201",
+      "end": "19170801"
     },
     {
-      "airfieldId": "halluin",
-      "startDate": "1917-08-01",
-      "endDate": "1917-09-01"
+      "airfield": "halluin",
+      "start": "19170801",
+      "end": "19170901"
     },
     {
-      "airfieldId": "menin",
-      "startDate": "1917-09-01",
-      "endDate": "1918-03-01"
+      "airfield": "menin",
+      "start": "19170901",
+      "end": "19180301"
     },
     {
-      "airfieldId": "mesnil_sw",
-      "startDate": "1918-03-01",
-      "endDate": "1918-10-01"
+      "airfield": "mesnil_sw",
+      "start": "19180301",
+      "end": "19181001"
     },
     {
-      "airfieldId": "bony",
-      "startDate": "1918-10-01",
-      "endDate": "1918-11-01"
+      "airfield": "bony",
+      "start": "19181001",
+      "end": "19181101"
     },
     {
-      "airfieldId": "gouy",
-      "startDate": "1918-11-01",
-      "endDate": "1918-11-11"
+      "airfield": "gouy",
+      "start": "19181101",
+      "end": "19181111"
     }
   ],
+
   "source": {
-    "pwcgSquadronFile": "pwcg_files/Jasta 2.json",
-    "comment": "Original source path was an absolute path, changed to a relative one for portability."
+    "pwcg_squadron_file": "pwcg_files/Jasta_2.json"
   }
 }

@@ -1,0 +1,28 @@
+{
+  "release": "20260316_215015",
+  "session_id": "9274a89228b44d8c87ace73d8e88dc47",
+  "generated_at_epoch_ms": 1773708615173,
+  "metrics": {
+    "startup_time_ms": 5466.45,
+    "action_duration_ms": 22.89,
+    "error_rate": 0.0,
+    "cache_hit_rate": 0.0,
+    "max_tab_switch_ms": 0.0,
+    "actions_total": 3.0,
+    "actions_failed": 0.0,
+    "cache_hits": 0.0,
+    "cache_misses": 60.0
+  },
+  "ux_budget": {
+    "startup_within_slo": false,
+    "tab_switch_within_slo": true,
+    "critical_action_within_slo": true
+  },
+  "baseline_delta": {
+    "startup_time_ms": -82.72,
+    "action_duration_ms": 21.17,
+    "error_rate": -0.0588,
+    "cache_hit_rate": 0.0,
+    "max_tab_switch_ms": -2.8
+  }
+}
