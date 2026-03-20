@@ -527,6 +527,22 @@ class TestCpDbCampaignRepository:
         assert ace["name"] == "Lt. James Bigglesworth"
         assert ace["country"] == "BRITAIN"
 
+    def test_process_career_uses_career_player_id_when_personage_link_is_wrong(self, test_db):
+        conn = sqlite3.connect(str(test_db))
+        conn.execute(
+            "UPDATE pilot SET personageId='mismatch-personage', country='BRITAIN' WHERE id=1"
+        )
+        conn.commit()
+        conn.close()
+
+        from app.infrastructure.cp_db_repository import CpDbCampaignRepository
+
+        repo = CpDbCampaignRepository(test_db)
+        data = repo.process_career("1")
+
+        assert data["pilot"]["name"] == "Lt. James Bigglesworth"
+        assert data["pilot"]["country"] == "BRITAIN"
+
     def test_process_career_uses_award_squad_name_fallback(self, test_db):
         conn = sqlite3.connect(str(test_db))
         conn.execute(
