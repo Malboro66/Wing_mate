@@ -36,11 +36,13 @@ def test_parser_get_campaign_aces_supports_multiple_formats(tmp_path: Path):
     assert parser.get_campaign_aces("camp1") == [{"name": "Ace 1"}]
 
     # formato dict com chave aces
+    time.sleep(0.02)
     aces_path.write_text('{"aces":[{"name":"Ace 2"}]}', encoding="utf-8")
     parser.clear_cache()
     assert parser.get_campaign_aces("camp1") == [{"name": "Ace 2"}]
 
     # formato dict com chave acesInCampaign
+    time.sleep(0.02)
     aces_path.write_text('{"acesInCampaign":{"1":{"name":"Ace 3"}}}', encoding="utf-8")
     parser.clear_cache()
     assert parser.get_campaign_aces("camp1") == [{"name": "Ace 3"}]
@@ -359,3 +361,129 @@ def test_process_missions_data_weather_uses_dedicated_parser_block_only():
     assert "Weather Report" in missions[0]["weather"]
     assert "Objective" not in missions[0]["weather"]
 
+
+
+# ── testes para _victories_from_report ───────────────────────────────────
+
+class TestVictoriesFromReport:
+    """Testa o método consolidado de extração de vitórias."""
+
+    def test_returns_int_field_directly(self):
+        """Campo confirmedVictory como int deve ser retornado diretamente."""
+        processor = IL2DataProcessor(None)
+        assert processor._victories_from_report({"confirmedVictory": 3}) == 3
+
+    def test_returns_zero_for_int_zero_without_warning(self, caplog):
+        """Campo presente com valor 0 deve retornar 0 sem emitir warning."""
+        import logging
+        processor = IL2DataProcessor(None)
+        with caplog.at_level(logging.WARNING, logger="IL2CampaignAnalyzer"):
+            result = processor._victories_from_report({"confirmedVictory": 0})
+        assert result == 0
+        assert "Nenhum campo de vitórias" not in caplog.text
+
+    def test_returns_length_for_list_field(self):
+        """Campo victories como lista deve retornar o comprimento da lista."""
+        processor = IL2DataProcessor(None)
+        assert processor._victories_from_report({"victories": [1, 2, 3]}) == 3
+
+    def test_returns_zero_for_empty_list_without_warning(self, caplog):
+        """Lista vazia é valor válido (0 vitórias) — não deve emitir warning."""
+        import logging
+        processor = IL2DataProcessor(None)
+        with caplog.at_level(logging.WARNING, logger="IL2CampaignAnalyzer"):
+            result = processor._victories_from_report({"victories": []})
+        assert result == 0
+        assert "Nenhum campo de vitórias" not in caplog.text
+
+    def test_returns_value_for_string_digit_field(self):
+        """Campo victoryCount como string numérica deve ser convertido."""
+        processor = IL2DataProcessor(None)
+        assert processor._victories_from_report({"victoryCount": "5"}) == 5
+
+    def test_priority_order_confirmedVictory_first(self):
+        """confirmedVictory deve ter prioridade sobre victories."""
+        processor = IL2DataProcessor(None)
+        report = {"confirmedVictory": 2, "victories": [1, 2, 3, 4, 5]}
+        assert processor._victories_from_report(report) == 2
+
+    def test_falls_through_to_next_candidate_when_none(self):
+        """Campo None deve ser ignorado, próximo candidato deve ser usado."""
+        processor = IL2DataProcessor(None)
+        report = {"confirmedVictory": None, "confirmedVictories": 4}
+        assert processor._victories_from_report(report) == 4
+
+    def test_emits_warning_when_no_candidate_field_present(self, caplog):
+        """Warning deve ser emitido quando NENHUM campo candidato existe no dict."""
+        import logging
+        processor = IL2DataProcessor(None)
+        report = {"date": "19180101", "type": "SPAD XIII", "duty": "Escort"}
+        with caplog.at_level(logging.WARNING, logger="IL2CampaignAnalyzer"):
+            result = processor._victories_from_report(report)
+        assert result == 0
+        assert "Nenhum campo de vitórias" in caplog.text
+
+    def test_warning_includes_expected_fields(self, caplog):
+        """Warning deve mencionar os campos esperados para facilitar diagnóstico."""
+        import logging
+        processor = IL2DataProcessor(None)
+        with caplog.at_level(logging.WARNING, logger="IL2CampaignAnalyzer"):
+            processor._victories_from_report({"date": "19180101"})
+        assert "confirmedVictory" in caplog.text
+
+    def test_no_warning_when_field_present_but_all_none(self, caplog):
+        """Campo presente com valor None não deve emitir warning — chave existe."""
+        import logging
+        processor = IL2DataProcessor(None)
+        report = {"confirmedVictory": None, "date": "19180101"}
+        with caplog.at_level(logging.WARNING, logger="IL2CampaignAnalyzer"):
+            result = processor._victories_from_report(report)
+        assert result == 0
+        assert "Nenhum campo de vitórias" not in caplog.text
+
+    def test_negative_values_clamped_to_zero(self):
+        """Valores negativos devem ser tratados como 0."""
+        processor = IL2DataProcessor(None)
+        assert processor._victories_from_report({"confirmedVictory": -3}) == 0
+
+    def test_process_pilot_data_uses_victories_from_report(self):
+        """process_pilot_data deve acumular vitórias corretamente via método consolidado."""
+        processor = IL2DataProcessor(None)
+        campaign_info = {
+            "referencePlayerName": "Pilot A",
+            "referencePlayerSquadronName": "Esc 1",
+        }
+        reports = [
+            {"confirmedVictory": 2, "pilotStatus": "active"},
+            {"confirmedVictory": 1, "pilotStatus": "active"},
+            {"confirmedVictory": 0, "pilotStatus": "active"},
+        ]
+        pilot = processor.process_pilot_data(campaign_info, reports)
+        assert pilot["total_victories"] == 3
+
+    def test_process_pilot_data_emits_warning_for_schema_drift(self, caplog):
+        """process_pilot_data deve emitir warning quando campo de vitórias ausente."""
+        import logging
+        processor = IL2DataProcessor(None)
+        campaign_info = {
+            "referencePlayerName": "Pilot A",
+            "referencePlayerSquadronName": "Esc 1",
+        }
+        reports = [
+            {"date": "19180101", "type": "SPAD", "unknownVictoryField": 5},
+            {"date": "19180102", "type": "SPAD", "unknownVictoryField": 3},
+        ]
+        with caplog.at_level(logging.WARNING, logger="IL2CampaignAnalyzer"):
+            pilot = processor.process_pilot_data(campaign_info, reports)
+        assert pilot["total_victories"] == 0
+        assert "Nenhum campo de vitórias" in caplog.text
+
+    def test_old_methods_no_longer_exist(self):
+        """Os métodos antigos duplicados devem ter sido removidos."""
+        processor = IL2DataProcessor(None)
+        assert not hasattr(processor, "_extract_confirmed_victories"), (
+            "_extract_confirmed_victories ainda existe — método antigo não foi removido"
+        )
+        assert not hasattr(processor, "_extract_report_victories"), (
+            "_extract_report_victories ainda existe — método antigo não foi removido"
+        )

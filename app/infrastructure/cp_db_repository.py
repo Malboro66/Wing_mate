@@ -19,6 +19,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from app.core.country_normalizer import canonicalize_country_code
 from app.core.repositories import Campaign, CampaignRepositoryPort
 from app.infrastructure.cp_db_mapper import CpDbMapper
 from app.infrastructure.cp_db_reader import CpDbReader
@@ -158,7 +159,10 @@ class CpDbCampaignRepository:
 
             career_id = int(career["id"])
             personage_id = str(career.get("personageId", ""))
+            player_id = self._as_int(career.get("playerId"), -1)
             pilot_row = self._reader.get_player_pilot(personage_id)
+            if (not pilot_row or not str(pilot_row.get("country", "") or "").strip()) and player_id >= 0:
+                pilot_row = self._reader.get_pilot(player_id) or pilot_row
             squadron_row = self._reader.get_squadron(int(career.get("squadronId", -1)))
             all_pilots = self._reader.get_pilots(int(career.get("squadronId", -1)))
             pilots_lookup: Dict[Any, Dict[str, Any]] = {}
@@ -354,15 +358,4 @@ class CpDbCampaignRepository:
 
     @staticmethod
     def _normalize_country(raw_country: Any) -> str:
-        value = str(raw_country or "").strip().upper()
-        if value in {"GER", "DE", "DEU", "GERMANY"}:
-            return "GERMANY"
-        if value in {"FRA", "FR", "FRANCE"}:
-            return "FRANCE"
-        if value in {"GB", "UK", "GBR", "BRITAIN"}:
-            return "BRITAIN"
-        if value in {"BEL", "BE", "BELGIUM", "BELGIAN"}:
-            return "BELGIAN"
-        if value in {"USA", "US", "UNITED STATES"}:
-            return "USA"
-        return value or "GERMANY"
+        return canonicalize_country_code(raw_country)

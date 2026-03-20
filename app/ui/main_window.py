@@ -56,10 +56,11 @@ from app.application.app_config import AppConfig
 from app.application.container import AppContainer
 from app.application.mission_validation_service import Mission, MissionValidationService
 from app.application.personnel_resolution_service import PersonnelResolutionService
+from app.core.country_normalizer import country_display_name
 from app.core.data_parser import IL2DataParser
 from app.core.data_processor import IL2DataProcessor
 from utils.notification_bus import notification_bus, notify_error, notify_info, notify_warning
-from utils.observability import Events, emit_event, record_action_duration, record_cache_stats
+from utils.observability import Events, emit_event, record_action_duration
 from utils.structured_logger import StructuredLogger
 from utils.settings_manager import settings as settings_manager
 from utils.flight_streak import compute_flight_streak
@@ -778,10 +779,10 @@ class MainWindow(QMainWindow):
         self._set_ui_busy(True, "Sincronizando campanha...")
         self.progress_bar.setValue(0)
 
-        if not self.container.has_cp_db():
-            parser = self.container.get_parser()
-            parser_metrics = getattr(parser, "get_cache_metrics", lambda: {"hits": 0, "misses": 0})()
-            record_cache_stats(int(parser_metrics.get("hits", 0)), int(parser_metrics.get("misses", 0)))
+        # Diagnóstico aplicado:
+        # O preenchimento manual de cache em observabilidade aqui ocorria antes da
+        # leitura real dos arquivos, gravando contadores zerados. As métricas agora
+        # são coletadas no publish via cache_manager.stats_para_observabilidade().
 
         self.sync_thread = DataSyncThread(
             self.pwcgfc_path,
@@ -937,12 +938,7 @@ class MainWindow(QMainWindow):
 
     @staticmethod
     def _roundel_display_label(country_code: str, display_name: str) -> str:
-        c: str = (country_code or "").strip().upper()
-        if c == "BRITAIN":
-            return "Great Britain"
-        if c == "BELGIAN":
-            return "Belgium"
-        return display_name or "Germany"
+        return display_name or country_display_name(country_code)
 
     # ---------------- Datas de missÃµes ----------------
 
