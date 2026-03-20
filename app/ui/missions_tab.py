@@ -13,7 +13,7 @@ from app.application.mission_validation_service import Mission
 from app.application.viewmodels import MissionsViewModel
 from app.ui.delegates.timeline_delegate import TimelineDelegate
 from app.ui.shortcut_mixin import CtrlFFocusMixin
-from app.ui.design_system import DSStates, DSStyles
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates
 from app.ui.widgets.stats_bar import StatsBar
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QSplitter, QTableWidget, QTableWidgetItem,
@@ -41,6 +41,7 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
         top_row: QHBoxLayout = QHBoxLayout()
         top_row.addWidget(QLabel(self.tr("Filtro rápido:")))
         self.filter_edit: QLineEdit = QLineEdit()
+        self.filter_edit.setStyleSheet(DSStyles.INPUT)
         self.filter_edit.setPlaceholderText(self.tr("Filtrar por data, aeronave, tipo ou descrição"))
         self.filter_edit.setToolTip(self.tr("Atalho: Ctrl+F para focar o filtro"))
         self.filter_edit.textChanged.connect(self._apply_filter)
@@ -87,6 +88,11 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.setToolTip(self.tr("Use setas para navegar, Enter para selecionar."))
         self._timeline_delegate = TimelineDelegate(self.table)
+        self.table.setStyleSheet(DSStyles.TABLE)
+        self.table.verticalHeader().setDefaultSectionSize(DSSpacing.TABLE_ROW_HEIGHT)
+        self.table.verticalHeader().setVisible(False)
+        self.table.horizontalHeader().setHighlightSections(False)
+        self.table.setAlternatingRowColors(False)
         self.table.setItemDelegateForColumn(4, self._timeline_delegate)
         
         # Painel de detalhes
@@ -315,15 +321,20 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
 
 
     def _set_view_state(self, state: str, message: str) -> None:
-        self.state_label.setText(message)
-        if state == DSStates.SUCCESS:
-            self.state_label.setStyleSheet(DSStyles.STATE_SUCCESS)
-        elif state == DSStates.ERROR:
-            self.state_label.setStyleSheet(DSStyles.STATE_ERROR)
-        elif state == DSStates.EMPTY:
-            self.state_label.setStyleSheet(DSStyles.STATE_WARNING)
-        else:
-            self.state_label.setStyleSheet(DSStyles.STATE_INFO)
+        icons = {
+            DSStates.SUCCESS: "✓",
+            DSStates.ERROR:   "✗",
+            DSStates.EMPTY:   "◌",
+            DSStates.LOADING: "⟳",
+        }
+        icon = icons.get(state, "ℹ")
+        self.state_label.setText(f"{icon}  {message}")
+        styles = {
+            DSStates.SUCCESS: DSStyles.STATE_SUCCESS,
+            DSStates.ERROR:   DSStyles.STATE_ERROR,
+            DSStates.EMPTY:   DSStyles.STATE_WARNING,
+        }
+        self.state_label.setStyleSheet(styles.get(state, DSStyles.STATE_INFO))
 
     def _apply_filter(self, text: str) -> None:
         row_values: List[List[str]] = []
@@ -354,15 +365,13 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
         self._stats_bar.update_stat(self.tr("Última"), last)
 
     def _toggle_high_contrast(self, enabled: bool) -> None:
-        if enabled:
-            self.table.setStyleSheet(
-                "QTableWidget { background:#111; color:#fff; gridline-color:#777; }"
-                "QHeaderView::section { background:#222; color:#fff; font-weight:bold; }"
-            )
-            self.details.setStyleSheet("QTextEdit { background:#111; color:#fff; }")
-        else:
-            self.table.setStyleSheet("")
-            self.details.setStyleSheet("")
+        self.table.setStyleSheet(
+            DSStyles.TABLE_HIGH_CONTRAST if enabled else DSStyles.TABLE
+        )
+        self.details.setStyleSheet(
+            f"QTextEdit {{ background:#080a0c; color:#f0ead8; border:none; }}"
+            if enabled else ""
+        )
 
     def selected_index(self) -> int:
         """

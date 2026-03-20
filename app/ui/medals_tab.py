@@ -40,6 +40,7 @@ from PyQt5.QtWidgets import (
 )
 
 from app.ui.widgets.medal_hover_popup import MedalHoverPopup
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates
 
 logger = logging.getLogger(__name__)
 
@@ -248,6 +249,7 @@ class MedalsTab(QWidget):
         controls.addWidget(self._country_label)
 
         self._mode_combo = QComboBox()
+        self._mode_combo.setStyleSheet(DSStyles.COMBO)
         self._mode_combo.setAccessibleName("medals_mode_selector")
         self._mode_combo.addItems([self.tr("Grade"), self.tr("Lista")])
         self._mode_combo.currentIndexChanged.connect(self._rebuild_view)
@@ -256,6 +258,7 @@ class MedalsTab(QWidget):
         controls.addWidget(self._mode_combo)
 
         self._filter_combo = QComboBox()
+        self._filter_combo.setStyleSheet(DSStyles.COMBO)
         self._filter_combo.setAccessibleName("medals_status_selector")
         self._filter_combo.addItems([self.tr("Todas"), self.tr("Conquistadas"), self.tr("Não Conquistadas")])
         self._filter_combo.currentIndexChanged.connect(self._rebuild_view)
@@ -264,6 +267,7 @@ class MedalsTab(QWidget):
         controls.addWidget(self._filter_combo)
 
         self._origin_combo = QComboBox()
+        self._origin_combo.setStyleSheet(DSStyles.COMBO)
         self._origin_combo.setAccessibleName("medals_origin_selector")
         self._origin_combo.addItems([self.tr("Todas"), self.tr("País"), self.tr("Manifesto")])
         self._origin_combo.currentIndexChanged.connect(self._rebuild_view)
@@ -280,6 +284,7 @@ class MedalsTab(QWidget):
         controls.addStretch(1)
 
         self._search_edit = QLineEdit()
+        self._search_edit.setStyleSheet(DSStyles.INPUT)
         self._search_edit.setAccessibleName("medals_search_input")
         self._search_edit.setPlaceholderText(self.tr("Buscar medalha por nome"))
         self._search_edit.textChanged.connect(self._rebuild_view)
@@ -328,6 +333,10 @@ class MedalsTab(QWidget):
 
         # Lista
         self._table = QTableWidget(0, 3)
+        self._table.setStyleSheet(DSStyles.TABLE)
+        self._table.verticalHeader().setVisible(False)
+        self._table.horizontalHeader().setHighlightSections(False)
+        self._table.setAlternatingRowColors(False)
         self._table.setAccessibleName("medals_table")
         self._table.setHorizontalHeaderLabels([self.tr("Nome"), self.tr("Status"), self.tr("Editar")])
         self._table.setSelectionBehavior(QAbstractItemView.SelectRows)

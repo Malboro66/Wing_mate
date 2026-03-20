@@ -4,6 +4,8 @@ from typing import Dict, List, Optional, Tuple
 
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QWidget
 
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates
+
 
 class StatCard(QWidget):
     def __init__(self, label: str, value: str, parent: Optional[QWidget] = None) -> None:
@@ -13,17 +15,25 @@ class StatCard(QWidget):
         layout.setSpacing(6)
 
         lbl = QLabel(f"{label}:")
-        lbl.setStyleSheet("color:#888; font-size:12px;")
+        lbl.setStyleSheet(
+            f"color:{DSColors.TEXT_MUTED}; font-size:9px; letter-spacing:1.5px;"
+            f" text-transform:uppercase; background:transparent;"
+        )
 
         self._val = QLabel(value)
-        self._val.setStyleSheet("color:#d8d8d8; font-size:13px; font-weight:bold;")
+        self._val.setStyleSheet(
+            f"color:{DSColors.TEXT_PRIMARY}; font-size:15px; font-weight:700; background:transparent;"
+        )
 
         layout.addWidget(lbl)
         layout.addWidget(self._val)
-        self.setStyleSheet(
-            "background:#2a2a2a; border:1px solid #3a3a3a;"
-            "border-radius:4px;"
-        )
+        self.setStyleSheet(f"""
+            QWidget {{
+                background: {DSColors.DEEP};
+                border-right: 1px solid {DSColors.BORDER};
+                padding: 0px;
+            }}
+        """)
 
     def update_value(self, value: str) -> None:
         self._val.setText(value)
@@ -33,8 +43,8 @@ class StatsBar(QWidget):
     def __init__(self, stats: List[Tuple[str, str]], parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 4, 0, 4)
-        layout.setSpacing(8)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
         self._cards: Dict[str, StatCard] = {}
 
         for label, value in stats:

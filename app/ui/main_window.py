@@ -50,6 +50,7 @@ from app.ui.input_medals_tab import InputMedalsTab
 from app.ui.skeleton_widget import SkeletonWidget
 from app.ui.toast_widget import ToastWidget
 from app.ui.i18n import AppI18n
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates
 from app.ui.war_propaganda_popup import WarPropagandaPopup
 
 from app.application.app_config import AppConfig
@@ -363,6 +364,7 @@ class MainWindow(QMainWindow):
         tb.setMovable(False)
         tb.setIconSize(QSize(20, 20))
         self.addToolBar(tb)
+        tb.setStyleSheet(DSStyles.TOOLBAR)
 
         self.action_open_folder = QAction(
             self._icon_from_asset("config.png", QStyle.SP_DirOpenIcon),
@@ -398,6 +400,12 @@ class MainWindow(QMainWindow):
         self.action_go_back.triggered.connect(self.go_back_requested.emit)
 
         tb.addAction(self.action_go_back)
+        _brand = QLabel("✈  WING MATE")
+        _brand.setStyleSheet(
+            f"color:{DSColors.GOLD}; font-size:14px; font-weight:700;"
+            f" letter-spacing:2px; margin-right:8px; background:transparent;"
+        )
+        tb.insertWidget(tb.actions()[0], _brand)
         tb.addSeparator()
         tb.addAction(self.action_open_folder)
         tb.addAction(self.action_sync)
@@ -407,6 +415,9 @@ class MainWindow(QMainWindow):
         # Linha do caminho (compacta)
         path_row = QHBoxLayout()
         self.path_label = QLabel(self._t("no_path_selected"))
+        self.path_label.setStyleSheet(
+            f"color:{DSColors.TEXT_MUTED}; font-size:11px; background:transparent;"
+        )
         self.path_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
         path_row.addWidget(self.path_label, 1)
 
@@ -425,6 +436,7 @@ class MainWindow(QMainWindow):
         self.lbl_campaign = QLabel(self._t("campaign_label"))
         row.addWidget(self.lbl_campaign)
         self.campaign_combo = QComboBox()
+        self.campaign_combo.setStyleSheet(DSStyles.COMBO)
         self.campaign_combo.setAccessibleName("campaign_selector")
         self.campaign_combo.currentTextChanged.connect(self._on_campaign_changed)
         row.addWidget(self.campaign_combo, 1)
@@ -439,6 +451,7 @@ class MainWindow(QMainWindow):
         self.lbl_language = QLabel(self._t("language_label"))
         row.addWidget(self.lbl_language)
         self.language_combo = QComboBox()
+        self.language_combo.setStyleSheet(DSStyles.COMBO)
         self.language_combo.addItem(AppI18n.LANG_LABELS[AppI18n.PT_BR], AppI18n.PT_BR)
         self.language_combo.addItem(AppI18n.LANG_LABELS[AppI18n.EN_US], AppI18n.EN_US)
         idx = self.language_combo.findData(self._language_code)
@@ -449,6 +462,8 @@ class MainWindow(QMainWindow):
 
         # Tabs
         self.tabs = QTabWidget()
+        self.tabs.setStyleSheet(DSStyles.TAB_WIDGET)
+        self.tabs.setDocumentMode(True)
         self.tabs.setAccessibleName("main_tabs")
 
         self.profile_tab = ProfileTab(settings=self.settings)
@@ -493,17 +508,23 @@ class MainWindow(QMainWindow):
         # StatusBar + progress embutido
         sb = QStatusBar()
         self.setStatusBar(sb)
+        sb.setStyleSheet(DSStyles.STATUS_BAR)
 
         self.progress_bar = QProgressBar()
+        self.progress_bar.setStyleSheet(DSStyles.PROGRESS_BAR)
+        self.progress_bar.setFixedHeight(4)
+        self.progress_bar.setTextVisible(False)
         self.progress_bar.setRange(0, 100)
         self.progress_bar.setVisible(False)
         self.progress_bar.setFixedWidth(180)
-        self.progress_bar.setTextVisible(True)
         sb.addPermanentWidget(self.progress_bar)
 
         self.flight_streak_label = QLabel()
         self.flight_streak_label.setObjectName("flight_streak_indicator")
-        self.flight_streak_label.setStyleSheet("padding:2px 8px;")
+        self.flight_streak_label.setStyleSheet(
+            f"color:{DSColors.AMBER}; font-weight:700; padding:2px 10px;"
+            f" letter-spacing:1px; background:transparent;"
+        )
         sb.addPermanentWidget(self.flight_streak_label)
 
         self._toast = ToastWidget(self)

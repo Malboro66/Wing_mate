@@ -20,6 +20,8 @@ from PyQt5.QtCore import QLockFile, Qt
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QMessageBox, QSplashScreen
 
+from app.ui.design_system import build_global_stylesheet
+
 from utils.observability import (
     publish_release_report,
     record_startup_error,
@@ -226,6 +228,7 @@ if __name__ == "__main__":
 
         app: QApplication = QApplication(sys.argv)
         app.setApplicationName("Wing Mate")
+        app.setStyleSheet(build_global_stylesheet())
         app.setOrganizationName("WingMate")
         profiler.mark("qapplication inicializada")
 
