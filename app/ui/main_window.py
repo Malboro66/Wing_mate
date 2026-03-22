@@ -50,7 +50,7 @@ from app.ui.input_medals_tab import InputMedalsTab
 from app.ui.skeleton_widget import SkeletonWidget
 from app.ui.toast_widget import ToastWidget
 from app.ui.i18n import AppI18n
-from app.ui.design_system import (
+from app.ui.design_system_v3 import (
     DSColors,
     DSStyles,
     DSFeedback,
@@ -894,13 +894,6 @@ class MainWindow(QMainWindow):
             display_name = personnel_info.display_name
             earned_ids = set(personnel_info.earned_medal_ids)
             
-            # Se estivermos no cp.db mas o país veio vazio, as medalhas do cp.db ainda podem ser válidas
-            if self.container.has_cp_db() and not earned_ids:
-                try:
-                    earned_ids = set(self.container.get_cp_db_repository().get_earned_medal_ids(campaign))
-                except Exception:
-                    pass
-
             # Se estivermos no cp.db mas o país veio vazio, as medalhas do cp.db ainda podem ser válidas
             if self.container.has_cp_db() and not earned_ids:
                 try:

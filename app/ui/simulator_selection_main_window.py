@@ -52,7 +52,7 @@ class MainWindow(QMainWindow):
 
         self._build_toolbar()
 
-        from app.ui.design_system import build_global_stylesheet, load_custom_fonts, font_display
+        from app.ui.design_system_v3 import build_global_stylesheet, load_custom_fonts, font_display
         from PyQt5.QtWidgets import QApplication
         load_custom_fonts()
         self._toast = ToastWidget(self)
@@ -68,7 +68,7 @@ class MainWindow(QMainWindow):
 
     def _build_toolbar(self) -> None:
         tb = QToolBar(self._t("toolbar_actions"), self)
-        from app.ui.design_system import DSStyles, DSColors, font_display
+        from app.ui.design_system_v3 import DSStyles, DSColors, font_display
         tb.setMovable(False)
         tb.setStyleSheet(DSStyles.TOOLBAR)
         self.addToolBar(tb)

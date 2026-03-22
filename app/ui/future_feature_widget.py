@@ -5,7 +5,7 @@ from typing import Callable
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
 
-from app.ui.design_system import DSStyles
+from app.ui.design_system_v3 import DSStyles
 
 
 class FutureFeatureWidget(QWidget):

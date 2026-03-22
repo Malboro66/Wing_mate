@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import (
 )
 
 from app.application.app_config import AppConfig
-from app.ui.design_system import DSStyles
+from app.ui.design_system_v3 import DSStyles
 from utils.notification_bus import notify_info, notify_warning
 
 

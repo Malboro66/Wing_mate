@@ -13,7 +13,7 @@ from app.application.mission_validation_service import Mission
 from app.application.viewmodels import MissionsViewModel
 from app.ui.delegates.timeline_delegate import TimelineDelegate
 from app.ui.shortcut_mixin import CtrlFFocusMixin
-from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
+from app.ui.design_system_v3 import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 from app.ui.widgets.stats_bar import StatsBar
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QSplitter, QTableWidget, QTableWidgetItem,

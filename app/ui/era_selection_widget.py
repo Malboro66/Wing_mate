@@ -6,7 +6,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QMouseEvent
 from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget, QHBoxLayout
 
-from app.ui.design_system import DSStyles
+from app.ui.design_system_v3 import DSStyles
 from utils.notification_bus import notify_info
 
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QLabel, QWidget
 
-from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
+from app.ui.design_system_v3 import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 
 
 class ToastWidget(QLabel):
@@ -25,7 +25,7 @@ class ToastWidget(QLabel):
         self.hide()
 
     def show_toast(self, level: str, message: str, timeout_ms: int) -> None:
-        from app.ui.design_system import font_ui
+        from app.ui.design_system_v3 import font_ui
         LEVEL_ICONS = {"info": "ℹ", "warning": "⚠", "error": "✗", "success": "✓"}
         icon = LEVEL_ICONS.get(level, "ℹ")
         base = self._STYLES.get(level, self._STYLES["info"])

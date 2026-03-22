@@ -53,7 +53,7 @@ from PyQt5.QtWidgets import (
 
 import logging
 
-from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
+from app.ui.design_system_v3 import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 from app.ui.error_feedback import show_actionable_error
 from utils.notification_bus import NotificationBus, NotificationLevel
 from utils.observability import Events, emit_event, record_action_duration
