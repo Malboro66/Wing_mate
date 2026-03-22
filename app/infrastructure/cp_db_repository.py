@@ -161,7 +161,7 @@ class CpDbCampaignRepository:
             personage_id = str(career.get("personageId", ""))
             player_id = self._as_int(career.get("playerId"), -1)
             pilot_row = self._reader.get_player_pilot(personage_id)
-            if (not pilot_row or not str(pilot_row.get("country", "") or "").strip()) and player_id >= 0:
+            if (not pilot_row or not str((pilot_row or {}).get("country", "") or "").strip()) and player_id >= 0:
                 pilot_row = self._reader.get_pilot(player_id) or pilot_row
             squadron_row = self._reader.get_squadron(int(career.get("squadronId", -1)))
             all_pilots = self._reader.get_pilots(int(career.get("squadronId", -1)))

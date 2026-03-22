@@ -836,8 +836,11 @@ class MainWindow(QMainWindow):
         campaign: str = self._selected_campaign_id()
 
         # País e medalhas
-        if self.container.has_cp_db():
-            cpdb_country = ((self.current_data.get("pilot", {}) or {}).get("country", "") or "").strip()
+        cpdb_country = ((self.current_data.get("pilot", {}) or {}).get("country", "") or "").strip()
+        pilot_name = ((self.current_data.get("pilot", {}) or {}).get("name", "") or "").strip()
+
+        if self.container.has_cp_db() and cpdb_country:
+            # Se temos cp.db e ele informou o país, usamos o mapeamento direto
             country_code, display_name = PersonnelResolutionService._map_country_to_folder_and_label(cpdb_country)
             earned_ids = set()
             try:
@@ -845,11 +848,18 @@ class MainWindow(QMainWindow):
             except Exception:
                 logger.exception("Falha ao carregar medalhas do cp.db")
         else:
-            pilot_name = ((self.current_data.get("pilot", {}) or {}).get("name", "") or "").strip()
+            # Fallback para PersonnelResolutionService (PWCG JSON) se o país estiver vazio ou não houver cp.db
             personnel_info = self.personnel_resolution_service.resolve(campaign, pilot_name)
             country_code = personnel_info.country_code
             display_name = personnel_info.display_name
             earned_ids = set(personnel_info.earned_medal_ids)
+            
+            # Se estivermos no cp.db mas o país veio vazio, as medalhas do cp.db ainda podem ser válidas
+            if self.container.has_cp_db() and not earned_ids:
+                try:
+                    earned_ids = set(self.container.get_cp_db_repository().get_earned_medal_ids(campaign))
+                except Exception:
+                    pass
 
         # Aba Medalhas (carregamento lazy + atualizaÃ§Ã£o Ãºnica de contexto)
         self.medals_tab.set_context(country_code, display_name, earned_ids)
