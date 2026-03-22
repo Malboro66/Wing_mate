@@ -8,9 +8,9 @@ import html
 import logging  # <-- Importação adicionada
 
 from PyQt5.QtCore import Qt, QTimer, QPoint, pyqtSignal
-from PyQt5.QtGui import QPixmap, QTransform, QColor, QMouseEvent, QIcon, QPainter, QFont
+from PyQt5.QtGui import QPixmap, QTransform, QColor, QMouseEvent, QIcon, QPainter
 from app.application.viewmodels import SquadronViewModel
-from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_section_group
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 from app.ui.shortcut_mixin import CtrlFFocusMixin
 from app.ui.widgets.stats_bar import StatsBar
 from PyQt5.QtWidgets import (
@@ -222,10 +222,7 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         text_v: QVBoxLayout = QVBoxLayout(text_panel)
 
         self.title_label: QLabel = QLabel(self.tr("N/A"))
-        title_font: QFont = QFont()
-        title_font.setPointSize(20)
-        title_font.setBold(True)
-        self.title_label.setFont(title_font)
+        self.title_label.setFont(font_display(20, bold=False))
         self.title_label.setWordWrap(True)
         self.title_label.setStyleSheet(
             f"color:{DSColors.AMBER}; font-size:20px; font-weight:700; letter-spacing:1px;"
@@ -236,8 +233,9 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         self.details_label.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         self.details_label.setTextFormat(Qt.RichText)
         self.details_label.setOpenExternalLinks(True)
+        self.details_label.setFont(font_body(12))
         self.details_label.setStyleSheet(
-            f"color:{DSColors.TEXT_SECONDARY}; font-size:12px; line-height:160%;"
+            f"color:{DSColors.TEXT_SECONDARY}; line-height:160%;"
         )
 
         text_v.addWidget(self.title_label)
@@ -258,6 +256,8 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         controls_row.addWidget(QLabel(self.tr("Filtro rápido:")))
         self.filter_edit: QLineEdit = QLineEdit()
         self.filter_edit.setStyleSheet(DSStyles.INPUT)
+        self.filter_edit.setFont(font_body(12))
+        self.filter_edit.setMinimumHeight(30)
         self.filter_edit.setPlaceholderText(self.tr("Filtrar por nome, patente ou status"))
         self.filter_edit.setToolTip(self.tr("Atalho: Ctrl+F para focar o filtro"))
         self.filter_edit.textChanged.connect(self._apply_filter)
@@ -296,7 +296,9 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         self.table.setStyleSheet(DSStyles.TABLE)
         self.table.verticalHeader().setVisible(False)
         self.table.horizontalHeader().setHighlightSections(False)
+        self.table.horizontalHeader().setFont(font_ui(9, bold=True))
         self.table.setAlternatingRowColors(False)
+        self.table.setFont(font_body(12))
         self._status_delegate = SquadronStatusDelegate(status_column=4, parent=self.table)
         self.table.setItemDelegate(self._status_delegate)
         root.addWidget(self.table)
@@ -646,6 +648,7 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         }
         icon = icons.get(state, "ℹ")
         self.state_label.setText(f"{icon}  {message}")
+        self.state_label.setFont(font_ui(10))
         styles = {
             DSStates.SUCCESS: DSStyles.STATE_SUCCESS,
             DSStates.ERROR:   DSStyles.STATE_ERROR,
@@ -699,7 +702,7 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
             DSStyles.TABLE_HIGH_CONTRAST if enabled else DSStyles.TABLE
         )
         self.header_group.setStyleSheet(
-            f"QGroupBox {{ color:#f0ead8; border-color:#505060; }}" if enabled else ""
+            "QGroupBox { color:#f0ead8; border-color:#505060; }" if enabled else ""
         )
 
     # -------- Preenchimento da tabela --------

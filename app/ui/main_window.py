@@ -50,7 +50,21 @@ from app.ui.input_medals_tab import InputMedalsTab
 from app.ui.skeleton_widget import SkeletonWidget
 from app.ui.toast_widget import ToastWidget
 from app.ui.i18n import AppI18n
-from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates
+from app.ui.design_system import (
+    DSColors,
+    DSStyles,
+    DSFeedback,
+    DSSpacing,
+    DSStates,
+    apply_primary_button,
+    apply_ghost_button,
+    apply_section_group,
+    build_global_stylesheet,
+    set_theme,
+    current_theme,
+    font_display,
+    font_ui,
+)
 from app.ui.war_propaganda_popup import WarPropagandaPopup
 
 from app.application.app_config import AppConfig
@@ -401,9 +415,9 @@ class MainWindow(QMainWindow):
 
         tb.addAction(self.action_go_back)
         _brand = QLabel("✈  WING MATE")
+        _brand.setFont(font_display(16, bold=False))
         _brand.setStyleSheet(
-            f"color:{DSColors.GOLD}; font-size:14px; font-weight:700;"
-            f" letter-spacing:2px; margin-right:8px; background:transparent;"
+            f"color:{DSColors.GOLD}; letter-spacing:2px; margin-right:8px; background:transparent;"
         )
         tb.insertWidget(tb.actions()[0], _brand)
         tb.addSeparator()
@@ -458,6 +472,19 @@ class MainWindow(QMainWindow):
         self.language_combo.setCurrentIndex(idx if idx >= 0 else 0)
         self.language_combo.currentIndexChanged.connect(self._on_language_changed)
         row.addWidget(self.language_combo)
+        self.btn_theme_toggle = QPushButton("☀")
+        self.btn_theme_toggle.setToolTip("Alternar tema Claro / Escuro")
+        self.btn_theme_toggle.setFixedSize(30, 28)
+        self.btn_theme_toggle.setFont(font_ui(12))
+        self.btn_theme_toggle.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent; border: 1px solid {DSColors.BORDER};
+                border-radius: 2px; color: {DSColors.TEXT_SECONDARY};
+            }}
+            QPushButton:hover {{ border-color: {DSColors.BRASS}; color: {DSColors.AMBER}; }}
+""")
+        self.btn_theme_toggle.clicked.connect(self._toggle_theme)
+        row.addWidget(self.btn_theme_toggle)
         layout.addLayout(row)
 
         # Tabs
@@ -521,6 +548,7 @@ class MainWindow(QMainWindow):
 
         self.flight_streak_label = QLabel()
         self.flight_streak_label.setObjectName("flight_streak_indicator")
+        self.flight_streak_label.setFont(font_ui(10, bold=True))
         self.flight_streak_label.setStyleSheet(
             f"color:{DSColors.AMBER}; font-weight:700; padding:2px 10px;"
             f" letter-spacing:1px; background:transparent;"
@@ -537,6 +565,18 @@ class MainWindow(QMainWindow):
 
         self._set_ui_busy(False)
         self._refresh_flight_streak_indicator()
+
+
+    def _toggle_theme(self) -> None:
+        """Alterna entre tema escuro e claro e reaplicar stylesheet global."""
+        new_theme = "light" if current_theme() == "dark" else "dark"
+        set_theme(new_theme)
+        icon = "🌙" if new_theme == "dark" else "☀"
+        self.btn_theme_toggle.setText(icon)
+        QApplication.instance().setStyleSheet(build_global_stylesheet())
+        self.tabs.setStyleSheet(DSStyles.TAB_WIDGET)
+        self.progress_bar.setStyleSheet(DSStyles.PROGRESS_BAR)
+        self.settings.setValue("ui/theme", new_theme)
 
 
     def _t(self, key: str, **kwargs: Any) -> str:
@@ -861,6 +901,13 @@ class MainWindow(QMainWindow):
                 except Exception:
                     pass
 
+            # Se estivermos no cp.db mas o país veio vazio, as medalhas do cp.db ainda podem ser válidas
+            if self.container.has_cp_db() and not earned_ids:
+                try:
+                    earned_ids = set(self.container.get_cp_db_repository().get_earned_medal_ids(campaign))
+                except Exception:
+                    pass
+
         # Aba Medalhas (carregamento lazy + atualizaÃ§Ã£o Ãºnica de contexto)
         self.medals_tab.set_context(country_code, display_name, earned_ids)
         self._medals_dirty = False
@@ -1012,3 +1059,13 @@ class MainWindow(QMainWindow):
         else:
             self._full_path_text = ""
             self._update_elided_path_label()
+
+        saved_theme = str(self.settings.value("ui/theme", "dark") or "dark")
+        if saved_theme != current_theme():
+            set_theme(saved_theme)
+            icon = "🌙" if saved_theme == "dark" else "☀"
+            if hasattr(self, "btn_theme_toggle"):
+                self.btn_theme_toggle.setText(icon)
+            QApplication.instance().setStyleSheet(build_global_stylesheet())
+            if hasattr(self, "tabs"):
+                self.tabs.setStyleSheet(DSStyles.TAB_WIDGET)

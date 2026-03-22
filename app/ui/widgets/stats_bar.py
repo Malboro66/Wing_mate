@@ -4,25 +4,26 @@ from typing import Dict, List, Optional, Tuple
 
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QWidget
 
-from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 
 
 class StatCard(QWidget):
     def __init__(self, label: str, value: str, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(12, 6, 12, 6)
-        layout.setSpacing(6)
+        layout.setContentsMargins(12, 6, 16, 6)
+        layout.setSpacing(8)
 
-        lbl = QLabel(f"{label}:")
+        lbl = QLabel(f"{label}")
+        lbl.setFont(font_ui(8, bold=True))
         lbl.setStyleSheet(
-            f"color:{DSColors.TEXT_MUTED}; font-size:9px; letter-spacing:1.5px;"
-            f" text-transform:uppercase; background:transparent;"
+            f"color:{DSColors.TEXT_MUTED}; letter-spacing:1.5px; background:transparent;"
         )
 
         self._val = QLabel(value)
+        self._val.setFont(font_ui(15, bold=True))
         self._val.setStyleSheet(
-            f"color:{DSColors.TEXT_PRIMARY}; font-size:15px; font-weight:700; background:transparent;"
+            f"color:{DSColors.TEXT_PRIMARY}; background:transparent;"
         )
 
         layout.addWidget(lbl)
@@ -31,7 +32,6 @@ class StatCard(QWidget):
             QWidget {{
                 background: {DSColors.DEEP};
                 border-right: 1px solid {DSColors.BORDER};
-                padding: 0px;
             }}
         """)
 

@@ -13,7 +13,7 @@ from app.application.mission_validation_service import Mission
 from app.application.viewmodels import MissionsViewModel
 from app.ui.delegates.timeline_delegate import TimelineDelegate
 from app.ui.shortcut_mixin import CtrlFFocusMixin
-from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 from app.ui.widgets.stats_bar import StatsBar
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QSplitter, QTableWidget, QTableWidgetItem,
@@ -42,6 +42,8 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
         top_row.addWidget(QLabel(self.tr("Filtro rápido:")))
         self.filter_edit: QLineEdit = QLineEdit()
         self.filter_edit.setStyleSheet(DSStyles.INPUT)
+        self.filter_edit.setFont(font_body(12))
+        self.filter_edit.setMinimumHeight(30)
         self.filter_edit.setPlaceholderText(self.tr("Filtrar por data, aeronave, tipo ou descrição"))
         self.filter_edit.setToolTip(self.tr("Atalho: Ctrl+F para focar o filtro"))
         self.filter_edit.textChanged.connect(self._apply_filter)
@@ -92,7 +94,9 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
         self.table.verticalHeader().setDefaultSectionSize(DSSpacing.TABLE_ROW_HEIGHT)
         self.table.verticalHeader().setVisible(False)
         self.table.horizontalHeader().setHighlightSections(False)
+        self.table.horizontalHeader().setFont(font_ui(9, bold=True))
         self.table.setAlternatingRowColors(False)
+        self.table.setFont(font_body(12))
         self.table.setItemDelegateForColumn(4, self._timeline_delegate)
         
         # Painel de detalhes
@@ -329,6 +333,7 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
         }
         icon = icons.get(state, "ℹ")
         self.state_label.setText(f"{icon}  {message}")
+        self.state_label.setFont(font_ui(10))
         styles = {
             DSStates.SUCCESS: DSStyles.STATE_SUCCESS,
             DSStates.ERROR:   DSStyles.STATE_ERROR,
@@ -369,8 +374,7 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
             DSStyles.TABLE_HIGH_CONTRAST if enabled else DSStyles.TABLE
         )
         self.details.setStyleSheet(
-            f"QTextEdit {{ background:#080a0c; color:#f0ead8; border:none; }}"
-            if enabled else ""
+            "QTextEdit { background:#080a0c; color:#f0ead8; border:none; }" if enabled else ""
         )
 
     def selected_index(self) -> int:
