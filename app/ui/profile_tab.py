@@ -53,6 +53,7 @@ from PyQt5.QtWidgets import (
 
 import logging
 
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 from app.ui.error_feedback import show_actionable_error
 from utils.notification_bus import NotificationBus, NotificationLevel
 from utils.observability import Events, emit_event, record_action_duration
@@ -226,6 +227,8 @@ class ProfileTab(QWidget):
         self._max_recruit_age = int(self.settings.value("profile/max_recruit_age", self.DEFAULT_MAX_RECRUIT_AGE))
 
         self.pilot_name_label = QLabel("N/A")
+        self.pilot_name_label.setFont(font_ui(14, bold=True))
+        self.pilot_name_label.setStyleSheet(f"color:{DSColors.TEXT_PRIMARY};")
         self.squadron_name_label = QLabel("N/A")
         self.total_missions_label = QLabel("0")
         self.xp_progress = QProgressBar()
@@ -308,6 +311,10 @@ class ProfileTab(QWidget):
         outer = QHBoxLayout(self)
 
         portrait_group = QGroupBox(self.tr("Retrato"))
+        portrait_group.setMaximumWidth(DSSpacing.PROFILE_PANEL_W)
+        portrait_group.setMinimumWidth(DSSpacing.PROFILE_PANEL_W)
+        portrait_group.setFont(font_display(10, bold=False))
+        portrait_group.setStyleSheet(DSStyles.GROUP_BOX)
         pv = QVBoxLayout(portrait_group)
 
         self.portrait_container = QFrame()
@@ -341,6 +348,8 @@ class ProfileTab(QWidget):
         outer.addWidget(portrait_group)
 
         info_group = QGroupBox(self.tr("Dados do Piloto"))
+        info_group.setFont(font_display(10, bold=False))
+        info_group.setStyleSheet(DSStyles.GROUP_BOX)
         info_hbox = QHBoxLayout(info_group)
 
         rank_panel = QFrame()
@@ -368,6 +377,10 @@ class ProfileTab(QWidget):
         rp_v.addStretch(1)
 
         form_right = QFormLayout()
+        form_right.setLabelAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        form_right.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
+        form_right.setHorizontalSpacing(12)
+        form_right.setVerticalSpacing(8)
         form_right.addRow(self.tr("Nome:"), self.pilot_name_label)
         self.xp_progress.setRange(0, 5000)
         self.xp_progress.setValue(0)
@@ -384,6 +397,8 @@ class ProfileTab(QWidget):
         form_right.addRow(self.tr("Esquadrão:"), self.squadron_name_label)
         form_right.addRow(self.tr("Missões Voadas:"), self.total_missions_label)
 
+        self.dob_edit.setMaximumWidth(200)
+        self.dob_edit.setStyleSheet(DSStyles.INPUT)
         self.dob_edit.setDisplayFormat("dd/MM/yyyy")
         form_right.addRow(self.tr("Data de Nascimento:"), self.dob_edit)
         form_right.addRow(self.tr("Idade (últ. missão):"), self.age_label)
@@ -395,11 +410,15 @@ class ProfileTab(QWidget):
         form_right.addRow(self.tr("Biografia:"), self.bio_edit)
 
         ribbons_group = QGroupBox(self.tr("Condecorações"))
+        ribbons_group.setFont(font_display(10, bold=False))
+        ribbons_group.setStyleSheet(DSStyles.GROUP_BOX)
         rv = QVBoxLayout(ribbons_group)
 
         self._ribbons_scroll = QScrollArea()
         self._ribbons_scroll.setWidgetResizable(True)
         self._ribbons_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self._ribbons_scroll.setMinimumHeight(80)
+        self._ribbons_scroll.setMaximumHeight(160)
 
         self._ribbons_holder = QtWidget()
         self._ribbons_holder.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -422,9 +441,11 @@ class ProfileTab(QWidget):
         info_hbox.addWidget(rank_panel)
 
         right_holder = QWidget()
+        right_holder.setMaximumWidth(DSSpacing.FORM_MAX_WIDTH)
         right_holder.setLayout(form_right)
         info_hbox.addWidget(right_holder, 1)
 
+        info_group.setFont(font_ui(10, bold=True))
         outer.addWidget(info_group, stretch=1)
 
     def _connect_signals(self):
