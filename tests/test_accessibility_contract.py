@@ -46,7 +46,7 @@ def test_main_window_shortcuts_cover_critical_operational_flow():
 def test_feedback_widgets_use_design_system_tokens():
     toast = Path("app/ui/toast_widget.py").read_text(encoding="utf-8")
     skeleton = Path("app/ui/skeleton_widget.py").read_text(encoding="utf-8")
-    ds = Path("app/ui/design_system.py").read_text(encoding="utf-8")
+    ds = Path("app/ui/design_system_v3.py").read_text(encoding="utf-8")
 
     assert "class DSFeedback" in ds
     assert "DSFeedback.TOAST_LEVEL_STYLES" in toast

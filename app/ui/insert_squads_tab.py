@@ -15,7 +15,7 @@ from app.application.squadron_enrichment_application_service import (
     SquadronEnrichmentApplicationService,
 )
 from app.core.squadron_enrichment_service import SquadronEnrichmentService
-from app.ui.design_system import DSStyles, DSSpacing, apply_primary_button, apply_section_group
+from app.ui.design_system_v3 import DSStyles, DSSpacing, apply_primary_button, apply_section_group
 from app.ui.error_feedback import show_actionable_error
 from utils.notification_bus import NotificationBus, NotificationLevel
 from PyQt5.QtCore import Qt
