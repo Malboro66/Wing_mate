@@ -115,6 +115,30 @@ class AppI18n:
             PT_BR: "Falha ao sincronizar dados.",
             EN_US: "Failed to sync data.",
         },
+        "empty_missions_title": {
+            PT_BR: "Nenhuma missão carregada",
+            EN_US: "No missions loaded",
+        },
+        "empty_missions_body": {
+            PT_BR: "Selecione uma campanha e clique em Sincronizar (F5) para ver o histórico de missões.",
+            EN_US: "Select a campaign and click Sync (F5) to view your mission history.",
+        },
+        "empty_squadron_title": {
+            PT_BR: "Esquadrão não carregado",
+            EN_US: "Squadron not loaded",
+        },
+        "empty_squadron_body": {
+            PT_BR: "Sincronize os dados da campanha para ver os membros do esquadrão.",
+            EN_US: "Sync campaign data to see your squadron members.",
+        },
+        "empty_aces_title": {
+            PT_BR: "Nenhum as registrado",
+            EN_US: "No aces recorded",
+        },
+        "empty_aces_body": {
+            PT_BR: "Pilotos com 5 ou mais vitórias confirmadas aparecerão aqui após a sincronização.",
+            EN_US: "Pilots with 5 or more confirmed victories will appear here after syncing.",
+        },
         "folder_dialog_title": {
             PT_BR: "Selecionar Pasta PWCGFC",
             EN_US: "Select PWCGFC Folder",

@@ -50,7 +50,22 @@ from app.ui.input_medals_tab import InputMedalsTab
 from app.ui.skeleton_widget import SkeletonWidget
 from app.ui.toast_widget import ToastWidget
 from app.ui.i18n import AppI18n
-from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates
+from app.ui.widgets.empty_state import EmptyStateWidget
+from app.ui.design_system import (
+    DSColors,
+    DSStyles,
+    DSFeedback,
+    DSSpacing,
+    DSStates,
+    apply_primary_button,
+    apply_ghost_button,
+    apply_section_group,
+    build_global_stylesheet,
+    set_theme,
+    current_theme,
+    font_display,
+    font_ui,
+)
 from app.ui.war_propaganda_popup import WarPropagandaPopup
 
 from app.application.app_config import AppConfig
@@ -96,6 +111,7 @@ class DataSyncThread(QThread):
     data_loaded = pyqtSignal(object)
     error_occurred = pyqtSignal(str)
     progress = pyqtSignal(int)
+    progress_label = pyqtSignal(str)
 
     def __init__(
         self,
@@ -108,6 +124,17 @@ class DataSyncThread(QThread):
         self.pwcgfc_path: str = pwcgfc_path
         self.campaign_name: str = campaign_name
         self.processor_factory = processor_factory or (lambda p: IL2DataProcessor(p))
+
+    @staticmethod
+    def _t(key: str) -> str:
+        """Retorna label de progresso em português (fallback seguro sem i18n)."""
+        _LABELS = {
+            "sync_label_reading":   "Lendo configuração...",
+            "sync_label_loading":   "Carregando missões...",
+            "sync_label_finishing": "Finalizando...",
+            "sync_label_error":     "Erro ao processar dados.",
+        }
+        return _LABELS.get(key, key)
 
     def _update_flight_streak(self) -> int:
         last_sync_date = str(settings_manager.get("flight_streak/last_sync_date", "") or "")
@@ -122,6 +149,7 @@ class DataSyncThread(QThread):
         sync_t0 = time.perf_counter()
         try:
             self.progress.emit(10)
+            self.progress_label.emit(self._t("sync_label_reading"))
             logger.info(
                 "Iniciando sincronizaÃ§Ã£o: campanha=%s, path=%s",
                 self.campaign_name,
@@ -136,9 +164,11 @@ class DataSyncThread(QThread):
 
             processor = self.processor_factory(self.pwcgfc_path)
             self.progress.emit(40)
+            self.progress_label.emit(self._t("sync_label_loading"))
 
             data = processor.process_campaign(self.campaign_name)
             self.progress.emit(90)
+            self.progress_label.emit(self._t("sync_label_finishing"))
 
             if not isinstance(data, dict) or not data:
                 msg = "Não foi possível carregar os dados da campanha."
@@ -194,6 +224,7 @@ class DataSyncThread(QThread):
                 (time.perf_counter() - sync_t0) * 1000.0,
                 success=False,
             )
+            self.progress_label.emit(self._t("sync_label_error"))
             self.error_occurred.emit(f"Erro ao processar dados: {e}")
             self.progress.emit(0)
 
@@ -213,11 +244,48 @@ class DataSyncThread(QThread):
                 (time.perf_counter() - sync_t0) * 1000.0,
                 success=False,
             )
+            self.progress_label.emit(self._t("sync_label_error"))
             self.error_occurred.emit(f"Erro inesperado: {e}")
             try:
                 self.progress.emit(0)
             except RuntimeError:
                 logger.debug("Thread finalizada durante emissÃ£o de sinal de erro")
+
+
+def _make_tab_wrapper(
+    content: "QWidget",
+    empty: "EmptyStateWidget",
+) -> "tuple[QWidget, QStackedWidget]":
+    """
+    Cria um container QStackedWidget para alternar entre empty state e conteúdo
+    real sem modificar o widget de conteúdo internamente.
+
+    O stack usa índice 0 para o estado vazio e índice 1 para o conteúdo real.
+    Começa sempre no índice 0 (estado vazio).
+
+    Args:
+        content: Widget de conteúdo real da aba (MissionsTab, SquadronTab, etc.)
+        empty:   Widget de estado vazio a exibir antes dos dados chegarem
+
+    Returns:
+        Tupla (wrapper, stack):
+          - wrapper: QWidget adicionado ao QTabWidget
+          - stack: QStackedWidget para chamar setCurrentIndex() externamente
+    """
+    from PyQt5.QtWidgets import QStackedWidget, QVBoxLayout
+
+    wrapper = QWidget()
+    layout = QVBoxLayout(wrapper)
+    layout.setContentsMargins(0, 0, 0, 0)
+    layout.setSpacing(0)
+
+    stack = QStackedWidget(wrapper)
+    stack.addWidget(empty)    # índice 0 — estado vazio
+    stack.addWidget(content)  # índice 1 — conteúdo real
+    stack.setCurrentIndex(0)  # começa exibindo o estado vazio
+
+    layout.addWidget(stack)
+    return wrapper, stack
 
 
 class MainWindow(QMainWindow):
@@ -401,9 +469,9 @@ class MainWindow(QMainWindow):
 
         tb.addAction(self.action_go_back)
         _brand = QLabel("✈  WING MATE")
+        _brand.setFont(font_display(16, bold=False))
         _brand.setStyleSheet(
-            f"color:{DSColors.GOLD}; font-size:14px; font-weight:700;"
-            f" letter-spacing:2px; margin-right:8px; background:transparent;"
+            f"color:{DSColors.GOLD}; letter-spacing:2px; margin-right:8px; background:transparent;"
         )
         tb.insertWidget(tb.actions()[0], _brand)
         tb.addSeparator()
@@ -458,6 +526,19 @@ class MainWindow(QMainWindow):
         self.language_combo.setCurrentIndex(idx if idx >= 0 else 0)
         self.language_combo.currentIndexChanged.connect(self._on_language_changed)
         row.addWidget(self.language_combo)
+        self.btn_theme_toggle = QPushButton("☀")
+        self.btn_theme_toggle.setToolTip("Alternar tema Claro / Escuro")
+        self.btn_theme_toggle.setFixedSize(30, 28)
+        self.btn_theme_toggle.setFont(font_ui(12))
+        self.btn_theme_toggle.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent; border: 1px solid {DSColors.BORDER};
+                border-radius: 2px; color: {DSColors.TEXT_SECONDARY};
+            }}
+            QPushButton:hover {{ border-color: {DSColors.BRASS}; color: {DSColors.AMBER}; }}
+""")
+        self.btn_theme_toggle.clicked.connect(self._toggle_theme)
+        row.addWidget(self.btn_theme_toggle)
         layout.addLayout(row)
 
         # Tabs
@@ -471,13 +552,52 @@ class MainWindow(QMainWindow):
 
         self.missions_tab = MissionsTab()
         self.missions_tab.missionSelected.connect(self._on_mission_selected)
-        self.tabs.addTab(self.missions_tab, self._t("missions_tab"))
+
+        _missions_empty = EmptyStateWidget(
+            icon="✈",
+            title=self._t("empty_missions_title"),
+            body=self._t("empty_missions_body"),
+            cta_label=self._t("sync_data"),
+        )
+        _missions_empty.action_triggered.connect(self._sync_data)
+
+        self._missions_wrapper, self._missions_stack = _make_tab_wrapper(
+            self.missions_tab, _missions_empty
+        )
+        self._missions_empty = _missions_empty
+        self.tabs.addTab(self._missions_wrapper, self._t("missions_tab"))
 
         self.squadron_tab = SquadronTab()
-        self.tabs.addTab(self.squadron_tab, self._t("squadron_tab"))
+
+        _squadron_empty = EmptyStateWidget(
+            icon="⚔",
+            title=self._t("empty_squadron_title"),
+            body=self._t("empty_squadron_body"),
+            cta_label=self._t("sync_data"),
+        )
+        _squadron_empty.action_triggered.connect(self._sync_data)
+
+        self._squadron_wrapper, self._squadron_stack = _make_tab_wrapper(
+            self.squadron_tab, _squadron_empty
+        )
+        self._squadron_empty = _squadron_empty
+        self.tabs.addTab(self._squadron_wrapper, self._t("squadron_tab"))
 
         self.aces_tab = AcesTab()
-        self.tabs.addTab(self.aces_tab, self._t("aces_tab"))
+
+        _aces_empty = EmptyStateWidget(
+            icon="★",
+            title=self._t("empty_aces_title"),
+            body=self._t("empty_aces_body"),
+            cta_label=self._t("sync_data"),
+        )
+        _aces_empty.action_triggered.connect(self._sync_data)
+
+        self._aces_wrapper, self._aces_stack = _make_tab_wrapper(
+            self.aces_tab, _aces_empty
+        )
+        self._aces_empty = _aces_empty
+        self.tabs.addTab(self._aces_wrapper, self._t("aces_tab"))
 
         self.medals_tab = MedalsTab()
         self.tabs.addTab(self.medals_tab, self._t("medals_tab"))
@@ -521,6 +641,7 @@ class MainWindow(QMainWindow):
 
         self.flight_streak_label = QLabel()
         self.flight_streak_label.setObjectName("flight_streak_indicator")
+        self.flight_streak_label.setFont(font_ui(10, bold=True))
         self.flight_streak_label.setStyleSheet(
             f"color:{DSColors.AMBER}; font-weight:700; padding:2px 10px;"
             f" letter-spacing:1px; background:transparent;"
@@ -537,6 +658,18 @@ class MainWindow(QMainWindow):
 
         self._set_ui_busy(False)
         self._refresh_flight_streak_indicator()
+
+
+    def _toggle_theme(self) -> None:
+        """Alterna entre tema escuro e claro e reaplicar stylesheet global."""
+        new_theme = "light" if current_theme() == "dark" else "dark"
+        set_theme(new_theme)
+        icon = "🌙" if new_theme == "dark" else "☀"
+        self.btn_theme_toggle.setText(icon)
+        QApplication.instance().setStyleSheet(build_global_stylesheet())
+        self.tabs.setStyleSheet(DSStyles.TAB_WIDGET)
+        self.progress_bar.setStyleSheet(DSStyles.PROGRESS_BAR)
+        self.settings.setValue("ui/theme", new_theme)
 
 
     def _t(self, key: str, **kwargs: Any) -> str:
@@ -562,12 +695,32 @@ class MainWindow(QMainWindow):
         self.btn_copy_path.setToolTip(self._t("copy_button_tooltip"))
 
         self.tabs.setTabText(self.tabs.indexOf(self.profile_tab), self._t("profile_tab"))
-        self.tabs.setTabText(self.tabs.indexOf(self.missions_tab), self._t("missions_tab"))
-        self.tabs.setTabText(self.tabs.indexOf(self.squadron_tab), self._t("squadron_tab"))
-        self.tabs.setTabText(self.tabs.indexOf(self.aces_tab), self._t("aces_tab"))
+        self.tabs.setTabText(self.tabs.indexOf(self._missions_wrapper), self._t("missions_tab"))
+        self.tabs.setTabText(self.tabs.indexOf(self._squadron_wrapper), self._t("squadron_tab"))
+        self.tabs.setTabText(self.tabs.indexOf(self._aces_wrapper), self._t("aces_tab"))
         self.tabs.setTabText(self.tabs.indexOf(self.medals_tab), self._t("medals_tab"))
         self.tabs.setTabText(self.tabs.indexOf(self.insert_squads_tab), self._t("insert_squads_tab"))
         self.tabs.setTabText(self.tabs.indexOf(self.input_medals_tab), self._t("input_medals_tab"))
+
+        # Atualizar textos dos empty states ao trocar idioma
+        if hasattr(self, "_missions_empty"):
+            self._missions_empty.set_texts(
+                self._t("empty_missions_title"),
+                self._t("empty_missions_body"),
+                self._t("sync_data"),
+            )
+        if hasattr(self, "_squadron_empty"):
+            self._squadron_empty.set_texts(
+                self._t("empty_squadron_title"),
+                self._t("empty_squadron_body"),
+                self._t("sync_data"),
+            )
+        if hasattr(self, "_aces_empty"):
+            self._aces_empty.set_texts(
+                self._t("empty_aces_title"),
+                self._t("empty_aces_body"),
+                self._t("sync_data"),
+            )
 
         self._update_elided_path_label()
 
@@ -815,6 +968,10 @@ class MainWindow(QMainWindow):
         self.sync_thread.data_loaded.connect(self._on_data_loaded, Qt.QueuedConnection)
         self.sync_thread.error_occurred.connect(self._on_sync_error, Qt.QueuedConnection)
         self.sync_thread.progress.connect(self.progress_bar.setValue, Qt.QueuedConnection)
+        self.sync_thread.progress_label.connect(
+            lambda msg: self.statusBar().showMessage(msg, 0),
+            Qt.QueuedConnection,
+        )
 
         self.sync_thread.finished.connect(lambda: self._set_ui_busy(False), Qt.QueuedConnection)
 
@@ -836,8 +993,11 @@ class MainWindow(QMainWindow):
         campaign: str = self._selected_campaign_id()
 
         # País e medalhas
-        if self.container.has_cp_db():
-            cpdb_country = ((self.current_data.get("pilot", {}) or {}).get("country", "") or "").strip()
+        cpdb_country = ((self.current_data.get("pilot", {}) or {}).get("country", "") or "").strip()
+        pilot_name = ((self.current_data.get("pilot", {}) or {}).get("name", "") or "").strip()
+
+        if self.container.has_cp_db() and cpdb_country:
+            # Se temos cp.db e ele informou o país, usamos o mapeamento direto
             country_code, display_name = PersonnelResolutionService._map_country_to_folder_and_label(cpdb_country)
             earned_ids = set()
             try:
@@ -845,11 +1005,18 @@ class MainWindow(QMainWindow):
             except Exception:
                 logger.exception("Falha ao carregar medalhas do cp.db")
         else:
-            pilot_name = ((self.current_data.get("pilot", {}) or {}).get("name", "") or "").strip()
+            # Fallback para PersonnelResolutionService (PWCG JSON) se o país estiver vazio ou não houver cp.db
             personnel_info = self.personnel_resolution_service.resolve(campaign, pilot_name)
             country_code = personnel_info.country_code
             display_name = personnel_info.display_name
             earned_ids = set(personnel_info.earned_medal_ids)
+
+            # Se estivermos no cp.db mas o país veio vazio, as medalhas do cp.db ainda podem ser válidas
+            if self.container.has_cp_db() and not earned_ids:
+                try:
+                    earned_ids = set(self.container.get_cp_db_repository().get_earned_medal_ids(campaign))
+                except Exception:
+                    pass
 
         # Aba Medalhas (carregamento lazy + atualizaÃ§Ã£o Ãºnica de contexto)
         self.medals_tab.set_context(country_code, display_name, earned_ids)
@@ -882,6 +1049,10 @@ class MainWindow(QMainWindow):
         self.squadron_tab.set_squad_overview(squadron_name)
 
         self._refresh_flight_streak_indicator()
+        # Revelar conteúdo real (índice 1) nas abas com stack
+        self._missions_stack.setCurrentIndex(1)
+        self._squadron_stack.setCurrentIndex(1)
+        self._aces_stack.setCurrentIndex(1)
         self.statusBar().showMessage(self._t("sync_success"), 4000)
 
     def _on_sync_error(self, msg: str) -> None:
@@ -1002,3 +1173,13 @@ class MainWindow(QMainWindow):
         else:
             self._full_path_text = ""
             self._update_elided_path_label()
+
+        saved_theme = str(self.settings.value("ui/theme", "dark") or "dark")
+        if saved_theme != current_theme():
+            set_theme(saved_theme)
+            icon = "🌙" if saved_theme == "dark" else "☀"
+            if hasattr(self, "btn_theme_toggle"):
+                self.btn_theme_toggle.setText(icon)
+            QApplication.instance().setStyleSheet(build_global_stylesheet())
+            if hasattr(self, "tabs"):
+                self.tabs.setStyleSheet(DSStyles.TAB_WIDGET)

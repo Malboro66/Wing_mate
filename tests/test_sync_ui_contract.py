@@ -77,3 +77,66 @@ def test_profile_tab_updates_xp_and_morale_widgets(qtbot):
 
     assert tab.xp_text_label.text() == "1750 XP"
     assert tab.morale_label.text() == "🔥 Inspirado (90)"
+
+
+def test_data_sync_thread_emits_progress_label_strings(qtbot):
+    """progress_label emite strings não-vazias nas etapas principais de sucesso."""
+    class _Processor:
+        def process_campaign(self, _campaign_name):
+            return {
+                "pilot": {"name": "Pilot A"},
+                "missions": [{"id": 1}],
+                "aces": [],
+            }
+
+    labels_received = []
+    thread = DataSyncThread(
+        pwcgfc_path="/tmp/pwcg",
+        campaign_name="camp1",
+        processor_factory=lambda _path: _Processor(),
+    )
+    thread.progress_label.connect(labels_received.append)
+
+    with qtbot.waitSignal(thread.data_loaded, timeout=3000):
+        thread.start()
+
+    qtbot.waitUntil(lambda: not thread.isRunning(), timeout=3000)
+
+    assert len(labels_received) >= 3, (
+        f"Esperado >= 3 labels de progresso, recebidos: {labels_received}"
+    )
+    assert all(label and isinstance(label, str) for label in labels_received), (
+        f"Label vazio ou não-string encontrado: {labels_received}"
+    )
+    assert not any(label == key for label in labels_received
+                   for key in ("sync_label_reading", "sync_label_loading",
+                               "sync_label_finishing")), (
+        f"Chave i18n não resolvida encontrada nos labels: {labels_received}"
+    )
+
+
+def test_data_sync_thread_emits_error_label_on_failure(qtbot):
+    """progress_label emite mensagem de erro quando process_campaign lança exceção."""
+    class _Processor:
+        def process_campaign(self, _campaign_name):
+            raise ValueError("Arquivo de campanha corrompido")
+
+    labels_received = []
+    thread = DataSyncThread(
+        pwcgfc_path="/tmp/pwcg",
+        campaign_name="camp1",
+        processor_factory=lambda _path: _Processor(),
+    )
+    thread.progress_label.connect(labels_received.append)
+
+    with qtbot.waitSignal(thread.error_occurred, timeout=3000):
+        thread.start()
+
+    qtbot.waitUntil(lambda: not thread.isRunning(), timeout=3000)
+
+    assert len(labels_received) >= 1, (
+        "Nenhum label de progresso emitido mesmo em cenário de erro"
+    )
+    assert all(label and isinstance(label, str) for label in labels_received), (
+        f"Label inválido no cenário de erro: {labels_received}"
+    )

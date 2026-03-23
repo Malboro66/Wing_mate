@@ -61,7 +61,7 @@ class CpDbCampaignRepository:
 
             personage_id = str(career.get("personageId", ""))
             personage = self._reader.get_personage(personage_id) if personage_id else None
-            pilot = self._reader.get_player_pilot(personage_id) if personage_id else None
+            pilot = self._resolve_pilot_with_country_fallback(career, personage_id)
             squadron = self._reader.get_squadron(int(career.get("squadronId", -1)))
             squadron_name = self._resolve_squadron_name(int(career.get("id", -1)), squadron)
             if squadron is not None:
@@ -94,10 +94,9 @@ class CpDbCampaignRepository:
                     return []
                 career_id = int(career["id"])
 
-            personage_id = str(
-                (self._reader.get_active_career(career_id) or {}).get("personageId", "")
-            )
-            pilot = self._reader.get_player_pilot(personage_id) if personage_id else None
+            career_row = self._reader.get_active_career(career_id) or {}
+            personage_id = str(career_row.get("personageId", ""))
+            pilot = self._resolve_pilot_with_country_fallback(career_row, personage_id)
             if not pilot:
                 return []
 
@@ -159,10 +158,7 @@ class CpDbCampaignRepository:
 
             career_id = int(career["id"])
             personage_id = str(career.get("personageId", ""))
-            player_id = self._as_int(career.get("playerId"), -1)
-            pilot_row = self._reader.get_player_pilot(personage_id)
-            if (not pilot_row or not str(pilot_row.get("country", "") or "").strip()) and player_id >= 0:
-                pilot_row = self._reader.get_pilot(player_id) or pilot_row
+            pilot_row = self._resolve_pilot_with_country_fallback(career, personage_id)
             squadron_row = self._reader.get_squadron(int(career.get("squadronId", -1)))
             all_pilots = self._reader.get_pilots(int(career.get("squadronId", -1)))
             pilots_lookup: Dict[Any, Dict[str, Any]] = {}
@@ -218,6 +214,23 @@ class CpDbCampaignRepository:
             return int(value)
         except (TypeError, ValueError):
             return default
+
+    def _resolve_pilot_with_country_fallback(
+        self,
+        career_row: Dict[str, Any],
+        personage_id: str,
+    ) -> Optional[Dict[str, Any]]:
+        pilot_row = self._reader.get_player_pilot(personage_id) if personage_id else None
+        has_country = bool(str((pilot_row or {}).get("country", "") or "").strip())
+        if has_country:
+            return pilot_row
+
+        player_id = self._as_int((career_row or {}).get("playerId"), -1)
+        if player_id >= 0:
+            fallback_pilot = self._reader.get_pilot(player_id)
+            if fallback_pilot:
+                return fallback_pilot
+        return pilot_row
 
     def _resolve_squadron_name(
         self,

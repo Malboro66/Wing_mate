@@ -51,6 +51,10 @@ class MainWindow(QMainWindow):
         self._idx_wing_mate = self.stack.addWidget(self.wing_mate_widget)
 
         self._build_toolbar()
+
+        from app.ui.design_system import build_global_stylesheet, load_custom_fonts, font_display
+        from PyQt5.QtWidgets import QApplication
+        load_custom_fonts()
         self._toast = ToastWidget(self)
         notification_bus.notified.connect(self._on_notification, Qt.QueuedConnection)
 
@@ -64,12 +68,20 @@ class MainWindow(QMainWindow):
 
     def _build_toolbar(self) -> None:
         tb = QToolBar(self._t("toolbar_actions"), self)
+        from app.ui.design_system import DSStyles, DSColors, font_display
         tb.setMovable(False)
+        tb.setStyleSheet(DSStyles.TOOLBAR)
         self.addToolBar(tb)
 
+        from PyQt5.QtWidgets import QLabel as _BL
+        _bl = _BL("✈  WING MATE")
+        _bl.setFont(font_display(14))
+        _bl.setStyleSheet(f"color:{DSColors.GOLD}; margin-right:8px; background:transparent;")
         spacer = QWidget(tb)
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         tb.addWidget(spacer)
+        if tb.actions():
+            tb.insertWidget(tb.actions()[0], _bl)
 
         self.btn_settings = QPushButton()
         self.btn_settings.setObjectName("settings_global_button")

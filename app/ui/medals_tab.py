@@ -40,7 +40,7 @@ from PyQt5.QtWidgets import (
 )
 
 from app.ui.widgets.medal_hover_popup import MedalHoverPopup
-from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 
 logger = logging.getLogger(__name__)
 
@@ -285,6 +285,8 @@ class MedalsTab(QWidget):
 
         self._search_edit = QLineEdit()
         self._search_edit.setStyleSheet(DSStyles.INPUT)
+        self._search_edit.setFont(font_body(12))
+        self._search_edit.setMinimumHeight(30)
         self._search_edit.setAccessibleName("medals_search_input")
         self._search_edit.setPlaceholderText(self.tr("Buscar medalha por nome"))
         self._search_edit.textChanged.connect(self._rebuild_view)
@@ -337,6 +339,7 @@ class MedalsTab(QWidget):
         self._table.verticalHeader().setVisible(False)
         self._table.horizontalHeader().setHighlightSections(False)
         self._table.setAlternatingRowColors(False)
+        self._table.setFont(font_body(12))
         self._table.setAccessibleName("medals_table")
         self._table.setHorizontalHeaderLabels([self.tr("Nome"), self.tr("Status"), self.tr("Editar")])
         self._table.setSelectionBehavior(QAbstractItemView.SelectRows)
