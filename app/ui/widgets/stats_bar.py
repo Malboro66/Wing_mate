@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Tuple
 
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QWidget
 
-from app.ui.design_system_v3 import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 
 
 class StatCard(QWidget):

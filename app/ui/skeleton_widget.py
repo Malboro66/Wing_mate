@@ -3,7 +3,7 @@ from __future__ import annotations
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QFrame, QLabel, QVBoxLayout, QWidget
 
-from app.ui.design_system_v3 import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 
 
 class SkeletonWidget(QWidget):
@@ -12,7 +12,7 @@ class SkeletonWidget(QWidget):
     def __init__(self, message: str = "Carregando...", parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setAttribute(Qt.WA_StyledBackground, True)
-        from app.ui.design_system_v3 import font_ui, font_display, DSFeedback
+        from app.ui.design_system import font_ui, font_display, DSFeedback
         self._title = QLabel(message, self)
         self._title.setFont(font_ui(13, bold=True))
         self._title.setStyleSheet(DSFeedback.LOADING_TITLE_TEXT)

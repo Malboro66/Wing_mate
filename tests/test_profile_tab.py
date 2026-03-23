@@ -271,3 +271,106 @@ def test_set_rank_country_persists_across_multiple_calls(qtbot):
     assert tab._country_folder == "usa", (
         f"País esperado 'usa' após múltiplas chamadas, obtido '{tab._country_folder}'"
     )
+
+
+def test_compute_ribbons_height_returns_min_when_empty(qtbot: QtBot):
+    """_compute_ribbons_height retorna 56 quando não há ribbons."""
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+
+    # Garantir que o layout está vazio
+    tab._clear_ribbons()
+
+    h = tab._compute_ribbons_height()
+    assert h == 56, f"Estado vazio deve retornar 56px, obtido {h}px"
+
+
+def test_compute_ribbons_height_respects_max(qtbot: QtBot):
+    """_compute_ribbons_height não excede MAX_H=160px independente dos itens."""
+    from PyQt5.QtWidgets import QToolButton
+    from PyQt5.QtCore import QSize
+
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+    tab.show()
+
+    # Adicionar muitos botões para forçar múltiplas linhas
+    tab._clear_ribbons()
+    if tab._ribbons_layout:
+        for i in range(20):
+            btn = QToolButton()
+            btn.setFixedSize(106, 106)
+            tab._ribbons_layout.addWidget(btn)
+
+    h = tab._compute_ribbons_height()
+    assert h <= 160, f"Altura não deve exceder 160px, obtido {h}px"
+
+
+def test_compute_ribbons_height_respects_min_when_filled(qtbot: QtBot):
+    """_compute_ribbons_height retorna ao menos 80px quando há 1 ribbon."""
+    from PyQt5.QtWidgets import QToolButton
+
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+    tab.show()
+
+    tab._clear_ribbons()
+    if tab._ribbons_layout:
+        btn = QToolButton()
+        btn.setFixedSize(106, 106)
+        tab._ribbons_layout.addWidget(btn)
+
+    h = tab._compute_ribbons_height()
+    assert h >= 80, f"Estado preenchido deve retornar ao menos 80px, obtido {h}px"
+
+
+def test_set_ribbons_empty_sets_height_56(qtbot: QtBot):
+    """set_ribbons com ids vazios aplica fixedHeight de 56px no scroll."""
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+    tab.show()
+
+    tab.set_ribbons("germany", earned_ids=set())
+
+    if tab._ribbons_scroll:
+        h = tab._ribbons_scroll.height()
+        assert h == 56, (
+            f"Estado vazio deve ter height=56px, obtido {h}px"
+        )
+
+
+def test_update_ribbons_height_method_exists(qtbot: QtBot):
+    """ProfileTab deve expor _update_ribbons_height como método callable."""
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+
+    assert hasattr(tab, "_update_ribbons_height"), (
+        "ProfileTab deve ter método _update_ribbons_height"
+    )
+    assert callable(tab._update_ribbons_height), (
+        "_update_ribbons_height deve ser callable"
+    )
+
+
+def test_compute_ribbons_height_method_exists(qtbot: QtBot):
+    """ProfileTab deve expor _compute_ribbons_height como método callable."""
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+
+    assert hasattr(tab, "_compute_ribbons_height"), (
+        "ProfileTab deve ter método _compute_ribbons_height"
+    )
+    assert callable(tab._compute_ribbons_height), (
+        "_compute_ribbons_height deve ser callable"
+    )
+
+
+def test_compute_ribbons_height_returns_int(qtbot: QtBot):
+    """_compute_ribbons_height deve sempre retornar int."""
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+
+    result = tab._compute_ribbons_height()
+    assert isinstance(result, int), (
+        f"_compute_ribbons_height deve retornar int, obtido {type(result)}"
+    )

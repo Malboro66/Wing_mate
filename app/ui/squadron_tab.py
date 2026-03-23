@@ -10,7 +10,7 @@ import logging  # <-- Importação adicionada
 from PyQt5.QtCore import Qt, QTimer, QPoint, pyqtSignal
 from PyQt5.QtGui import QPixmap, QTransform, QColor, QMouseEvent, QIcon, QPainter
 from app.application.viewmodels import SquadronViewModel
-from app.ui.design_system_v3 import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 from app.ui.shortcut_mixin import CtrlFFocusMixin
 from app.ui.widgets.stats_bar import StatsBar
 from PyQt5.QtWidgets import (

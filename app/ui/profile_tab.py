@@ -53,7 +53,7 @@ from PyQt5.QtWidgets import (
 
 import logging
 
-from app.ui.design_system_v3 import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
+from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 from app.ui.error_feedback import show_actionable_error
 from utils.notification_bus import NotificationBus, NotificationLevel
 from utils.observability import Events, emit_event, record_action_duration
@@ -256,6 +256,7 @@ class ProfileTab(QWidget):
         self.dob_edit = BirthDateEdit()
         self.age_label = QLabel("N/A")
         self.birthplace_edit = QLineEdit()
+        self.birthplace_edit.setMaximumWidth(420)
         self.bio_edit = QTextEdit()
         self.btn_save: Optional[QPushButton] = None
 
@@ -417,8 +418,7 @@ class ProfileTab(QWidget):
         self._ribbons_scroll = QScrollArea()
         self._ribbons_scroll.setWidgetResizable(True)
         self._ribbons_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self._ribbons_scroll.setMinimumHeight(80)
-        self._ribbons_scroll.setMaximumHeight(160)
+        self._ribbons_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
         self._ribbons_holder = QtWidget()
         self._ribbons_holder.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -430,20 +430,31 @@ class ProfileTab(QWidget):
         self._ribbons_scroll.setWidget(self._ribbons_holder)
         rv.addWidget(self._ribbons_scroll)
 
-        form_right.addRow(ribbons_group)
-
         # Botão salvar desabilitado inicialmente
         self.btn_save = QPushButton(self.tr("Salvar Perfil"))
         self.btn_save.clicked.connect(self.save_to_settings)
         self.btn_save.setEnabled(False)
-        form_right.addRow("", self.btn_save)
 
         info_hbox.addWidget(rank_panel)
 
-        right_holder = QWidget()
-        right_holder.setMaximumWidth(DSSpacing.FORM_MAX_WIDTH)
-        right_holder.setLayout(form_right)
-        info_hbox.addWidget(right_holder, 1)
+        # fields_holder: container dos campos com largura máxima
+        fields_holder = QWidget()
+        fields_holder.setLayout(form_right)
+        fields_holder.setMaximumWidth(680)
+
+        # right_outer: container externo sem restrição de largura
+        right_outer = QWidget()
+        right_vbox = QVBoxLayout(right_outer)
+        right_vbox.setContentsMargins(0, 0, 0, 0)
+        right_vbox.setSpacing(0)
+
+        # Empilhar: campos restritos → condecorações livres → botão
+        right_vbox.addWidget(fields_holder)
+        right_vbox.addWidget(ribbons_group)
+        right_vbox.addWidget(self.btn_save, 0, Qt.AlignRight)
+
+        # Substituir right_holder por right_outer no hbox
+        info_hbox.addWidget(right_outer, 1)
 
         info_group.setFont(font_ui(10, bold=True))
         outer.addWidget(info_group, stretch=1)
@@ -639,6 +650,83 @@ class ProfileTab(QWidget):
 
     # ---------------- Ribbons (FlowLayout) ----------------
 
+    def _compute_ribbons_height(self) -> int:
+        """
+        Calcula a altura necessária para o FlowLayout de ribbons com base
+        na largura atual do viewport do scroll e no número de itens presentes.
+
+        Consulta diretamente o FlowLayout._do_layout(test_only=True) via
+        heightForWidth() para obter a altura exata após wrap.
+
+        Returns:
+            Altura em pixels entre MIN_H (56) e MAX_H (160).
+            56px para estado vazio, altura calculada para estado preenchido.
+        """
+        MIN_H_EMPTY = 56
+        MIN_H_FILLED = 80
+        MAX_H = 160
+
+        if not self._ribbons_holder or not self._ribbons_layout:
+            return MIN_H_EMPTY
+
+        item_count = self._ribbons_layout.count()
+        if item_count == 0:
+            return MIN_H_EMPTY
+
+        # Largura disponível: usar viewport do scroll quando já tem tamanho,
+        # cair para a largura do próprio scroll menos scrollbar (aprox. 4px)
+        # como fallback antes do primeiro show.
+        available_w = 0
+        if self._ribbons_scroll and self._ribbons_scroll.viewport():
+            available_w = self._ribbons_scroll.viewport().width()
+        if available_w <= 0 and self._ribbons_scroll:
+            available_w = max(0, self._ribbons_scroll.width() - 4)
+        if available_w <= 0:
+            available_w = 400  # fallback seguro antes do primeiro show
+
+        # Consultar o FlowLayout — já implementa a lógica de wrap completa
+        computed_h = self._ribbons_layout.heightForWidth(available_w)
+
+        # Adicionar margens internas do QScrollArea (2px em cada lado)
+        computed_h += 8
+
+        return max(MIN_H_FILLED, min(MAX_H, computed_h))
+
+    def _update_ribbons_height(self) -> None:
+        """
+        Recalcula e aplica a altura do QScrollArea de ribbons.
+
+        Primeiro remove qualquer fixedHeight anterior (setMinimumHeight(0) +
+        setMaximumHeight(QWIDGETSIZE_MAX)) para não colidir com o novo valor,
+        depois aplica setFixedHeight com o valor calculado.
+
+        Chamado após adicionar widgets em set_ribbons() e no resizeEvent.
+        """
+        if not self._ribbons_scroll:
+            return
+
+        h = self._compute_ribbons_height()
+
+        # Liberar restrições anteriores antes de aplicar o novo valor
+        self._ribbons_scroll.setMinimumHeight(0)
+        self._ribbons_scroll.setMaximumHeight(16777215)  # QWIDGETSIZE_MAX do Qt
+
+        self._ribbons_scroll.setFixedHeight(h)
+
+    def resizeEvent(self, event) -> None:
+        """
+        Recalcula a altura dos ribbons quando o painel é redimensionado.
+
+        O recálculo só acontece quando há itens no layout (estado preenchido),
+        evitando custo desnecessário no estado vazio.
+        """
+        super().resizeEvent(event)
+        if (
+            self._ribbons_layout is not None
+            and self._ribbons_layout.count() > 0
+        ):
+            self._update_ribbons_height()
+
     def _clear_ribbons(self):
         if not self._ribbons_layout:
             return
@@ -656,8 +744,18 @@ class ProfileTab(QWidget):
 
         ids = list(earned_ids or [])
         if not ids:
+            # Estado vazio: área compacta com mensagem contextual
+            if self._ribbons_scroll:
+                self._ribbons_scroll.setMinimumHeight(0)
+                self._ribbons_scroll.setMaximumHeight(16777215)
+                self._ribbons_scroll.setFixedHeight(56)
+            lbl = QLabel(self.tr("Sem condecorações registradas para este piloto."))
+            lbl.setStyleSheet(
+                f"color:{DSColors.TEXT_MUTED}; font-style:italic; font-size:12px;"
+                " padding:6px 0; background:transparent;"
+            )
             if self._ribbons_layout:
-                self._ribbons_layout.addWidget(QLabel(self.tr("Sem condecorações registradas.")))
+                self._ribbons_layout.addWidget(lbl)
             return
 
         code = canonicalize_country_code(country_code)
@@ -698,6 +796,12 @@ class ProfileTab(QWidget):
 
             if self._ribbons_layout:
                 self._ribbons_layout.addWidget(btn)
+
+        # Calcular e aplicar altura após todos os widgets estarem no layout.
+        # QTimer.singleShot(0) garante que o FlowLayout já executou setGeometry
+        # antes de heightForWidth() ser consultado.
+        from PyQt5.QtCore import QTimer
+        QTimer.singleShot(0, self._update_ribbons_height)
 
     # ---------------- Persistence ----------------
 
