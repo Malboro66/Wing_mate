@@ -11,9 +11,9 @@ dependencies = [
   "PyQt5>=5.15.0",
 ]
 
-# Placeholder until main_app.py exposes a standalone main() wrapper.
+# Placeholder until an installable console-script target is defined.
 # [project.scripts]
-# wing-mate = "main_app:main"
+# wing-mate = "main_app:run"
 
 [project.optional-dependencies]
 dev = [
@@ -21,6 +21,10 @@ dev = [
   "pytest-qt>=4.2.0",
   "mypy>=1.0.0",
   "PyQt5-stubs>=5.15.6.0",
+  "ruff>=0.6.0",
+]
+build = [
+  "pyinstaller>=6.0.0",
 ]
 
 [tool.setuptools.packages.find]
@@ -47,3 +51,29 @@ warn_redundant_casts = true
 [[tool.mypy.overrides]]
 module = ["PyQt5.*"]
 ignore_missing_imports = true
+
+[tool.ruff]
+target-version = "py38"
+line-length = 100
+extend-exclude = [
+  "build",
+  "dist",
+]
+
+[tool.ruff.lint]
+select = [
+  "E",
+  "F",
+  "W",
+  "I",
+  "UP",
+  "B",
+]
+ignore = [
+  "E501",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"

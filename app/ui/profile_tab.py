@@ -55,6 +55,7 @@ import logging
 
 from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 from app.ui.error_feedback import show_actionable_error
+from app.ui.i18n import AppI18n
 from utils.notification_bus import NotificationBus, NotificationLevel
 from utils.observability import Events, emit_event, record_action_duration
 from utils.structured_logger import StructuredLogger
@@ -209,6 +210,28 @@ class ProfileTab(QWidget):
     MAX_BIRTHPLACE = 100
     MAX_BIO = 2000
     SCHEMA_VERSION = 1
+    _I18N_MAP = {
+        "Retrato": "Portrait",
+        "Escolher Avatar": "Choose Avatar",
+        "Remover Avatar": "Remove Avatar",
+        "Dados do Piloto": "Pilot Data",
+        "Nome:": "Name:",
+        "Prestígio (XP):": "Prestige (XP):",
+        "Esquadrão:": "Squadron:",
+        "Missões Voadas:": "Missions Flown:",
+        "Data de Nascimento:": "Birth Date:",
+        "Idade (últ. missão):": "Age (last mission):",
+        "Local de Nascimento:": "Birthplace:",
+        "Biografia do piloto...": "Pilot biography...",
+        "Biografia:": "Biography:",
+        "Condecorações": "Decorations",
+        "Salvar Perfil": "Save Profile",
+        "Frame ausente": "Missing frame",
+        "Sem roundel": "No roundel",
+        "Imagem não encontrada": "Image not found",
+        "Sem condecorações registradas para este piloto.": "No decorations recorded for this pilot.",
+        "Pasta de medalhas ausente.": "Medals folder missing.",
+    }
 
     def __init__(self, settings: Optional[QSettings] = None, parent: Optional[QWidget] = None):
         super().__init__(parent)
@@ -225,6 +248,7 @@ class ProfileTab(QWidget):
         self._country_folder: str = "germany"
         self._recruit_ref_year = self.MIN_ENLIST_YEAR
         self._max_recruit_age = int(self.settings.value("profile/max_recruit_age", self.DEFAULT_MAX_RECRUIT_AGE))
+        self._language_code: str = AppI18n.PT_BR
 
         self.pilot_name_label = QLabel("N/A")
         self.pilot_name_label.setFont(font_ui(14, bold=True))
@@ -272,6 +296,36 @@ class ProfileTab(QWidget):
         self._connect_signals()
         self._configure_dob_bounds()
         self.load_from_settings()
+
+    def _t(self, pt_text: str) -> str:
+        key = f"profile_tab/{pt_text}"
+        AppI18n._T.setdefault(
+            key,
+            {AppI18n.PT_BR: pt_text, AppI18n.EN_US: self._I18N_MAP.get(pt_text, pt_text)},
+        )
+        return AppI18n.t(key, self._language_code)
+
+    def set_language(self, language_code: str) -> None:
+        self._language_code = str(language_code or AppI18n.PT_BR)
+        self.retranslate()
+
+    def retranslate(self) -> None:
+        for lbl in self.findChildren(QLabel):
+            txt = lbl.text()
+            if txt in self._I18N_MAP or txt in self._I18N_MAP.values():
+                pt = txt if txt in self._I18N_MAP else next((k for k, v in self._I18N_MAP.items() if v == txt), txt)
+                lbl.setText(self._t(pt))
+        for grp in self.findChildren(QGroupBox):
+            title = grp.title()
+            if title in self._I18N_MAP or title in self._I18N_MAP.values():
+                pt = title if title in self._I18N_MAP else next((k for k, v in self._I18N_MAP.items() if v == title), title)
+                grp.setTitle(self._t(pt))
+        for btn in self.findChildren(QPushButton):
+            txt = btn.text()
+            if txt in self._I18N_MAP or txt in self._I18N_MAP.values():
+                pt = txt if txt in self._I18N_MAP else next((k for k, v in self._I18N_MAP.items() if v == txt), txt)
+                btn.setText(self._t(pt))
+        self.bio_edit.setPlaceholderText(self._t("Biografia do piloto..."))
 
     # ---------------- Keys/paths ----------------
 

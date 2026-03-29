@@ -3,7 +3,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-import cache_manager
+from utils import cache_manager
 
 
 def test_cache_manager_tracks_hits_and_misses() -> None:

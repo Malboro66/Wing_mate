@@ -14,10 +14,10 @@
   - correlação por `session_id` em todos os eventos;
   - relatório por release com `ux_budget` + `baseline_delta`.
 
-- `main_app.py`
+- `main.py`
   - mede startup real da aplicação e registra `startup_completed`;
-  - publica relatório automático em `logs/observability/observability_<release>.json`;
-  - atualiza `logs/observability/baseline.json` para tendência por release.
+  - publica relatório automático em `<user_data>/WingMate/logs/observability/observability_<release>.json`;
+  - atualiza `<user_data>/WingMate/logs/observability/baseline.json` para tendência por release.
 
 - `app/ui/main_window.py`
   - mede tempo de troca de aba com `record_action_duration("tab_switch:...")`;

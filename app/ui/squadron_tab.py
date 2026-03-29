@@ -13,6 +13,7 @@ from app.application.viewmodels import SquadronViewModel
 from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 from app.ui.shortcut_mixin import CtrlFFocusMixin
 from app.ui.widgets.stats_bar import StatsBar
+from app.ui.i18n import AppI18n
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QLabel, QScrollArea,
     QTableWidget, QTableWidgetItem, QHeaderView, QToolTip, QLineEdit, QCheckBox,
@@ -196,6 +197,24 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         "leave": QColor(90, 110, 130),
         "rest": QColor(90, 110, 130),
     }
+    _I18N_MAP = {
+        "Esquadrão": "Squadron",
+        "Sem emblema": "No emblem",
+        "Filtro rápido:": "Quick filter:",
+        "Filtrar por nome, patente ou status": "Filter by name, rank, or status",
+        "Atalho: Ctrl+F para focar o filtro": "Shortcut: Ctrl+F to focus the filter",
+        "Alto contraste": "High contrast",
+        "Total": "Total",
+        "Visíveis": "Visible",
+        "Abates": "Kills",
+        "Missões": "Missions",
+        "Pronto para carregar dados do esquadrão.": "Ready to load squadron data.",
+        "Use setas para navegar entre os pilotos.": "Use arrows to navigate between pilots.",
+        "N/A": "N/A",
+        "Nome": "Name",
+        "Patente": "Rank",
+        "Status": "Status",
+    }
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
@@ -203,6 +222,7 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         self._country_folder: str = "germany"
         self._current_squad_name: str = ""
         self._vm: SquadronViewModel = SquadronViewModel()
+        self._language_code: str = AppI18n.PT_BR
 
         root: QVBoxLayout = QVBoxLayout(self)
 
@@ -303,6 +323,33 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
         self.table.setItemDelegate(self._status_delegate)
         root.addWidget(self.table)
         self.bind_ctrl_f_to_filter(self, self.filter_edit)
+
+    def _t(self, pt_text: str) -> str:
+        key = f"squadron_tab/{pt_text}"
+        AppI18n._T.setdefault(
+            key,
+            {AppI18n.PT_BR: pt_text, AppI18n.EN_US: self._I18N_MAP.get(pt_text, pt_text)},
+        )
+        return AppI18n.t(key, self._language_code)
+
+    def set_language(self, language_code: str) -> None:
+        self._language_code = str(language_code or AppI18n.PT_BR)
+        self.retranslate()
+
+    def retranslate(self) -> None:
+        for lbl in self.findChildren(QLabel):
+            txt = lbl.text()
+            if txt in self._I18N_MAP or txt in self._I18N_MAP.values():
+                pt = txt if txt in self._I18N_MAP else next((k for k, v in self._I18N_MAP.items() if v == txt), txt)
+                lbl.setText(self._t(pt))
+
+        self.header_group.setTitle(self._t("Esquadrão"))
+        self.filter_edit.setPlaceholderText(self._t("Filtrar por nome, patente ou status"))
+        self.filter_edit.setToolTip(self._t("Atalho: Ctrl+F para focar o filtro"))
+        self.high_contrast_toggle.setText(self._t("Alto contraste"))
+        self.state_label.setText(self._t("Pronto para carregar dados do esquadrão."))
+        self.table.setHorizontalHeaderLabels([self._t("Nome"), self._t("Patente"), self._t("Abates"), self._t("Missões"), self._t("Status")])
+        self.table.setToolTip(self._t("Use setas para navegar entre os pilotos."))
 
     # -------- Auxiliares de caminho --------
     @staticmethod

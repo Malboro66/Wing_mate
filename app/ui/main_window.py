@@ -702,6 +702,12 @@ class MainWindow(QMainWindow):
         self.tabs.setTabText(self.tabs.indexOf(self.insert_squads_tab), self._t("insert_squads_tab"))
         self.tabs.setTabText(self.tabs.indexOf(self.input_medals_tab), self._t("input_medals_tab"))
 
+        for tab_widget in (self.missions_tab, self.squadron_tab, self.profile_tab):
+            if hasattr(tab_widget, "set_language"):
+                tab_widget.set_language(self._language_code)
+            elif hasattr(tab_widget, "retranslate"):
+                tab_widget.retranslate()
+
         # Atualizar textos dos empty states ao trocar idioma
         if hasattr(self, "_missions_empty"):
             self._missions_empty.set_texts(

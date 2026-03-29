@@ -47,8 +47,8 @@ wingmate/
 ├── utils/
 ├── tests/
 ├── logs/
-├── main_app.py
-├── requirements.txt
+├── main.py
+├── pyproject.toml
 └── README.md
 ```
 
@@ -71,11 +71,17 @@ wingmate/
     ```
 - [x] **Instale as dependências**
     ```bash
-    pip install -r requirements.txt
+    pip install .
     ```
 - [x] **Execute o aplicativo**
     ```bash
-    python main_app.py
+    python main.py
+    ```
+
+- [x] **Gerar executável standalone (PyInstaller)**
+    ```bash
+    pip install .[build]
+    python build_scripts/build_with_pyinstaller.py
     ```
     <details>
       <summary><b>Exemplo de código: Inicialização da aplicação</b></summary>
@@ -94,6 +100,11 @@ wingmate/
 ---
 
 ## 🧪 Testes & Smoke Gates
+
+### Ambiente de desenvolvimento
+```bash
+pip install .[dev]
+```
 
 ### Executando testes unitários
 ```bash
@@ -114,6 +125,12 @@ pytest -q \
   tests/test_campaign_repository_ports.py \
   tests/test_observability.py \
   tests/test_ui_performance_budget_contract.py
+```
+
+### Lint e formatação (Ruff)
+```bash
+ruff check .
+ruff format .
 ```
 
 ---
