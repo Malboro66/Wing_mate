@@ -1,0 +1,5 @@
+CAMPAIGN_LOADED = "CampaignLoaded"
+CAMPAIGN_ANALYZED = "CampaignAnalyzed"
+PILOT_SELECTED = "PilotSelected"
+FILTER_CHANGED = "FilterChanged"
+SQUADRON_SELECTED = "SquadronSelected"

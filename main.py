@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from main_app import run
+from wingmate.bootstrap.app_factory import AppFactory
 
 
 if __name__ == "__main__":
-    raise SystemExit(run())
+    raise SystemExit(AppFactory().start())
