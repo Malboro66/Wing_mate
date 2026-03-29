@@ -4,7 +4,7 @@
     <em>A central hub for deep analytics and enriched insights on IL-2 flight campaigns & squadrons.</em>
   </p>
   <p>
-    <img alt="PyPI - Python Version" src="https://img.shields.io/badge/python-3.8%2B-blue?logo=python">
+    <img alt="PyPI - Python Version" src="https://img.shields.io/badge/python-3.10%2B-blue?logo=python">
     <img alt="Build Status" src="https://img.shields.io/github/actions/workflow/status/SEU_REPO/wingmate/ci.yml?branch=main&label=Tests&logo=github">
     <img alt="License" src="https://img.shields.io/badge/license-MIT-green.svg">
     <img alt="Contributions Welcome" src="https://img.shields.io/badge/contributions-welcome-brightgreen">
@@ -30,7 +30,7 @@
 
 | 🚀 Tecnologia         | Descrição                |
 |----------------------|-------------------------|
-| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" width="22"/> **Python 3.8+** | Linguagem principal |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" width="22"/> **Python 3.10+** | Linguagem principal |
 | <img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/PyQt_logo.svg" width="22"/> **PyQt5**               | GUI Moderno        |
 | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytest/pytest-original.svg" width="22"/> **Pytest** | Testes Automatizados|
 | 🗃️ **Logging Estruturado** | Observabilidade        |
@@ -47,8 +47,8 @@ wingmate/
 ├── utils/
 ├── tests/
 ├── logs/
-├── main_app.py
-├── requirements.txt
+├── main.py
+├── pyproject.toml
 └── README.md
 ```
 
@@ -71,11 +71,17 @@ wingmate/
     ```
 - [x] **Instale as dependências**
     ```bash
-    pip install -r requirements.txt
+    pip install .
     ```
 - [x] **Execute o aplicativo**
     ```bash
-    python main_app.py
+    python main.py
+    ```
+
+- [x] **Gerar executável standalone (PyInstaller)**
+    ```bash
+    pip install .[build]
+    python build_scripts/build_with_pyinstaller.py
     ```
     <details>
       <summary><b>Exemplo de código: Inicialização da aplicação</b></summary>
@@ -94,6 +100,11 @@ wingmate/
 ---
 
 ## 🧪 Testes & Smoke Gates
+
+### Ambiente de desenvolvimento
+```bash
+pip install .[dev]
+```
 
 ### Executando testes unitários
 ```bash
@@ -114,6 +125,12 @@ pytest -q \
   tests/test_campaign_repository_ports.py \
   tests/test_observability.py \
   tests/test_ui_performance_budget_contract.py
+```
+
+### Lint e formatação (Ruff)
+```bash
+ruff check .
+ruff format .
 ```
 
 ---

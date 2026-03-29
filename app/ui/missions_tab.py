@@ -15,6 +15,7 @@ from app.ui.delegates.timeline_delegate import TimelineDelegate
 from app.ui.shortcut_mixin import CtrlFFocusMixin
 from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSStates, apply_primary_button, apply_ghost_button, apply_section_group, font_display, font_ui, font_body
 from app.ui.widgets.stats_bar import StatsBar
+from app.ui.i18n import AppI18n
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QSplitter, QTableWidget, QTableWidgetItem,
     QTextEdit, QGroupBox, QHeaderView, QLineEdit, QLabel, QCheckBox
@@ -26,12 +27,32 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
     
     missionSelected = pyqtSignal(int, object)
     stats_updated = pyqtSignal(int, int, str, str)
+    _I18N_MAP = {
+        "Filtro rápido:": "Quick filter:",
+        "Filtrar por data, aeronave, tipo ou descrição": "Filter by date, aircraft, type or description",
+        "Atalho: Ctrl+F para focar o filtro": "Shortcut: Ctrl+F to focus the filter",
+        "Alto contraste": "High contrast",
+        "Total": "Total",
+        "Visíveis": "Visible",
+        "Primeira": "First",
+        "Última": "Last",
+        "Pronto para carregar missões.": "Ready to load missions.",
+        "Data": "Date",
+        "Hora": "Time",
+        "Aeronave": "Aircraft",
+        "Tipo": "Type",
+        "Linha do Tempo": "Timeline",
+        "Use setas para navegar, Enter para selecionar.": "Use arrows to navigate, Enter to select.",
+        "Detalhes da Missão Selecionada": "Selected Mission Details",
+        "Progresso temporal da campanha": "Campaign timeline progress",
+    }
     
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         """Inicializa a aba de missões."""
         super().__init__(parent)
         self._missions: List[Mission] = []
         self._vm: MissionsViewModel = MissionsViewModel()
+        self._language_code: str = AppI18n.PT_BR
         self._build_ui()
     
     def _build_ui(self) -> None:
@@ -113,6 +134,37 @@ class MissionsTab(QWidget, CtrlFFocusMixin):
 
         self.setFocusProxy(self.table)
         self.bind_ctrl_f_to_filter(self, self.filter_edit)
+
+    def _t(self, pt_text: str) -> str:
+        key = f"missions_tab/{pt_text}"
+        AppI18n._T.setdefault(
+            key,
+            {AppI18n.PT_BR: pt_text, AppI18n.EN_US: self._I18N_MAP.get(pt_text, pt_text)},
+        )
+        return AppI18n.t(key, self._language_code)
+
+    def set_language(self, language_code: str) -> None:
+        self._language_code = str(language_code or AppI18n.PT_BR)
+        self.retranslate()
+
+    def retranslate(self) -> None:
+        for lbl in self.findChildren(QLabel):
+            txt = lbl.text()
+            if txt in self._I18N_MAP or txt in self._I18N_MAP.values():
+                pt = txt if txt in self._I18N_MAP else next((k for k, v in self._I18N_MAP.items() if v == txt), txt)
+                lbl.setText(self._t(pt))
+
+        self.filter_edit.setPlaceholderText(self._t("Filtrar por data, aeronave, tipo ou descrição"))
+        self.filter_edit.setToolTip(self._t("Atalho: Ctrl+F para focar o filtro"))
+        self.high_contrast_toggle.setText(self._t("Alto contraste"))
+        self.table.setHorizontalHeaderLabels([
+            self._t("Data"),
+            self._t("Hora"),
+            self._t("Aeronave"),
+            self._t("Tipo"),
+            self._t("Linha do Tempo"),
+        ])
+        self.table.setToolTip(self._t("Use setas para navegar, Enter para selecionar."))
     
     def set_missions(self, missions: List[Mission]) -> None:
         """

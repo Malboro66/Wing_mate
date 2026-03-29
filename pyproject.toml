@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wing-mate"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+  "diskcache>=5.6.3",
+  "PyQt5>=5.15.0",
+]
+
+# Placeholder until an installable console-script target is defined.
+# [project.scripts]
+# wing-mate = "main_app:run"
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.4.0",
+  "pytest-qt>=4.2.0",
+  "mypy>=1.0.0",
+  "PyQt5-stubs>=5.15.6.0",
+  "ruff>=0.6.0",
+]
+build = [
+  "pyinstaller>=6.0.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*", "utils*", "models*", "tests*"]
+exclude = ["assets*", "docs*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+
+[[tool.mypy.overrides]]
+module = ["PyQt5.*"]
+ignore_missing_imports = true
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+extend-exclude = [
+  "build",
+  "dist",
+]
+
+[tool.ruff.lint]
+select = [
+  "E",
+  "F",
+  "W",
+  "I",
+  "UP",
+  "B",
+]
+ignore = [
+  "E501",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"

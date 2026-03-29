@@ -11,7 +11,7 @@ from typing import Any, Optional
 
 from utils.structured_logger import StructuredLogger
 
-import cache_manager
+from utils import cache_manager
 
 # SLOs de UX (máquina de referência)
 STARTUP_SLO_MS = 2500.0

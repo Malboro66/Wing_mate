@@ -7,7 +7,7 @@ import json
 import re
 import logging
 
-import cache_manager
+from utils import cache_manager
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path

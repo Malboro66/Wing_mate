@@ -29,7 +29,8 @@ from utils.observability import (
     record_startup_time,
 )
 
-import cache_manager
+from utils import cache_manager
+from utils.app_paths import get_logs_dir, get_observability_dir
 from utils.structured_logger import StructuredLogger
 
 STARTUP_TIMEOUT_S = 10.0
@@ -50,8 +51,7 @@ def _setup_logging(level: int = logging.INFO) -> logging.Logger:
     logger.addHandler(sh)
 
     try:
-        base_dir = Path(__file__).parent if "__file__" in globals() else Path.cwd()
-        logs_dir = base_dir / "logs"
+        logs_dir = get_logs_dir()
         logs_dir.mkdir(parents=True, exist_ok=True)
         log_filename = logs_dir / f"wingmate_{datetime.now():%Y%m%d}.log"
 
@@ -210,7 +210,7 @@ def _wait_for_splash_minimum_duration(app: QApplication, splash: Optional[QSplas
         time.sleep(0.01)
 
 
-if __name__ == "__main__":
+def run() -> int:
     cache_manager.inicializar_sessao()
     app_start_t0 = time.perf_counter()
     profiler = StartupProfiler()
@@ -296,7 +296,7 @@ if __name__ == "__main__":
     finally:
         startup_watchdog.cancel()
         try:
-            reports_dir = Path(__file__).resolve().parent / "logs" / "observability"
+            reports_dir = get_observability_dir()
             release_tag = datetime.now().strftime("%Y%m%d_%H%M%S")
             baseline = reports_dir / "baseline.json"
             report_path = publish_release_report(
@@ -312,4 +312,5 @@ if __name__ == "__main__":
 
         if lock and lock.isLocked():
             lock.unlock()
-        sys.exit(exit_code)
+
+    return exit_code
