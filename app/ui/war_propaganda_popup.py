@@ -28,7 +28,7 @@ class WarPropagandaPopup(QDialog):
 
         root = QVBoxLayout(self)
 
-        title = QLabel("🗞️ GAZETA DA FRENTE — EDIÇÃO EXTRA")
+        title = QLabel("🗞️ Gazeta da Frente — Edição Extra")
         title.setObjectName("title")
         root.addWidget(title)
 

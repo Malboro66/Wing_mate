@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Wing Mate â€” app/infrastructure/cp_db_reader.py
+Wing Mate — app/infrastructure/cp_db_reader.py
 
-Leitor de baixo nÃ­vel para o banco SQLite `cp.db` do IL-2 Flying Circus.
+Leitor de baixo nível para o banco SQLite `cp.db` do IL-2 Flying Circus.
 
 Responsabilidades:
-  - Abrir conexÃ£o read-only (uri=True, ?mode=ro)
+  - Abrir conexão read-only (uri=True, ?mode=ro)
   - Aplicar PRAGMA WAL e foreign_keys
-  - Fornecer mÃ©todos de consulta tipados com soft-delete embutido
-  - NÃ£o conhecer domÃ­nio â€” retorna apenas dicts/listas
+  - Fornecer métodos de consulta tipados com soft-delete embutido
+  - Não conhecer domínio — retorna apenas dicts/listas
 """
 
 from __future__ import annotations
@@ -22,9 +22,9 @@ logger = logging.getLogger("IL2CampaignAnalyzer")
 
 
 class CpDbReader:
-    """AbstraÃ§Ã£o de acesso read-only ao cp.db."""
+    """Abstração de acesso read-only ao cp.db."""
 
-    # CÃ³digo TVD do Flying Circus (conforme relatÃ³rio forense)
+    # Código TVD do Flying Circus (conforme relatório forense)
     TVD_FLYING_CIRCUS = 28
 
     def __init__(self, db_path: Path) -> None:
@@ -32,11 +32,11 @@ class CpDbReader:
         self._conn: Optional[sqlite3.Connection] = None
 
     # ------------------------------------------------------------------ #
-    # ConexÃ£o                                                              #
+    # Conexão                                                              #
     # ------------------------------------------------------------------ #
 
     def open(self) -> None:
-        """Abre conexÃ£o read-only com WAL habilitado."""
+        """Abre conexão read-only com WAL habilitado."""
         if self._conn is not None:
             return
 
@@ -47,14 +47,14 @@ class CpDbReader:
             # Evita erro de decode em colunas com bytes não UTF-8 (ex.: PersonageAwardId).
             # A normalização para string fica no _rows().
             self._conn.text_factory = bytes
-            # NOTA: NÃƒO executar PRAGMA journal_mode=WAL em conexÃ£o read-only
+            # Nota: não executar PRAGMA journal_mode=WAL em conexão read-only
             # (gera "attempt to write a readonly database").
-            # O banco usa DELETE mode (padrÃ£o do jogo) â€” leituras sÃ£o seguras.
+            # O banco usa DELETE mode (padrão do jogo) — leituras são seguras.
             self._conn.execute("PRAGMA foreign_keys=OFF;")  # sem FKs declarativas
             logger.info("cp.db aberto: %s", self._db_path)
         except sqlite3.OperationalError as exc:
             self._conn = None
-            raise ConnectionError(f"NÃ£o foi possÃ­vel abrir cp.db: {exc}") from exc
+            raise ConnectionError(f"Não foi possível abrir cp.db: {exc}") from exc
 
     def close(self) -> None:
         if self._conn:
@@ -69,11 +69,11 @@ class CpDbReader:
         self.close()
 
     # ------------------------------------------------------------------ #
-    # UtilitÃ¡rio                                                           #
+    # Utilitário                                                           #
     # ------------------------------------------------------------------ #
 
     def _rows(self, sql: str, params: tuple = ()) -> List[Dict[str, Any]]:
-        """Executa query e retorna lista de dicts. Garante conexÃ£o aberta."""
+        """Executa query e retorna lista de dicts. Garante conexão aberta."""
         if self._conn is None:
             self.open()
         cur = self._conn.execute(sql, params)  # type: ignore[union-attr]
@@ -152,7 +152,7 @@ class CpDbReader:
     # ------------------------------------------------------------------ #
 
     def get_pilots(self, squadron_id: int) -> List[Dict[str, Any]]:
-        """Todos os pilotos ativos de um esquadrÃ£o (isDeleted=0)."""
+        """Todos os pilotos ativos de um esquadrão (isDeleted=0)."""
         return self._rows(
             "SELECT * FROM pilot WHERE squadronId=? AND isDeleted=0 ORDER BY id",
             (squadron_id,),
@@ -177,7 +177,7 @@ class CpDbReader:
     # ------------------------------------------------------------------ #
 
     def get_missions(self, career_id: int) -> List[Dict[str, Any]]:
-        """MissÃµes de uma carreira, ordenadas por data (mais antiga primeiro)."""
+        """Missões de uma carreira, ordenadas por data (mais antiga primeiro)."""
         return self._rows(
             "SELECT * FROM mission WHERE careerId=? AND isDeleted=0 ORDER BY date ASC",
             (career_id,),
@@ -200,7 +200,7 @@ class CpDbReader:
         )
 
     def get_pilot_sorties(self, pilot_id: int) -> List[Dict[str, Any]]:
-        """Todas as saÃ­das de um piloto especÃ­fico."""
+        """Todas as saídas de um piloto específico."""
         return self._rows(
             "SELECT * FROM sortie WHERE pilotId=? AND isDeleted=0 ORDER BY date ASC",
             (pilot_id,),
@@ -295,7 +295,7 @@ class CpDbReader:
         )
 
     # ------------------------------------------------------------------ #
-    # VerificaÃ§Ã£o                                                          #
+    # Verificação                                                          #
     # ------------------------------------------------------------------ #
 
     def integrity_ok(self) -> bool:
