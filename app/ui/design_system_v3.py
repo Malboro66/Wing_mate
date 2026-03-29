@@ -613,7 +613,7 @@ def build_global_stylesheet() -> str:
 
 
 # ───────────────────────────────────────────────────────────────────
-# HELPERS DE BOTÃO
+# Helpers de botão
 # ───────────────────────────────────────────────────────────────────
 
 def apply_primary_button(button: QPushButton) -> None:

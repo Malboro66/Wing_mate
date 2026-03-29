@@ -102,7 +102,7 @@ class AcesTab(QWidget):
             "Vitórias"
         ])
         
-        # ✅ DESABILITA EDIÇÃO
+        # ✅ desabilita edição
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         
         # Configura redimensionamento
