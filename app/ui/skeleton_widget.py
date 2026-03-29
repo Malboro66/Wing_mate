@@ -39,10 +39,19 @@ class SkeletonWidget(QWidget):
         self._timer.timeout.connect(self._tick)
         self.hide()
 
+    def refresh_theme(self) -> None:
+        """Re-applies current theme to overlay and bars."""
+        from app.ui.design_system import DSFeedback
+        self._title.setStyleSheet(DSFeedback.LOADING_TITLE_TEXT)
+        self.setStyleSheet(f"QWidget {{ {DSFeedback.LOADING_OVERLAY_BG} }}")
+        for bar in self._bars:
+            bar.setStyleSheet(f"background-color: {DSFeedback.LOADING_BAR_IDLE}; border-radius: 6px;")
+
     def set_message(self, message: str) -> None:
         self._title.setText(message or "Carregando...")
 
     def showEvent(self, event) -> None:  # noqa: N802
+        self.refresh_theme()
         self._timer.start()
         super().showEvent(event)
 

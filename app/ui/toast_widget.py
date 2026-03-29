@@ -9,8 +9,6 @@ from app.ui.design_system import DSColors, DSStyles, DSFeedback, DSSpacing, DSSt
 class ToastWidget(QLabel):
     """Toast não-bloqueante para feedback ao usuário."""
 
-    _STYLES = DSFeedback.TOAST_LEVEL_STYLES
-
     def __init__(self, parent: QWidget) -> None:
         super().__init__(parent)
         self.setWordWrap(True)
@@ -28,7 +26,7 @@ class ToastWidget(QLabel):
         from app.ui.design_system import font_ui
         LEVEL_ICONS = {"info": "ℹ", "warning": "⚠", "error": "✗", "success": "✓"}
         icon = LEVEL_ICONS.get(level, "ℹ")
-        base = self._STYLES.get(level, self._STYLES["info"])
+        base = DSFeedback.get_toast_style(level)
         self.setStyleSheet(
             f"QLabel {{ border-radius:2px; padding:8px 16px; {base} }}"
         )

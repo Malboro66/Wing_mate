@@ -93,6 +93,9 @@ class DarkColors:
     TEXT_MUTED     = "#605850"
     TEXT_ACCENT    = "#e8c060"
 
+    TAB_INACTIVE_TEXT = "#7a6858"
+    TAB_HOVER_TEXT    = "#b0a090"
+
     SUCCESS     = "#2d6e3a"
     SUCCESS_TXT = "#7ec890"
     WARNING     = "#7a5818"
@@ -127,6 +130,9 @@ class LightColors:
     TEXT_SECONDARY = "#3a2e20"   # Texto secundário
     TEXT_MUTED     = "#7a6a54"   # Texto desativado
     TEXT_ACCENT    = "#8a5c10"   # Destaque
+
+    TAB_INACTIVE_TEXT = "#5a4830"
+    TAB_HOVER_TEXT    = "#3a2e20"
 
     SUCCESS     = "#c8ecd0"
     SUCCESS_TXT = "#1e5a2a"
@@ -182,21 +188,40 @@ class DSSpacing:
 # ───────────────────────────────────────────────────────────────────
 
 class DSFeedback:
-    TOAST_LEVEL_STYLES = {
-        "info":    f"background:{DarkColors.DEEP}; color:{DarkColors.INFO_TXT}; border:1px solid {DarkColors.INFO_TXT};",
-        "warning": f"background:{DarkColors.DEEP}; color:{DarkColors.WARNING_TXT}; border:1px solid {DarkColors.WARNING_TXT};",
-        "error":   f"background:{DarkColors.DEEP}; color:{DarkColors.DANGER_TXT}; border:1px solid {DarkColors.DANGER_TXT};",
-        "success": f"background:{DarkColors.DEEP}; color:{DarkColors.SUCCESS_TXT}; border:1px solid {DarkColors.SUCCESS_TXT};",
+    TOAST_LEVEL_STYLES: dict = {
+        "info": "",
+        "warning": "",
+        "error": "",
+        "success": "",
     }
-    LOADING_OVERLAY_BG  = "background-color: rgba(10,12,14,0.88);"
-    LOADING_TITLE_TEXT  = f"color:{DarkColors.AMBER}; font-weight:600; font-size:13px; letter-spacing:1px;"
-    LOADING_BAR_ACTIVE  = DarkColors.AMBER
-    LOADING_BAR_IDLE    = DarkColors.BORDER
+    LOADING_OVERLAY_BG  = ""
+    LOADING_TITLE_TEXT  = ""
+    LOADING_BAR_ACTIVE  = ""
+    LOADING_BAR_IDLE    = ""
+
+    @staticmethod
+    def get_toast_style(level: str) -> str:
+        """Returns theme-aware toast CSS for the given level. Reads DSColors at call time."""
+        return DSFeedback.TOAST_LEVEL_STYLES.get(level, DSFeedback.TOAST_LEVEL_STYLES.get("info", ""))
 
 
 # ───────────────────────────────────────────────────────────────────
 # GERADOR DE QSS POR TEMA
 # ───────────────────────────────────────────────────────────────────
+
+def _svg_chevron(color: str) -> str:
+    """Generates a chevron SVG as data URI for QSS image: url(...)."""
+    c = color.replace("#", "%23")
+    return (
+        "data:image/svg+xml,"
+        "%3Csvg xmlns='http://www.w3.org/2000/svg' "
+        "width='12' height='12' viewBox='0 0 12 12'%3E"
+        "%3Cpath d='M2 4L6 8L10 4' fill='none' "
+        f"stroke='{c}' stroke-width='1.5' "
+        "stroke-linecap='round' stroke-linejoin='round'/%3E"
+        "%3C/svg%3E"
+    )
+
 
 def _build_styles(C) -> "type":
     """Gera uma classe DSStyles para um conjunto de cores C."""
@@ -283,10 +308,21 @@ def _build_styles(C) -> "type":
             QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus, QDateEdit:focus {{
                 border-color: {C.BRASS};
             }}
+            QLineEdit::placeholder, QTextEdit::placeholder {{ color: {C.TEXT_MUTED}; }}
             QDateEdit::drop-down {{
+                subcontrol-origin: padding;
+                subcontrol-position: center right;
+                width: 28px;
                 border: none;
-                width: 20px;
-                background: {C.LIFTED};
+                background: transparent;
+            }}
+            QDateEdit::down-arrow {{
+                image: url("{_svg_chevron(C.TEXT_MUTED)}");
+                width: 12px;
+                height: 12px;
+            }}
+            QDateEdit::down-arrow:hover {{
+                image: url("{_svg_chevron(C.AMBER)}");
             }}
         """
 
@@ -296,20 +332,37 @@ def _build_styles(C) -> "type":
                 color: {C.TEXT_PRIMARY};
                 border: 1px solid {C.BORDER};
                 border-radius: 2px;
-                padding: 4px 10px;
+                padding: 4px 34px 4px 10px;
                 min-height: 28px;
             }}
+            QComboBox:hover {{ border-color: {C.MUTED}; }}
             QComboBox:focus {{ border-color: {C.BRASS}; }}
-            QComboBox::drop-down {{ border: none; width: 22px; }}
+            QComboBox:on {{ border-color: {C.BRASS}; background: {C.LIFTED}; }}
+            QComboBox::drop-down {{
+                subcontrol-origin: padding;
+                subcontrol-position: center right;
+                width: 28px;
+                border: none;
+                border-left: 1px solid {C.BORDER};
+                background: transparent;
+            }}
+            QComboBox::drop-down:hover {{ background: {C.GOLD_GLOW}; }}
+            QComboBox::down-arrow {{ image: url("{_svg_chevron(C.TEXT_MUTED)}"); width: 12px; height: 12px; }}
+            QComboBox::down-arrow:hover {{ image: url("{_svg_chevron(C.AMBER)}"); }}
+            QComboBox::down-arrow:on {{ image: url("{_svg_chevron(C.GOLD)}"); }}
+            QComboBox::down-arrow:disabled {{ image: url("{_svg_chevron(C.TEXT_MUTED)}"); opacity: 0.4; }}
             QComboBox QAbstractItemView {{
                 background: {C.PANEL};
                 color: {C.TEXT_SECONDARY};
                 border: 1px solid {C.BRASS};
+                border-top: none;
                 selection-background-color: {C.GOLD_GLOW};
                 selection-color: {C.TEXT_PRIMARY};
                 outline: none;
-                padding: 4px;
+                padding: 4px 0;
             }}
+            QComboBox QAbstractItemView::item {{ padding: 5px 12px; min-height: 26px; }}
+            QComboBox QAbstractItemView::item:selected {{ background: {C.GOLD_GLOW}; color: {C.TEXT_PRIMARY}; }}
         """
 
         GROUP_BOX = f"""
@@ -359,7 +412,7 @@ def _build_styles(C) -> "type":
             }}
             QTabBar::tab {{
                 background: {C.SHADOW};
-                color: {C.TEXT_MUTED};
+                color: {C.TAB_INACTIVE_TEXT};
                 border: none;
                 border-bottom: 2px solid transparent;
                 padding: 9px 18px;
@@ -374,7 +427,7 @@ def _build_styles(C) -> "type":
                 background: {C.SHADOW};
             }}
             QTabBar::tab:hover:!selected {{
-                color: {C.TEXT_SECONDARY};
+                color: {C.TAB_HOVER_TEXT};
                 background: {C.DEEP};
             }}
             QTabBar::tab:first {{ margin-left: 8px; }}
@@ -466,11 +519,28 @@ def current_theme() -> str:
     return _current_theme
 
 
+def _refresh_feedback() -> None:
+    """Rebuilds DSFeedback attributes using the current DSColors alias."""
+    DSFeedback.TOAST_LEVEL_STYLES = {
+        "info":    f"background:{DSColors.DEEP}; color:{DSColors.INFO_TXT}; border:1px solid {DSColors.INFO_TXT};",
+        "warning": f"background:{DSColors.DEEP}; color:{DSColors.WARNING_TXT}; border:1px solid {DSColors.WARNING_TXT};",
+        "error":   f"background:{DSColors.DEEP}; color:{DSColors.DANGER_TXT}; border:1px solid {DSColors.DANGER_TXT};",
+        "success": f"background:{DSColors.DEEP}; color:{DSColors.SUCCESS_TXT}; border:1px solid {DSColors.SUCCESS_TXT};",
+    }
+    if _current_theme == "light":
+        DSFeedback.LOADING_OVERLAY_BG  = "background-color: rgba(235,225,210,0.92);"
+    else:
+        DSFeedback.LOADING_OVERLAY_BG  = "background-color: rgba(10,12,14,0.88);"
+    DSFeedback.LOADING_TITLE_TEXT  = f"color:{DSColors.AMBER}; font-weight:600; font-size:13px; letter-spacing:1px;"
+    DSFeedback.LOADING_BAR_ACTIVE  = DSColors.AMBER
+    DSFeedback.LOADING_BAR_IDLE    = DSColors.BORDER
+
+
 def set_theme(theme: str) -> None:
     """
-    Muda o tema ativo. theme: "dark" | "light"
-    Atualiza DSColors, DSStyles e DSFeedback globalmente.
-    Chame QApplication.instance().setStyleSheet(build_global_stylesheet()) depois.
+    Changes the active theme. theme: "dark" | "light"
+    Updates DSColors, DSStyles and DSFeedback globally.
+    Call QApplication.instance().setStyleSheet(build_global_stylesheet()) afterwards.
     """
     global _current_theme, DSColors, DSStyles
 
@@ -478,29 +548,10 @@ def set_theme(theme: str) -> None:
     if theme == "light":
         DSColors = LightColors
         DSStyles = _build_styles(LightColors)
-        DSFeedback.TOAST_LEVEL_STYLES = {
-            "info":    f"background:{LightColors.INFO}; color:{LightColors.INFO_TXT}; border:1px solid {LightColors.INFO_TXT};",
-            "warning": f"background:{LightColors.WARNING}; color:{LightColors.WARNING_TXT}; border:1px solid {LightColors.WARNING_TXT};",
-            "error":   f"background:{LightColors.DANGER}; color:{LightColors.DANGER_TXT}; border:1px solid {LightColors.DANGER_TXT};",
-            "success": f"background:{LightColors.SUCCESS}; color:{LightColors.SUCCESS_TXT}; border:1px solid {LightColors.SUCCESS_TXT};",
-        }
-        DSFeedback.LOADING_OVERLAY_BG  = "background-color: rgba(235,225,210,0.92);"
-        DSFeedback.LOADING_TITLE_TEXT  = f"color:{LightColors.AMBER}; font-weight:600; font-size:13px; letter-spacing:1px;"
-        DSFeedback.LOADING_BAR_ACTIVE  = LightColors.AMBER
-        DSFeedback.LOADING_BAR_IDLE    = LightColors.BORDER
     else:
         DSColors = DarkColors
-        DSStyles = _DarkStyles
-        DSFeedback.TOAST_LEVEL_STYLES = {
-            "info":    f"background:{DarkColors.DEEP}; color:{DarkColors.INFO_TXT}; border:1px solid {DarkColors.INFO_TXT};",
-            "warning": f"background:{DarkColors.DEEP}; color:{DarkColors.WARNING_TXT}; border:1px solid {DarkColors.WARNING_TXT};",
-            "error":   f"background:{DarkColors.DEEP}; color:{DarkColors.DANGER_TXT}; border:1px solid {DarkColors.DANGER_TXT};",
-            "success": f"background:{DarkColors.DEEP}; color:{DarkColors.SUCCESS_TXT}; border:1px solid {DarkColors.SUCCESS_TXT};",
-        }
-        DSFeedback.LOADING_OVERLAY_BG  = "background-color: rgba(10,12,14,0.88);"
-        DSFeedback.LOADING_TITLE_TEXT  = f"color:{DarkColors.AMBER}; font-weight:600; font-size:13px; letter-spacing:1px;"
-        DSFeedback.LOADING_BAR_ACTIVE  = DarkColors.AMBER
-        DSFeedback.LOADING_BAR_IDLE    = DarkColors.BORDER
+        DSStyles = _build_styles(DarkColors)
+    _refresh_feedback()
 
 
 # ───────────────────────────────────────────────────────────────────
@@ -615,3 +666,7 @@ def apply_section_group(group: QGroupBox) -> None:
     group.setFlat(False)
     group.setFont(font_ui(10, bold=True))
     group.setStyleSheet(DSStyles.GROUP_BOX)
+
+
+# Initialize DSFeedback with dark-theme defaults at module load
+_refresh_feedback()

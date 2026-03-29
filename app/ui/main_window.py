@@ -1018,13 +1018,6 @@ class MainWindow(QMainWindow):
                 except Exception:
                     pass
 
-            # Se estivermos no cp.db mas o país veio vazio, as medalhas do cp.db ainda podem ser válidas
-            if self.container.has_cp_db() and not earned_ids:
-                try:
-                    earned_ids = set(self.container.get_cp_db_repository().get_earned_medal_ids(campaign))
-                except Exception:
-                    pass
-
         # Aba Medalhas (carregamento lazy + atualizaÃ§Ã£o Ãºnica de contexto)
         self.medals_tab.set_context(country_code, display_name, earned_ids)
         self._medals_dirty = False

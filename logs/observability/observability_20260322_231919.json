@@ -1,0 +1,37 @@
+{
+  "release": "20260322_231919",
+  "session_id": "a4b66e84cddd442796acb17f21cdc91b",
+  "generated_at_epoch_ms": 1774232359374,
+  "metrics": {
+    "startup_time_ms": 5209.58,
+    "startup_phases_ms": {
+      "qt atributos configurados": 1.23,
+      "qapplication inicializada": 16.21,
+      "ícone carregado": 14.46,
+      "splash exibido": 113.98,
+      "controle de instância concluído": 4.06,
+      "janela principal interativa": 5057.62
+    },
+    "startup_error": null,
+    "action_duration_ms": 1.69,
+    "error_rate": 0.0,
+    "cache_hit_rate": 0.0,
+    "max_tab_switch_ms": 1.35,
+    "actions_total": 18.0,
+    "actions_failed": 0.0,
+    "cache_hits": 0.0,
+    "cache_misses": 63.0
+  },
+  "ux_budget": {
+    "startup_within_slo": false,
+    "tab_switch_within_slo": true,
+    "critical_action_within_slo": true
+  },
+  "baseline_delta": {
+    "startup_time_ms": -27.63,
+    "action_duration_ms": 0.75,
+    "error_rate": 0.0,
+    "cache_hit_rate": 0.0,
+    "max_tab_switch_ms": -0.64
+  }
+}
