@@ -14,7 +14,7 @@ from app.core.country_normalizer import COUNTRY_ROUNDEL_STEMS, canonicalize_coun
 from app.ui.widgets.stats_bar import StatsBar
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, 
-    QHeaderView, QLabel, QAbstractItemView
+    QHeaderView, QLabel, QAbstractItemView, QHBoxLayout
 )
 
 logger = logging.getLogger("IL2CampaignAnalyzer")
@@ -25,9 +25,9 @@ class AcesTab(QWidget):
     """Aba de Ases da campanha com roundels por nacionalidade."""
     
     # Tamanhos otimizados
-    ROUNDEL_SIZE = 45
-    ROW_HEIGHT = 60
-    ROUNDEL_COLUMN_WIDTH = 70
+    ROUNDEL_SIZE = 36
+    ROW_HEIGHT = 56
+    ROUNDEL_COLUMN_WIDTH = 120
     
     COUNTRY_ROUNDELS = {
         country: f"{stem}.png"
@@ -176,7 +176,7 @@ class AcesTab(QWidget):
         self._stats_bar.update_stat("Top Ás", top_name or "—")
         self._stats_bar.update_stat("Top Vitórias", str(top_victories))
 
-    def _create_roundel_widget(self, country_code: str) -> Optional[QLabel]:
+    def _create_roundel_widget(self, country_code: str) -> Optional[QWidget]:
         """
         Cria um QLabel com a roundel do país.
         
@@ -184,7 +184,7 @@ class AcesTab(QWidget):
             country_code: Código do país em maiúsculas
             
         Returns:
-            QLabel com roundel ou None se não encontrado
+            Widget centralizado com roundel ou None se não encontrado
         """
         if not country_code:
             return None
@@ -210,8 +210,13 @@ class AcesTab(QWidget):
             logger.warning(f"Falha ao carregar imagem: {roundel_path}")
             return None
         
-        # Cria label
-        label = QLabel()
+        # Cria label centralizado em container para evitar corte/desalinhamento
+        cell_widget = QWidget()
+        cell_layout = QHBoxLayout(cell_widget)
+        cell_layout.setContentsMargins(0, 0, 0, 0)
+        cell_layout.setSpacing(0)
+
+        label = QLabel(cell_widget)
         label.setAlignment(Qt.AlignCenter)
         
         # Redimensiona mantendo proporção
@@ -223,9 +228,10 @@ class AcesTab(QWidget):
         )
         
         label.setPixmap(scaled_pixmap)
-        label.setFixedSize(self.ROUNDEL_COLUMN_WIDTH, self.ROW_HEIGHT)
-        
-        return label
+        label.setFixedSize(self.ROUNDEL_SIZE, self.ROUNDEL_SIZE)
+        cell_layout.addWidget(label, 0, Qt.AlignCenter)
+
+        return cell_widget
     
     def _get_victories(self, ace: Dict[str, Any]) -> int:
         """

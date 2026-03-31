@@ -175,9 +175,19 @@ class CpDbCampaignRepository:
             aces_list = self._reader.get_aces(career_id)
 
             squad_name = self._resolve_squadron_name(career_id, squadron_row)
+            effective_country = self._resolve_career_country(
+                pilot_row=pilot_row,
+                squadron_row=squadron_row,
+                career_row=career,
+                squadron_name=squad_name,
+            )
+
+            pilot_for_mapping = dict(pilot_row or {})
+            if effective_country and not str((pilot_row or {}).get("country", "") or "").strip():
+                pilot_for_mapping["country"] = effective_country
 
             pilot_data = CpDbMapper.pilot_to_pilot_data(
-                pilot_row or {}, sorties, squad_name
+                pilot_for_mapping, sorties, squad_name
             )
             missions_data = CpDbMapper.sorties_to_missions(sorties, missions_by_id)
             self._enrich_missions_with_flight_logs(missions_data)
@@ -191,16 +201,25 @@ class CpDbCampaignRepository:
                     aces_data.append({
                         "name": member.get("name", "N/A"),
                         "rank": member.get("rank", "N/A"),
-                        "country": self._normalize_country(pilot_row.get("country")),
+                        "country": self._normalize_country(
+                            (pilot_row or {}).get("country") or effective_country
+                        ),
                         "victories": int(member.get("victories", 0) or 0),
                         "missions_flown": int(member.get("missions_flown", 0) or 0),
                     })
             aircraft_prog = CpDbMapper.sorties_to_aircraft_progression(sorties)
+            squadron_overview = {
+                "name": squad_name,
+                "airfield": str((squadron_row or {}).get("airfield", "") or "").strip(),
+                "config_id": self._as_int((squadron_row or {}).get("configId"), -1),
+                "country": effective_country,
+            }
 
             return {
                 "pilot": pilot_data,
                 "missions": missions_data,
                 "squadron": squadron_data,
+                "squadron_overview": squadron_overview,
                 "aces": aces_data,
                 "aircraft_progression": aircraft_prog,
             }
@@ -372,3 +391,58 @@ class CpDbCampaignRepository:
     @staticmethod
     def _normalize_country(raw_country: Any) -> str:
         return canonicalize_country_code(raw_country)
+
+    def _resolve_career_country(
+        self,
+        *,
+        pilot_row: Optional[Dict[str, Any]],
+        squadron_row: Optional[Dict[str, Any]],
+        career_row: Optional[Dict[str, Any]],
+        squadron_name: str,
+    ) -> str:
+        """Resolve nacionalidade da carreira priorizando dados do banco.
+
+        Ordem:
+          1) country do piloto
+          2) campos de país em squadron/career
+          3) heurística por nome do esquadrão
+          4) fallback canônico (GERMANY)
+        """
+        direct_candidates = [
+            (pilot_row or {}).get("country"),
+            (squadron_row or {}).get("country"),
+            (squadron_row or {}).get("nationality"),
+            (squadron_row or {}).get("nation"),
+            (squadron_row or {}).get("countryName"),
+            (career_row or {}).get("country"),
+            (career_row or {}).get("nationality"),
+            (career_row or {}).get("nation"),
+        ]
+        for raw in direct_candidates:
+            normalized = canonicalize_country_code(raw, default="")
+            if normalized:
+                return normalized
+
+        by_squad = self._infer_country_from_squadron_name(squadron_name)
+        if by_squad:
+            return by_squad
+
+        return canonicalize_country_code("")
+
+    @staticmethod
+    def _infer_country_from_squadron_name(squadron_name: str) -> str:
+        value = str(squadron_name or "").strip().upper()
+        if not value:
+            return ""
+
+        if any(token in value for token in ("SQUADRON", "RFC", "RNAS", "RAF", "NO.")):
+            return "BRITAIN"
+        if any(token in value for token in ("ESC", "ESCADRILLE", "SPA", "SAL")):
+            return "FRANCE"
+        if any(token in value for token in ("JASTA", "STAFFEL", "JG", "KG", "FLIK")):
+            return "GERMANY"
+        if any(token in value for token in ("AERO", "US", "USA")):
+            return "USA"
+        if "BELG" in value:
+            return "BELGIAN"
+        return ""

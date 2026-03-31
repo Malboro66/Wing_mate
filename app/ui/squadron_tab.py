@@ -598,7 +598,22 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
 
         return "".join(parts)
 
-    def set_squad_overview(self, squad_name: str) -> None:
+    def _render_cpdb_overview_html(self, overview: Dict[str, Any]) -> str:
+        parts: List[str] = []
+        country = str(overview.get("country", "") or "").strip()
+        airfield = str(overview.get("airfield", "") or "").strip()
+        config_id = overview.get("config_id")
+
+        if country:
+            parts.append(f"<p><b>País:</b> {_esc(country)}</p>")
+        if airfield:
+            parts.append(f"<p><b>Aeródromo:</b> {_esc(airfield)}</p>")
+        if isinstance(config_id, int) and config_id >= 0:
+            parts.append(f"<p><b>Config ID:</b> {_esc(config_id)}</p>")
+
+        return "".join(parts)
+
+    def set_squad_overview(self, squad_name: str, fallback_overview: Optional[Dict[str, Any]] = None) -> None:
         """Carrega emblema e dados completos do esquadrão a partir de assets/squadrons/meta."""
         self._current_squad_name = squad_name or ""
 
@@ -614,7 +629,13 @@ class SquadronTab(QWidget, CtrlFFocusMixin):
 
         cands: List[Path] = self._candidate_meta_paths(self._current_squad_name)
         if not cands:
-            self._set_view_state(DSStates.EMPTY, self.tr("Metadados do esquadrão não encontrados."))
+            if fallback_overview:
+                fallback_name = str(fallback_overview.get("name", "") or "").strip()
+                self.title_label.setText(fallback_name or self._current_squad_name or "N/A")
+                self.details_label.setText(self._render_cpdb_overview_html(fallback_overview))
+                self._set_view_state(DSStates.SUCCESS, self.tr("Dados do esquadrão carregados."))
+            else:
+                self._set_view_state(DSStates.EMPTY, self.tr("Metadados do esquadrão não encontrados."))
             return
 
         meta_path: Path = cands[0]

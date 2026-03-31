@@ -322,8 +322,9 @@ class MedalsTab(QWidget):
 
         # UI change: clique simples seleciona, duplo clique abre detalhes
         self._icon_list.setSelectionMode(QAbstractItemView.SingleSelection)
+        # Evita abrir o diálogo duas vezes: em alguns estilos o Qt já emite
+        # itemActivated no duplo clique.
         self._icon_list.itemActivated.connect(self._on_icon_activated)
-        self._icon_list.itemDoubleClicked.connect(self._on_icon_activated)
         self._icon_list.itemClicked.connect(self._on_icon_clicked)
         self._icon_list.setMouseTracking(True)
         self._icon_list.mouseMoveEvent = self._on_icon_hover
