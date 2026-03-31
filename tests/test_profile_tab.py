@@ -13,7 +13,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import pytest
 from pytestqt.qtbot import QtBot
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, QSettings
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QGroupBox
 
 from app.ui.profile_tab import ProfileTab
 
@@ -135,6 +137,39 @@ def test_save_button_disabled_initially(qtbot: QtBot):
     
     # Botão deve estar desabilitado inicialmente
     assert not tab.btn_save.isEnabled(), "Botão salvar deveria estar desabilitado inicialmente"
+
+
+def test_portrait_group_width_supports_full_frame(qtbot: QtBot):
+    """Painel de retrato deve comportar o frame inteiro sem cortar."""
+    tab = ProfileTab()
+    qtbot.addWidget(tab)
+    tab.show()
+
+    portrait_group = tab.findChild(QGroupBox, "profile_portrait_group")
+
+    assert portrait_group is not None, "Grupo de retrato não encontrado"
+    assert portrait_group.width() >= tab.FRAME_W, (
+        f"Largura do painel ({portrait_group.width()}) menor que o frame ({tab.FRAME_W})"
+    )
+
+
+def test_context_without_avatar_shows_empty_message(qtbot: QtBot, tmp_path: Path):
+    settings_path = tmp_path / "profile_tab_test.ini"
+    settings = QSettings(str(settings_path), QSettings.IniFormat)
+
+    tab = ProfileTab(settings=settings)
+    qtbot.addWidget(tab)
+
+    # Simula avatar já exibido de outro perfil.
+    pm = QPixmap(16, 16)
+    pm.fill()
+    tab.avatar_label.setPixmap(pm)
+
+    # Perfil sem avatar salvo deve limpar imagem e mostrar texto padrão.
+    tab.set_context("Campanha B", "Piloto Sem Foto")
+
+    assert tab.avatar_label.pixmap() is None
+    assert tab.avatar_label.text() == "Sem foto selecionada."
 
 
 def test_compute_age_static_method():
