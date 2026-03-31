@@ -227,6 +227,7 @@ class ProfileTab(QWidget):
         "Condecorações": "Decorations",
         "Salvar Perfil": "Save Profile",
         "Frame ausente": "Missing frame",
+        "Sem foto selecionada.": "No photo selected.",
         "Sem roundel": "No roundel",
         "Imagem não encontrada": "Image not found",
         "Sem condecorações registradas para este piloto.": "No decorations recorded for this pilot.",
@@ -366,8 +367,10 @@ class ProfileTab(QWidget):
         outer = QHBoxLayout(self)
 
         portrait_group = QGroupBox(self.tr("Retrato"))
-        portrait_group.setMaximumWidth(DSSpacing.PROFILE_PANEL_W)
-        portrait_group.setMinimumWidth(DSSpacing.PROFILE_PANEL_W)
+        portrait_group.setObjectName("profile_portrait_group")
+        portrait_panel_w = max(DSSpacing.PROFILE_PANEL_W, self.FRAME_W + 24)
+        portrait_group.setMaximumWidth(portrait_panel_w)
+        portrait_group.setMinimumWidth(portrait_panel_w)
         portrait_group.setFont(font_display(10, bold=False))
         portrait_group.setStyleSheet(DSStyles.GROUP_BOX)
         pv = QVBoxLayout(portrait_group)
@@ -556,11 +559,18 @@ class ProfileTab(QWidget):
             QMessageBox.warning(self, self.tr("Erro"), self.tr("Não foi possível carregar a imagem."))
 
     def _clear_avatar(self):
-        if self.avatar_label:
-            self.avatar_label.clear()
+        self._show_empty_avatar_message()
         self.settings.remove(f"{self._prefix()}/avatar_path")
         if self.frame_label:
             self.frame_label.raise_()
+
+    def _show_empty_avatar_message(self) -> None:
+        if not self.avatar_label:
+            return
+        self.avatar_label.clear()
+        self.avatar_label.setText(self.tr("Sem foto selecionada."))
+        self.avatar_label.setAlignment(Qt.AlignCenter)
+        self.avatar_label.setStyleSheet("background-color: #202020; border: 1px solid #444; color: #8a8a8a;")
 
     def _set_avatar_pixmap(self, path: Path):
         if not self.avatar_label:
@@ -569,6 +579,8 @@ class ProfileTab(QWidget):
         if pm.isNull():
             raise ValueError("Imagem inválida")
         pm = pm.scaled(self.AVATAR_MAX_W, self.AVATAR_MAX_H, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.avatar_label.setText("")
+        self.avatar_label.setStyleSheet("background-color: #202020; border: 1px solid #444;")
         self.avatar_label.setPixmap(pm)
         if self.frame_label:
             self.frame_label.raise_()
@@ -906,18 +918,17 @@ class ProfileTab(QWidget):
         try:
             prefix = self._prefix()
             self._load_frame()
+            self._show_empty_avatar_message()
 
             avatar_path = self.settings.value(f"{prefix}/avatar_path", "")
             if avatar_path:
                 try:
                     self._set_avatar_pixmap(Path(avatar_path))
                 except (OSError, ValueError):
-                    pass
-            else:
-                if self.avatar_label:
-                    self.avatar_label.clear()
-                if self.frame_label:
-                    self.frame_label.raise_()
+                    self._show_empty_avatar_message()
+
+            if self.frame_label:
+                self.frame_label.raise_()
 
             dob_str = self.settings.value(f"{prefix}/dob", "")
             if dob_str:

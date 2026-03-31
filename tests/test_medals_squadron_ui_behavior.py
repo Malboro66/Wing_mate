@@ -4,6 +4,11 @@ from pathlib import Path
 import pytest
 
 pytest.importorskip("pytestqt")
+pytest.importorskip("PyQt5.QtCore")
+pytest.importorskip("PyQt5.QtWidgets")
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QListWidgetItem
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -28,6 +33,33 @@ def test_medals_tab_switches_between_grid_and_list_modes(qtbot):
     tab._mode_combo.setCurrentIndex(1)
     qtbot.waitUntil(lambda: not tab._table.isHidden())
     assert tab._icon_list.isHidden()
+
+
+def test_medals_tab_avoids_reopening_details_after_close(qtbot, monkeypatch):
+    tab = MedalsTab()
+    qtbot.addWidget(tab)
+    tab.show()
+
+    assert tab._icon_list is not None
+
+    call_count = 0
+
+    def _fake_open_details(_rec):
+        nonlocal call_count
+        call_count += 1
+
+    monkeypatch.setattr(tab, "_open_details", _fake_open_details)
+
+    item = QListWidgetItem("Medalha de teste")
+    item.setData(Qt.UserRole, {"id": "test_medal", "name": "Teste"})
+    tab._icon_list.addItem(item)
+
+    # itemActivated abre detalhes; itemDoubleClicked não deve disparar
+    # novamente para evitar reabertura após fechar.
+    tab._icon_list.itemActivated.emit(item)
+    tab._icon_list.itemDoubleClicked.emit(item)
+
+    assert call_count == 1
 
 
 def test_squadron_tab_stats_signal_emits_expected_totals(qtbot):
