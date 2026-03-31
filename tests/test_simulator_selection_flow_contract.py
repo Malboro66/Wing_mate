@@ -43,3 +43,10 @@ def test_settings_widget_retranslate_updates_labels_and_buttons():
     src = Path("app/ui/settings_widget.py").read_text(encoding="utf-8")
     assert "for key, (lbl, _edit, browse, _status, label_key) in self._fields.items():" in src
     assert "browse.setText(self._t(\"browse\"))" in src
+
+
+def test_main_window_reloads_campaigns_when_data_source_changes():
+    src = Path("app/ui/main_window.py").read_text(encoding="utf-8")
+    assert "def _on_data_source_changed(self, _index: int) -> None:" in src
+    assert "self.container.set_pwcgfc_path(self.pwcgfc_path)" in src
+    assert "self._load_campaigns()" in src

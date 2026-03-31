@@ -817,7 +817,21 @@ class MainWindow(QMainWindow):
                 self.source_combo.blockSignals(False)
 
     def _on_data_source_changed(self, _index: int) -> None:
-        self.set_data_source_mode(str(self.source_combo.currentData() or self.SOURCE_AUTO))
+        selected_mode = str(self.source_combo.currentData() or self.SOURCE_AUTO)
+        self.set_data_source_mode(selected_mode)
+
+        # Em troca de fonte, recarrega campanhas para refletir imediatamente
+        # o backend selecionado (PWCG JSON x cp.db vanilla).
+        if self._data_source_mode == self.SOURCE_IL2_VANILLA and not self.container.has_cp_db():
+            il2_fc_path = str(self.config.get_path(AppConfig.KEY_IL2_FC) or "").strip()
+            if il2_fc_path and il2_fc_path != self.pwcgfc_path:
+                switched = self.set_campaign_path(il2_fc_path, show_cp_db_notice=False)
+                if switched:
+                    return
+
+        if self.pwcgfc_path:
+            self.container.set_pwcgfc_path(self.pwcgfc_path)
+            self._load_campaigns()
 
     @staticmethod
     def _resolve_pwcg_root_for_tools(raw_path: str) -> Optional[str]:
@@ -1052,7 +1066,8 @@ class MainWindow(QMainWindow):
         self.profile_tab.set_ribbons(country_code, earned_ids)
 
         squadron_name: str = (self.current_data.get("pilot", {}) or {}).get("squadron", "N/A")
-        self.squadron_tab.set_squad_overview(squadron_name)
+        squadron_overview: Dict[str, Any] = self.current_data.get("squadron_overview", {}) or {}
+        self.squadron_tab.set_squad_overview(squadron_name, squadron_overview)
 
         self._refresh_flight_streak_indicator()
         # Revelar conteúdo real (índice 1) nas abas com stack

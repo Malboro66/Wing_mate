@@ -556,6 +556,24 @@ class TestCpDbCampaignRepository:
         repo = CpDbCampaignRepository(test_db)
         data = repo.process_career("1")
         assert data["pilot"]["squadron"] == "No.45 Squadron"
+        assert data["squadron_overview"]["name"] == "No.45 Squadron"
+
+    def test_process_career_infers_country_from_squadron_when_pilot_country_missing(self, test_db):
+        conn = sqlite3.connect(str(test_db))
+        conn.execute("UPDATE pilot SET country='' WHERE id=1")
+        conn.execute(
+            "UPDATE award SET squadName='No.45 Squadron', SquadId=1, squadConfigId=1 WHERE id=1"
+        )
+        conn.commit()
+        conn.close()
+
+        from app.infrastructure.cp_db_repository import CpDbCampaignRepository
+
+        repo = CpDbCampaignRepository(test_db)
+        data = repo.process_career("1")
+
+        assert data["pilot"]["country"] == "BRITAIN"
+        assert data["squadron_overview"]["country"] == "BRITAIN"
 
     def test_list_career_ids(self, test_db):
         from app.infrastructure.cp_db_repository import CpDbCampaignRepository

@@ -242,7 +242,10 @@ class InputMedalsTab(QWidget):
             try:
                 data: Dict[str, Any] = json.loads(p.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, UnicodeDecodeError, OSError) as e:
-                logger.warning(f"Não foi possível ler ou decodificar o arquivo {p}: {e}")
+                if self._is_likely_medal_model_file(p):
+                    logger.warning(f"Não foi possível ler ou decodificar o arquivo {p}: {e}")
+                else:
+                    logger.debug(f"Ignorando JSON inválido fora de medalhas/awards: {p} ({e})")
                 continue
             
             # Busca por arrays de condições em chaves conhecidas
@@ -624,3 +627,7 @@ class InputMedalsTab(QWidget):
         self._hide_form()
         self._refresh_list()
         notify_info("Medalha salva com sucesso!")
+    @staticmethod
+    def _is_likely_medal_model_file(path: Path) -> bool:
+        name = path.name.lower()
+        return any(token in name for token in ("medal", "award", "decor", "condition"))
